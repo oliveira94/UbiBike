@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">UbiBike</string>
+    <string name="SignInText">Sign In</string>
+    <string name="SignUpText">Sign Up</string>
+</resources>
