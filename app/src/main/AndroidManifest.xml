@@ -19,11 +19,14 @@
             android:name=".CreateAccount"
             android:label="@string/SignUpText"
             android:theme="@style/AppTheme" />
-
         <activity
             android:name=".LogIn"
             android:label="@string/SignInText"
             android:theme="@style/AppTheme" />
+        <activity
+            android:name=".NaviagationDrawer"
+            android:label="@string/title_activity_naviagation_drawer"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

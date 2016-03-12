@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/HistoryItem"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="History" />
+        <item
+            android:id="@+id/FriendsItem"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Friends" />
+        <item
+            android:id="@+id/PointsItem"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="Points" />
+        <item
+            android:id="@+id/BookBikeItem"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Book Bike" />
+        <item
+            android:id="@+id/MessagesItem"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Messages" />
+    </group>
+
+</menu>

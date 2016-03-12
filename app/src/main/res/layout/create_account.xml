@@ -158,7 +158,8 @@
                 android:layout_toRightOf="@+id/textView3"
                 android:layout_toEndOf="@+id/textView3"
                 android:layout_gravity="bottom|center"
-                android:layout_marginTop="40dp" />
+                android:layout_marginTop="40dp"
+                android:onClick="SignUpToDraw" />
         </FrameLayout>
 
 
