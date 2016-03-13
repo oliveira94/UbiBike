@@ -3,6 +3,10 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/InicialPage"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Profile Page" />
+        <item
             android:id="@+id/HistoryItem"
             android:icon="@drawable/ic_menu_gallery"
             android:title="History" />
