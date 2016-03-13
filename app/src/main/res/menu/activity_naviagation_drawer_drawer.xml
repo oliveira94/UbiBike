@@ -4,7 +4,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/HistoryItem"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_menu_gallery"
             android:title="History" />
         <item
             android:id="@+id/FriendsItem"
@@ -12,15 +12,15 @@
             android:title="Friends" />
         <item
             android:id="@+id/PointsItem"
-            android:icon="@drawable/ic_menu_slideshow"
+            android:icon="@drawable/ic_menu_gallery"
             android:title="Points" />
         <item
             android:id="@+id/BookBikeItem"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_menu_gallery"
             android:title="Book Bike" />
         <item
             android:id="@+id/MessagesItem"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_menu_gallery"
             android:title="Messages" />
     </group>
 
