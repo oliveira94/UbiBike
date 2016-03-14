@@ -57,7 +57,8 @@
                     android:layout_width="fill_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginTop="20dp">
+                    android:layout_marginTop="20dp"
+                    android:onClick="FrameClicked">
 
                     <TextView
                         android:layout_width="wrap_content"

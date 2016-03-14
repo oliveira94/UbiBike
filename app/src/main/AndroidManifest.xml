@@ -26,7 +26,8 @@
         <activity
             android:name=".NaviagationDrawer"
             android:label="@string/title_activity_naviagation_drawer"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".Chat"></activity>
     </application>
 
 </manifest>
