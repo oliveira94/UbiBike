@@ -46,4 +46,5 @@ public class Chat extends AppCompatActivity {
         //Adding the whole HorizontalLayout to the VerticalLayout
         linearLayoutVertical.addView(chatHorizontalLayout);
     }
+
 }

@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.cmov.ubibike;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -8,9 +9,16 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
 public class NaviagationDrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -132,5 +140,29 @@ public class NaviagationDrawer extends AppCompatActivity
     public void FrameClicked(View view) {
         Intent i = new Intent(this, Chat.class);
         startActivity(i);
+    }
+
+    public void addFriend(View view) {
+        LinearLayout principalLayout= (LinearLayout) findViewById(R.id.idFriendsVertical);
+        LinearLayout secondaryLauout= new LinearLayout(this);
+        TextView tx= new TextView(this);
+        EditText et= (EditText) findViewById(R.id.ADD);
+
+        String edittx= String.valueOf(et.getText().toString());
+        if (edittx.equals("")) {
+        }else
+        {
+            tx.setText(edittx);
+            tx.setTextSize(22);
+            tx.setTextColor(Color.BLACK);
+
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+            params.setMargins(0, 20, 0, 10);
+
+            secondaryLauout.addView(tx, params);
+            principalLayout.addView(secondaryLauout);
+        }
+        et.setText("");
     }
 }
