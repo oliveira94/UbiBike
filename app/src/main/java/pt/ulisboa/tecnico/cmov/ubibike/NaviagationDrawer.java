@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.cmov.ubibike;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -130,8 +131,12 @@ public class NaviagationDrawer extends AppCompatActivity
                 fragmenttransaction.replace(R.id.container, new Messages());
                 fragmenttransaction.commit();
 
-            }
+            }else if(id == R.id.Mapdebug)
+            {
+                Intent maps = new Intent(this,MapsActivity.class);
+                startActivity(maps);
 
+            }
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             drawer.closeDrawer(GravityCompat.START);
             return true;

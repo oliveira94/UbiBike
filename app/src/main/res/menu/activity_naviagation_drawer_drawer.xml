@@ -23,9 +23,16 @@
             android:icon="@drawable/ic_menu_gallery"
             android:title="Book Bike" />
         <item
-            android:id="@+id/MessagesItem"
+        android:id="@+id/MessagesItem"
+        android:icon="@drawable/ic_menu_gallery"
+        android:title="Messages" />
+        <item
+            android:id="@+id/Mapdebug"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="Messages" />
+            android:title="MAP"
+
+            />
+
     </group>
 
 </menu>
