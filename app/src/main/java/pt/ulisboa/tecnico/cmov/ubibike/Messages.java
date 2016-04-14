@@ -13,11 +13,9 @@ import android.view.ViewGroup;
  */
 public class Messages extends Fragment {
 
-
     public Messages() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -26,7 +24,4 @@ public class Messages extends Fragment {
 
         return inflater.inflate(R.layout.fragment_messages, container, false);
     }
-
-
-
 }

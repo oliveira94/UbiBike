@@ -35,7 +35,7 @@
             <EditText
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/editName"
+                android:id="@+id/nameid"
                 android:layout_gravity="bottom" />
         </LinearLayout>
 
@@ -61,7 +61,7 @@
             <EditText
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/editAge"
+                android:id="@+id/ageid"
                 android:layout_gravity="bottom" />
         </LinearLayout>
 
@@ -87,7 +87,7 @@
             <EditText
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/editUsername"
+                android:id="@+id/userid"
                 android:layout_gravity="bottom" />
         </LinearLayout>
 
@@ -113,7 +113,7 @@
             <EditText
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/editPassword"
+                android:id="@+id/pass1id"
                 android:layout_gravity="bottom" />
         </LinearLayout>
 
@@ -139,7 +139,7 @@
             <EditText
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/editConfirmPass"
+                android:id="@+id/pass2id"
                 android:layout_gravity="bottom" />
         </LinearLayout>
 

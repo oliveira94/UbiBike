@@ -32,7 +32,7 @@
             <EditText
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/editName"
+                android:id="@+id/lognameid"
                 android:layout_gravity="bottom" />
         </LinearLayout>
 
@@ -58,7 +58,7 @@
             <EditText
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/editPassword"
+                android:id="@+id/logpasswordid"
                 android:layout_gravity="bottom" />
         </LinearLayout>
 
