@@ -49,7 +49,7 @@ public class CreateAccount extends AppCompatActivity {
             Toast password = Toast.makeText(CreateAccount.this, "Account created", Toast.LENGTH_SHORT);
             password.show();
 
-            Intent i = new Intent(this,NaviagationDrawer.class);
+            Intent i = new Intent(this,NavigationDrawer.class);
             startActivity(i);
         }
 

@@ -34,7 +34,7 @@ public class LogIn extends AppCompatActivity {
 
 
         if(Ipass.equals(Password)){
-            Intent i = new Intent(this,NaviagationDrawer.class);
+            Intent i = new Intent(this,NavigationDrawer.class);
             i.putExtra("Username", Iusername);
             startActivity(i);
         }

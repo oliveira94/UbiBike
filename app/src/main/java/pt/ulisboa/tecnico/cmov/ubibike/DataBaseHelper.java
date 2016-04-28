@@ -6,9 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-/**
- * Created by utilizador on 14/04/16.
- */
 public class DataBaseHelper extends SQLiteOpenHelper {
 
 
@@ -21,11 +18,17 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_AGE = "age";
     private static final String COLUMN_USERNAME = "username";
     private static final String COLUMN_PASSWORD = "password";
+    private static final String COLUMN_SENDER = "sender";
+    private static final String COLUMN_RECEIVER = "receiver";
+    private static final String COLUMN_MESSSGE = "message";
 
     SQLiteDatabase db;
 
-    private static final String TABLE_CREATE = "create table mydata (id integer primary key not null , " +
+    private static final String TABLE_CREATE_DATA = "create table mydata (id integer primary key not null , " +
        "username text not null , password text not null , name text not null , age integer not null);";
+
+    private static final String TABLE_CREATE_CHAT = "create table mychat (id integer primary key not null , " +
+            ""
 
 
 
@@ -35,7 +38,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(TABLE_CREATE);
+        db.execSQL(TABLE_CREATE_DATA);
         this.db = db;
     }
 
