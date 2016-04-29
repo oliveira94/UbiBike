@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.cmov.ubibike;
 
 
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -11,7 +10,6 @@ import android.widget.TextView;
 
 public class InicialPage extends Fragment {
 
-    SQLiteDatabase db;
     View view;
     TextView usernameTextView;
 
@@ -20,18 +18,15 @@ public class InicialPage extends Fragment {
                              Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.fragment_inicial_page, container, false);
-        //usernameTextView = (TextView) view.findViewById(R.id.usernametext);
+
+        //retrieve the bundle
+        Bundle bundle = getArguments(); //retrieve the bundle
+        String bundleText = bundle.getString("USER"); //get the data on the bundle
+
+        //find view & set the text
+        usernameTextView = (TextView) view.findViewById(R.id.usernametext);
+        usernameTextView.setText(bundleText);
 
         return view;
-
     }
-
-    public TextView getUsernameTextView(){
-        return usernameTextView;
-    }
-
-    public void setUsernameTextView(String username){
-        usernameTextView.setText(username);
-    }
-
 }

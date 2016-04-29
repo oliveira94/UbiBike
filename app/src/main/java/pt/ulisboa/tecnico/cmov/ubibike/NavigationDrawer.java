@@ -31,9 +31,10 @@ public class NavigationDrawer extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //TODO create a global class
         Bundle extras = getIntent().getExtras();
         if(extras !=null) {
-            user = extras.getString("KEY"); // TODO this is the value that i need to pass to the fragment InicialPage
+            user = extras.getString("KEY");
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -47,6 +48,11 @@ public class NavigationDrawer extends AppCompatActivity
 
         android.support.v4.app.FragmentTransaction fragmenttransaction =
                 getSupportFragmentManager().beginTransaction();
+
+        Bundle bundle = new Bundle(); //create the bundle
+        bundle.putString("USER", user); //attach data to the bundle
+
+        inicialpage.setArguments(bundle); //set the bundle on the fragment
 
         fragmenttransaction.replace(R.id.container, inicialpage);
         fragmenttransaction.commit();
