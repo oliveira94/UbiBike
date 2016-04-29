@@ -34,8 +34,10 @@ public class LogIn extends AppCompatActivity {
 
 
         if(Ipass.equals(Password)){
+            helper.setUserDataAfterLogIn(Iusername, Ipass);
             Intent i = new Intent(this,NavigationDrawer.class);
-            i.putExtra("Username", Iusername);
+            Intent i2 = new Intent(this, Chat.class);
+            i2.putExtra("UserInfo", Iusername);
             startActivity(i);
         }
         else

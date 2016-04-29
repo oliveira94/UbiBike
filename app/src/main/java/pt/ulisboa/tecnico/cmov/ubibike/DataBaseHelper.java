@@ -11,8 +11,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
 
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "mydata.db";
-    private static final String TABLE_NAME = "mydata";
+    private static final String DATABASE_NAME = "dase.db";
+    private static final String TABLE_NAME_DATA = "mydata";
+    private static final String TABLE_NAME_CHAT = "mychat";
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_NAME = "name";
     private static final String COLUMN_AGE = "age";
@@ -20,7 +21,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_PASSWORD = "password";
     private static final String COLUMN_SENDER = "sender";
     private static final String COLUMN_RECEIVER = "receiver";
-    private static final String COLUMN_MESSSGE = "message";
+    private static final String COLUMN_MESSAGE = "message";
 
     SQLiteDatabase db;
 
@@ -28,7 +29,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
        "username text not null , password text not null , name text not null , age integer not null);";
 
     private static final String TABLE_CREATE_CHAT = "create table mychat (id integer primary key not null , " +
-            ""
+            "sender text not null , receiver text not null , message text not null);";
 
 
 
@@ -39,10 +40,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(TABLE_CREATE_DATA);
+        db.execSQL(TABLE_CREATE_CHAT);
         this.db = db;
     }
 
-
+    //method that insert a new user data in the database
     public void insertUserData(UserData userData){
 
         db = this.getWritableDatabase();
@@ -60,15 +62,36 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_USERNAME, userData.getUsername());
         values.put(COLUMN_PASSWORD, userData.getPassword());
 
-        db.insert(TABLE_NAME, null, values);
+        db.insert(TABLE_NAME_DATA, null, values);
         db.close();
 
     }
 
+    //method to store a message between a sender and a receiver in the database
+    public void sendNewMessage(ExchangeMessages exchangeMessages){
+        db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        String query = "select * from mychat";
+        Cursor cursor = db.rawQuery(query, null);
+
+        int counter = cursor.getCount();
+
+
+        values.put(COLUMN_ID, counter);
+        values.put(COLUMN_SENDER, exchangeMessages.getSender());
+        values.put(COLUMN_RECEIVER,exchangeMessages.getReceiver());
+        values.put(COLUMN_MESSAGE, exchangeMessages.getMessage());
+
+        db.insert(TABLE_NAME_CHAT, null, values);
+        db.close();
+    }
+
+    //method responsable to check if the password of the user is right
     public String searchPassword(String user){
 
         db = this.getReadableDatabase();
-        String query1 = "select username, password from "+TABLE_NAME;
+        String query1 = "select username, password from "+ TABLE_NAME_DATA;
         Cursor cursor1;
         cursor1 = db.rawQuery(query1, null);
         String x,y;
@@ -88,12 +111,20 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return y;
     }
 
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        String query = "DROP TABLE IF EXISTS " + TABLE_NAME;
-        db.execSQL(query);
-        this.onCreate(db);
+    public void setUserDataAfterLogIn(String username, String password){
+        UserData userData = new UserData();
+        userData.setUsername(username);
+        userData.setPassword(password);
+
     }
 
 
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        String queryData = "DROP TABLE IF EXISTS " + TABLE_NAME_DATA;
+        db.execSQL(queryData);
+        String queryChat = "DROP TABLE IF EXISTS " + TABLE_NAME_CHAT;
+        db.execSQL(queryChat);
+        this.onCreate(db);
+    }
 }
