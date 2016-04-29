@@ -21,6 +21,9 @@ import android.widget.TextView;
 public class NavigationDrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    String user = "";
+    InicialPage inicialpage = new InicialPage();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,14 +31,10 @@ public class NavigationDrawer extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
+        Bundle extras = getIntent().getExtras();
+        if(extras !=null) {
+            user = extras.getString("KEY"); // TODO this is the value that i need to pass to the fragment InicialPage
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -46,11 +45,10 @@ public class NavigationDrawer extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-
         android.support.v4.app.FragmentTransaction fragmenttransaction =
                 getSupportFragmentManager().beginTransaction();
 
-        fragmenttransaction.replace(R.id.container, new InicialPage());
+        fragmenttransaction.replace(R.id.container, inicialpage);
         fragmenttransaction.commit();
 
         DrawerLayout drawer1 = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -100,7 +98,7 @@ public class NavigationDrawer extends AppCompatActivity
 
             if (id == R.id.InicialPage) {
 
-                fragmenttransaction.replace(R.id.container, new InicialPage());
+                fragmenttransaction.replace(R.id.container, inicialpage);
                 fragmenttransaction.commit();
 
             } else if (id == R.id.HistoryItem) {
@@ -140,7 +138,10 @@ public class NavigationDrawer extends AppCompatActivity
         }
 
     public void FrameClicked(View view) {
+        //send user name to chat
         Intent i = new Intent(this, Chat.class);
+        i.putExtra("USER", user);
+
         startActivity(i);
     }
 

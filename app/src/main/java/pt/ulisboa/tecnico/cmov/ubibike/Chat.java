@@ -19,17 +19,20 @@ public class Chat extends AppCompatActivity {
     SQLiteDatabase db;
     DataBaseHelper helper = new DataBaseHelper(this);
     ExchangeMessages exchangeMessages = new ExchangeMessages();
-    UserData userData = new UserData();
-    String user = getIntent().getExtras().getString("UserInfo");
-
+    String user = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+        TextView ReceiverName = (TextView)findViewById(R.id.bookBikeText);
+        ReceiverName.setText("joao");//TODO put where the name of the receiver
 
 
-
+        Bundle extras = getIntent().getExtras();
+        if(extras !=null) {
+            user = extras.getString("USER");
+        }
         updateMessages(user);
         Toast toast = Toast.makeText(Chat.this, user, Toast.LENGTH_SHORT);
         toast.show();
@@ -72,8 +75,6 @@ public class Chat extends AppCompatActivity {
     }
 
     public void updateMessages(String user){//TODO update to receive user
-        LinearLayout linearLayoutVertical = (LinearLayout) findViewById(R.id.idChatLinearVertical);
-        LinearLayout chatHorizontalLayout = new LinearLayout(this);
 
         db = helper.getReadableDatabase();
         String query1 = "select sender, receiver, message from mychat";
@@ -84,12 +85,16 @@ public class Chat extends AppCompatActivity {
         if(cursor1.moveToFirst()){
 
             do{
+
+                LinearLayout linearLayoutVertical = (LinearLayout) findViewById(R.id.idChatLinearVertical);
+                LinearLayout chatHorizontalLayout = new LinearLayout(this);
+
                 sender = cursor1.getString(0);
 
                 receiver = cursor1.getString(1);
 
                 message = cursor1.getString(2);
-                TextView chatText = null;
+                TextView chatText = new TextView(this);
                 chatText.setText(message);
                 chatText.setTextSize(22);
                 chatText.setTextColor(Color.BLACK);
@@ -107,7 +112,7 @@ public class Chat extends AppCompatActivity {
                 chatHorizontalLayout.addView(chatText, params);
                 linearLayoutVertical.addView(chatHorizontalLayout);
             }
-            while (cursor1.moveToNext());
+            while (cursor1.moveToNext() && cursor1.getString(0) != "");
         }
         Toast toast = Toast.makeText(Chat.this, "finish", Toast.LENGTH_SHORT);
         toast.show();

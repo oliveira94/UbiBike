@@ -11,6 +11,7 @@ import android.widget.Toast;
 public class LogIn extends AppCompatActivity {
 
     DataBaseHelper helper = new DataBaseHelper(this);
+    UserData userData = new UserData();
 
 
     @Override
@@ -29,15 +30,17 @@ public class LogIn extends AppCompatActivity {
         String Ipass = pass.getText().toString();
 
         String Password = helper.searchPassword(Iusername);
-        Toast toast1 = Toast.makeText(LogIn.this, Password, Toast.LENGTH_SHORT);
-        toast1.show();
+        //Toast toast1 = Toast.makeText(LogIn.this, Password, Toast.LENGTH_SHORT);
+        //toast1.show();
 
 
         if(Ipass.equals(Password)){
-            helper.setUserDataAfterLogIn(Iusername, Ipass);
+            userData = helper.setUserDataAfterLogIn(Iusername, Ipass);
             Intent i = new Intent(this,NavigationDrawer.class);
-            Intent i2 = new Intent(this, Chat.class);
-            i2.putExtra("UserInfo", Iusername);
+           // Intent i2 = new Intent(this, Chat.class);
+            Toast toast = Toast.makeText(LogIn.this, Iusername, Toast.LENGTH_SHORT);
+            toast.show();
+            i.putExtra("KEY", Iusername);
             startActivity(i);
         }
         else

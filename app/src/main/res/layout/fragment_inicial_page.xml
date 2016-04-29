@@ -55,7 +55,7 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="Name Surname"
-                    android:id="@+id/AgeText"
+                    android:id="@+id/usernametext"
                     android:layout_marginTop="10dp"
                     android:textSize="27dp"
                     android:layout_weight="0.20"

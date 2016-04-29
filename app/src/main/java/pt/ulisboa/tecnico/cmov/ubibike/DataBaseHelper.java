@@ -111,10 +111,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return y;
     }
 
-    public void setUserDataAfterLogIn(String username, String password){
+    public UserData setUserDataAfterLogIn(String username, String password){
         UserData userData = new UserData();
         userData.setUsername(username);
         userData.setPassword(password);
+
+        return userData;
 
     }
 
