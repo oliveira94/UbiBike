@@ -52,6 +52,19 @@ public class NavigationDrawer extends AppCompatActivity
         Bundle bundle = new Bundle(); //create the bundle
         bundle.putString("USER", user); //attach data to the bundle
 
+        //example of a get of a global variable
+        int points = ((UserData) this.getApplication()).getPoints();
+        bundle.putString("POINTS", Integer.toString(points));
+
+        int age = ((UserData) this.getApplication()).getAge();
+        bundle.putString("AGE", Integer.toString(age));
+
+        TextView UpdateHeaderName = (TextView)findViewById(R.id.headername);
+        UpdateHeaderName.setText(user);
+
+        TextView UpdateHeaderPoints = (TextView)findViewById(R.id.headerpoints);
+        UpdateHeaderPoints.setText("Points: " + Integer.toString(points));
+
         inicialpage.setArguments(bundle); //set the bundle on the fragment
 
         fragmenttransaction.replace(R.id.container, inicialpage);
@@ -59,6 +72,8 @@ public class NavigationDrawer extends AppCompatActivity
 
         DrawerLayout drawer1 = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer1.closeDrawer(GravityCompat.START);
+
+
 
     }
         @Override

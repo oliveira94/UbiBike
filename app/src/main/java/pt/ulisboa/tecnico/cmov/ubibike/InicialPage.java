@@ -20,12 +20,24 @@ public class InicialPage extends Fragment {
         view = inflater.inflate(R.layout.fragment_inicial_page, container, false);
 
         //retrieve the bundle
-        Bundle bundle = getArguments(); //retrieve the bundle
-        String bundleText = bundle.getString("USER"); //get the data on the bundle
+        Bundle bundle = getArguments();
+
+        //get the data on the bundle
+        String bundleText = bundle.getString("USER");
+        String bundlePoints = bundle.getString("POINTS");
+        String bundleAge = bundle.getString("AGE");
 
         //find view & set the text
         usernameTextView = (TextView) view.findViewById(R.id.usernametext);
         usernameTextView.setText(bundleText);
+
+        usernameTextView = (TextView)view.findViewById(R.id.pointsText);
+        usernameTextView.setText("Current Points: " + bundlePoints);
+
+        usernameTextView = (TextView)view.findViewById(R.id.ageupdate);
+        usernameTextView.setText("Age: " + bundleAge);
+
+
 
         return view;
     }

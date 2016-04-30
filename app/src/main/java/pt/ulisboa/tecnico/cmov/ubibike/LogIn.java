@@ -35,9 +35,13 @@ public class LogIn extends AppCompatActivity {
 
 
         if(Ipass.equals(Password)){
-            userData = helper.setUserDataAfterLogIn(Iusername, Ipass);
+            //example of set a global variable
+            ((UserData) this.getApplication()).setName(Iusername);
+            ((UserData) this.getApplication()).setPassword(Iusername);
+            ((UserData) this.getApplication()).setPoints(helper.PointsFromUser(Iusername));
+            ((UserData) this.getApplication()).setAge(helper.AgeFromUser(Iusername));
+
             Intent i = new Intent(this,NavigationDrawer.class);
-           // Intent i2 = new Intent(this, Chat.class);
             Toast toast = Toast.makeText(LogIn.this, Iusername, Toast.LENGTH_SHORT);
             toast.show();
             i.putExtra("KEY", Iusername);

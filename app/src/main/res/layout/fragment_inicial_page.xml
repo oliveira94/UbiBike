@@ -63,6 +63,29 @@
 
             </FrameLayout>
 
+
+            <FrameLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:id="@+id/ageid">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Last Distance: 9 Km"
+                    android:id="@+id/ageupdate"
+                    android:layout_marginTop="30dp"
+                    android:textSize="27dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_gravity="center_horizontal" />
+
+            </FrameLayout>
+
             <FrameLayout
                 android:orientation="horizontal"
                 android:layout_width="fill_parent"
@@ -74,7 +97,7 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="Current Points: 25"
-                    android:id="@+id/UsernameText"
+                    android:id="@+id/pointsText"
                     android:layout_marginTop="30dp"
                     android:textSize="27dp"
                     android:layout_alignParentTop="true"
