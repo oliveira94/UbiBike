@@ -18,6 +18,13 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import pt.ulisboa.tecnico.cmov.ubibike.Fragments.BookBike;
+import pt.ulisboa.tecnico.cmov.ubibike.Fragments.Friends;
+import pt.ulisboa.tecnico.cmov.ubibike.Fragments.Historic;
+import pt.ulisboa.tecnico.cmov.ubibike.Fragments.InicialPage;
+import pt.ulisboa.tecnico.cmov.ubibike.Fragments.Messages;
+import pt.ulisboa.tecnico.cmov.ubibike.Fragments.Points;
+
 public class NavigationDrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
