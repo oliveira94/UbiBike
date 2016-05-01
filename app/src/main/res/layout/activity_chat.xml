@@ -22,15 +22,7 @@
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="João Pedro"
                 android:id="@+id/bookBikeText"
-                android:layout_gravity="center_horizontal|top" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="XX Points"
-                android:id="@+id/textView26"
-                android:layout_gravity="center_horizontal|bottom" />
+                android:layout_gravity="center" />
 
         </FrameLayout>
 
@@ -63,68 +55,11 @@
                         android:id="@+id/textView27" />
                 </LinearLayout>
 
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="10dp">
+                <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/output" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:text="És tonto"
-                        android:id="@+id/textView28" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="right"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginRight="10dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:text="Não sou não"
-                        android:id="@+id/textView29" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="left"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="10dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:text="Certo"
-                        android:id="@+id/textView30" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="right"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginRight="10dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:text="Ok"
-                        android:id="@+id/textView31" />
-                </LinearLayout>
             </LinearLayout>
         </ScrollView>
 
@@ -146,6 +81,13 @@
                 android:text="Send"
                 android:id="@+id/sendButtonChat"
                 android:onClick="sendClickedChat" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Act"
+                android:id="@+id/actbutton"
+                android:onClick="UpdateButton" />
         </LinearLayout>
 
     </LinearLayout>

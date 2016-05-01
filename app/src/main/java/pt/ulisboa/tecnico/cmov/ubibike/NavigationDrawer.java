@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.cmov.ubibike;
 
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -18,18 +19,21 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
 import pt.ulisboa.tecnico.cmov.ubibike.Fragments.BookBike;
 import pt.ulisboa.tecnico.cmov.ubibike.Fragments.Friends;
 import pt.ulisboa.tecnico.cmov.ubibike.Fragments.Historic;
 import pt.ulisboa.tecnico.cmov.ubibike.Fragments.InicialPage;
 import pt.ulisboa.tecnico.cmov.ubibike.Fragments.Messages;
 import pt.ulisboa.tecnico.cmov.ubibike.Fragments.Points;
+import pt.ulisboa.tecnico.cmov.ubibike.WifiDirect.SimWifiP2pBroadcastReceiver;
 
 public class NavigationDrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     String user = "";
     InicialPage inicialpage = new InicialPage();
+    private SimWifiP2pBroadcastReceiver receiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +41,15 @@ public class NavigationDrawer extends AppCompatActivity
         setContentView(R.layout.activity_naviagation_drawer);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        //TODO ter em todas as actividades
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_STATE_CHANGED_ACTION);
+        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_PEERS_CHANGED_ACTION);
+        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_NETWORK_MEMBERSHIP_CHANGED_ACTION);
+        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_GROUP_OWNERSHIP_CHANGED_ACTION);
+        receiver = new SimWifiP2pBroadcastReceiver(this);
+        registerReceiver(receiver, filter);
 
         //TODO create a global class
         Bundle extras = getIntent().getExtras();

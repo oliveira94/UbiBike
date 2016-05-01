@@ -30,7 +30,7 @@
         tools:replace="android:icon" >
         <service android:name="pt.inesc.termite.wifidirect.service.SimWifiP2pService" />
 
-        <activity android:name=".WifiDirect.MsgSenderActivity" >
+        <activity android:name=".MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

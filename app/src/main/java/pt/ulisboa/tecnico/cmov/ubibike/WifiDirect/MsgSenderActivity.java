@@ -69,7 +69,7 @@ public class MsgSenderActivity extends Activity implements
         super.onCreate(savedInstanceState);
 
         // initialize the UI
-        setContentView(R.layout.content_test_wifi_direct);
+        setContentView(R.layout.activity_chat);
         guiSetButtonListeners();
         guiUpdateInitState();
 
@@ -82,9 +82,8 @@ public class MsgSenderActivity extends Activity implements
         filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_PEERS_CHANGED_ACTION);
         filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_NETWORK_MEMBERSHIP_CHANGED_ACTION);
         filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_GROUP_OWNERSHIP_CHANGED_ACTION);
-        mReceiver = new SimWifiP2pBroadcastReceiver(this);
+        // mReceiver = new SimWifiP2pBroadcastReceiver(this);
         registerReceiver(mReceiver, filter);
-       // devices.getByName("A");
         StartWifi();
 
     }
@@ -254,7 +253,6 @@ public class MsgSenderActivity extends Activity implements
         }
     };
 
-
 	/*
 	 * Asynctasks implementing message exchange
 	 */
@@ -300,7 +298,7 @@ public class MsgSenderActivity extends Activity implements
         }
     }
 
-     public class OutgoingCommTask extends AsyncTask<String, Void, String> {
+    public class OutgoingCommTask extends AsyncTask<String, Void, String> {
 //
 //        @Override
 //        protected void onPreExecute() {
