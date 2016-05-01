@@ -2,9 +2,7 @@ package pt.ulisboa.tecnico.cmov.ubibike;
 
 import android.app.Application;
 
-/**
- * Created by utilizador on 14/04/16.
- */
+
 public class UserData extends Application {
 
     int age, points;

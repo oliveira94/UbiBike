@@ -45,6 +45,13 @@
                 android:layout_height="wrap_content"
                 android:text="Disconnect"
                 android:id="@+id/idDisconnectButton" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ACT"
+                android:id="@+id/button11"
+                android:onClick="updateRange" />
         </LinearLayout>
 
         <LinearLayout

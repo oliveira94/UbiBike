@@ -5,6 +5,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
 import pt.inesc.termite.wifidirect.SimWifiP2pDevice;
@@ -53,6 +55,14 @@ public class MsgSenderActivity extends Activity implements
     private TextView mTextInput;
     private TextView mTextOutput;
     private SimWifiP2pBroadcastReceiver mReceiver;
+    MsgSenderActivity msgSenderActivity;
+    String IP = "";
+    SimWifiP2pDeviceList devices;
+    SimWifiP2pInfo groupInfo;
+
+    //list with the devices in the neighbor
+    List listOfDevices = new ArrayList();
+    List listOfIPs = new ArrayList();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -74,8 +84,56 @@ public class MsgSenderActivity extends Activity implements
         filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_GROUP_OWNERSHIP_CHANGED_ACTION);
         mReceiver = new SimWifiP2pBroadcastReceiver(this);
         registerReceiver(mReceiver, filter);
+
+        StartWifi();
+
+    }
+    //test
+    public void updateRange(View v){
+
+
+        if (mBound) {
+            mManager.requestGroupInfo(mChannel, MsgSenderActivity.this);
+        } else {
+            Toast.makeText(v.getContext(), "Service not bound",
+                    Toast.LENGTH_SHORT).show();
+        }
+        if (mBound) {
+            mManager.requestPeers(mChannel, MsgSenderActivity.this);
+        } else {
+            Toast.makeText(v.getContext(), "Service not bound",
+                    Toast.LENGTH_SHORT).show();
+        }
+
+        updateRangeAndNetwork( devices, groupInfo);
     }
 
+    //TODO the problem is the arguments are null
+    public void updateRangeAndNetwork(SimWifiP2pDeviceList devices, SimWifiP2pInfo groupInfo){
+        //StringBuilder peersStr = new StringBuilder();
+        for (String deviceName : groupInfo.getDevicesInNetwork()) {
+
+            SimWifiP2pDevice device = devices.getByName(deviceName);
+            //String devstr = "" + deviceName + " (" +
+            //        ((device == null)?"??":device.getVirtIp()) + ")\n";
+            //peersStr.append(devstr);
+            AddDevicesNameToList(deviceName);
+            AddDeviceIPToList(device.getVirtIp());
+            GetDeviceIP(deviceName);
+        }
+    }
+
+    public void StartWifi(){
+        Intent intent = new Intent(this, SimWifiP2pService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        mBound = true;
+
+        // spawn the chat server background task
+        new IncommingCommTask().executeOnExecutor(
+                AsyncTask.THREAD_POOL_EXECUTOR);
+
+        guiUpdateDisconnectedState();
+    }
     @Override
     public void onPause() {
         super.onPause();
@@ -86,6 +144,7 @@ public class MsgSenderActivity extends Activity implements
 	 * Listeners associated to buttons
 	 */
 
+    //not using now
     private View.OnClickListener listenerWifiOnButton = new View.OnClickListener() {
         public void onClick(View v){
 
@@ -96,10 +155,10 @@ public class MsgSenderActivity extends Activity implements
             // spawn the chat server background task
             new IncommingCommTask().executeOnExecutor(
                     AsyncTask.THREAD_POOL_EXECUTOR);
-
             guiUpdateDisconnectedState();
         }
     };
+
 
     private View.OnClickListener listenerWifiOffButton = new View.OnClickListener() {
         public void onClick(View v){
@@ -133,15 +192,17 @@ public class MsgSenderActivity extends Activity implements
         }
     };
 
-    private View.OnClickListener listenerConnectButton = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            findViewById(R.id.idConnectButton).setEnabled(false);
-            new OutgoingCommTask().executeOnExecutor(
-                    AsyncTask.THREAD_POOL_EXECUTOR,
-                    mTextInput.getText().toString());
-        }
-    };
+//    private View.OnClickListener listenerConnectButton = new View.OnClickListener() {
+//        @Override
+//        public void onClick(View v) {
+//            findViewById(R.id.idConnectButton).setEnabled(false);
+//            new OutgoingCommTask().executeOnExecutor(
+//                    AsyncTask.THREAD_POOL_EXECUTOR,
+//                    mTextInput.getText().toString()
+//                   // GetDeviceIP(mTextInput.getText().toString()).toString()
+//            );
+//        }
+//    };
 
     private View.OnClickListener listenerSendButton = new View.OnClickListener() {
         @Override
@@ -151,6 +212,7 @@ public class MsgSenderActivity extends Activity implements
             new SendCommTask().executeOnExecutor(
                     AsyncTask.THREAD_POOL_EXECUTOR,
                     mTextInput.getText().toString());
+
         }
     };
 
@@ -225,7 +287,6 @@ public class MsgSenderActivity extends Activity implements
                 } catch (IOException e) {
                     Log.d("Error socket:", e.getMessage());
                     break;
-                    //e.printStackTrace();
                 }
             }
             return null;
@@ -237,13 +298,13 @@ public class MsgSenderActivity extends Activity implements
         }
     }
 
-    public class OutgoingCommTask extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected void onPreExecute() {
-            mTextOutput.setText("Connecting...");
-        }
-
+     public class OutgoingCommTask extends AsyncTask<String, Void, String> {
+//
+//        @Override
+//        protected void onPreExecute() {
+//            mTextOutput.setText("Connecting...");
+//        }
+//
         @Override
         protected String doInBackground(String... params) {
             try {
@@ -256,7 +317,7 @@ public class MsgSenderActivity extends Activity implements
             }
             return null;
         }
-
+//
         @Override
         protected void onPostExecute(String result) {
             if (result != null) {
@@ -278,6 +339,8 @@ public class MsgSenderActivity extends Activity implements
         @Override
         protected Void doInBackground(String... msg) {
             try {
+
+                mCliSocket = new SimWifiP2pSocket(IP, 10001);
                 mCliSocket.getOutputStream().write((msg[0] + "\n").getBytes());
                 BufferedReader sockIn = new BufferedReader(
                         new InputStreamReader(mCliSocket.getInputStream()));
@@ -292,8 +355,19 @@ public class MsgSenderActivity extends Activity implements
 
         @Override
         protected void onPostExecute(Void result) {
-            mTextInput.setText("");
+           mTextInput.setText("");
             guiUpdateDisconnectedState();
+            if (result != null) {
+                guiUpdateDisconnectedState();
+               mTextOutput.setText("sfsdfsdfsdfsdfdsfs");//get message
+            } else {
+                findViewById(R.id.idDisconnectButton).setEnabled(true);
+                findViewById(R.id.idConnectButton).setEnabled(false);
+                findViewById(R.id.idSendButton).setEnabled(true);
+                mTextInput.setHint("");
+                mTextInput.setText("");
+                mTextOutput.setText("");
+            }
         }
     }
 
@@ -322,17 +396,42 @@ public class MsgSenderActivity extends Activity implements
                 .show();
     }
 
+    public void AddDeviceIPToList(String IP){
+        if (!listOfIPs.contains(IP)) {
+            listOfIPs.add(IP);
+            Toast.makeText(this, listOfIPs.toString(),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void GetDeviceIP(String devicename){
+        int positonInList = listOfDevices.indexOf(devicename);
+        IP = String.valueOf(listOfIPs.get(positonInList));
+    }
+
+
+    public void AddDevicesNameToList(String device){
+
+        if (!listOfDevices.contains(device)) {
+            listOfDevices.add(device);
+            Toast.makeText(this, listOfDevices.toString(),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
     @Override
     public void onGroupInfoAvailable(SimWifiP2pDeviceList devices,
                                      SimWifiP2pInfo groupInfo) {
-
         // compile list of network members
         StringBuilder peersStr = new StringBuilder();
         for (String deviceName : groupInfo.getDevicesInNetwork()) {
+
             SimWifiP2pDevice device = devices.getByName(deviceName);
             String devstr = "" + deviceName + " (" +
                     ((device == null)?"??":device.getVirtIp()) + ")\n";
             peersStr.append(devstr);
+            AddDevicesNameToList(deviceName);
+            AddDeviceIPToList(device.getVirtIp());
         }
 
         // display list of network members
@@ -352,10 +451,10 @@ public class MsgSenderActivity extends Activity implements
 
     private void guiSetButtonListeners() {
 
-        findViewById(R.id.idConnectButton).setOnClickListener(listenerConnectButton);
+        //findViewById(R.id.idConnectButton).setOnClickListener(listenerConnectButton);
         findViewById(R.id.idDisconnectButton).setOnClickListener(listenerDisconnectButton);
         findViewById(R.id.idSendButton).setOnClickListener(listenerSendButton);
-        findViewById(R.id.idWifiOnButton).setOnClickListener(listenerWifiOnButton);
+       // findViewById(R.id.idWifiOnButton).setOnClickListener(listenerWifiOnButton);
         findViewById(R.id.idWifiOffButton).setOnClickListener(listenerWifiOffButton);
         findViewById(R.id.idInRangeButton).setOnClickListener(listenerInRangeButton);
         findViewById(R.id.idInGroupButton).setOnClickListener(listenerInGroupButton);
@@ -373,7 +472,7 @@ public class MsgSenderActivity extends Activity implements
 
         findViewById(R.id.idConnectButton).setEnabled(false);
         findViewById(R.id.idDisconnectButton).setEnabled(false);
-        findViewById(R.id.idSendButton).setEnabled(false);
+        findViewById(R.id.idSendButton).setEnabled(true);
         findViewById(R.id.idWifiOnButton).setEnabled(true);
         findViewById(R.id.idWifiOffButton).setEnabled(false);
         findViewById(R.id.idInRangeButton).setEnabled(false);
@@ -387,7 +486,7 @@ public class MsgSenderActivity extends Activity implements
         mTextOutput.setEnabled(true);
         mTextOutput.setText("");
 
-        findViewById(R.id.idSendButton).setEnabled(false);
+        findViewById(R.id.idSendButton).setEnabled(true);
         findViewById(R.id.idConnectButton).setEnabled(true);
         findViewById(R.id.idDisconnectButton).setEnabled(false);
         findViewById(R.id.idWifiOnButton).setEnabled(false);
