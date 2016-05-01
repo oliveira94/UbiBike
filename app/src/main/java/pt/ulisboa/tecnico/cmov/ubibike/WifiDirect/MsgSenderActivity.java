@@ -84,13 +84,12 @@ public class MsgSenderActivity extends Activity implements
         filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_GROUP_OWNERSHIP_CHANGED_ACTION);
         mReceiver = new SimWifiP2pBroadcastReceiver(this);
         registerReceiver(mReceiver, filter);
-
+       // devices.getByName("A");
         StartWifi();
 
     }
     //test
     public void updateRange(View v){
-
 
         if (mBound) {
             mManager.requestGroupInfo(mChannel, MsgSenderActivity.this);
@@ -105,7 +104,10 @@ public class MsgSenderActivity extends Activity implements
                     Toast.LENGTH_SHORT).show();
         }
 
-        updateRangeAndNetwork( devices, groupInfo);
+        //devices.getDeviceList();
+
+        //updateRangeAndNetwork( mChannel, groupInfo);
+
     }
 
     //TODO the problem is the arguments are null
@@ -359,7 +361,7 @@ public class MsgSenderActivity extends Activity implements
             guiUpdateDisconnectedState();
             if (result != null) {
                 guiUpdateDisconnectedState();
-               mTextOutput.setText("sfsdfsdfsdfsdfdsfs");//get message
+                mTextOutput.setText("sfsdfsdfsdfsdfdsfs");//get message
             } else {
                 findViewById(R.id.idDisconnectButton).setEnabled(true);
                 findViewById(R.id.idConnectButton).setEnabled(false);
@@ -386,14 +388,14 @@ public class MsgSenderActivity extends Activity implements
         }
 
         // display list of devices in range
-        new AlertDialog.Builder(this)
-                .setTitle("Devices in WiFi Range")
-                .setMessage(peersStr.toString())
-                .setNeutralButton("Dismiss", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                })
-                .show();
+//        new AlertDialog.Builder(this)
+//                .setTitle("Devices in WiFi Range")
+//                .setMessage(peersStr.toString())
+//                .setNeutralButton("Dismiss", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int which) {
+//                    }
+//                })
+//                .show();
     }
 
     public void AddDeviceIPToList(String IP){
@@ -432,17 +434,18 @@ public class MsgSenderActivity extends Activity implements
             peersStr.append(devstr);
             AddDevicesNameToList(deviceName);
             AddDeviceIPToList(device.getVirtIp());
+            GetDeviceIP(deviceName);
         }
 
         // display list of network members
-        new AlertDialog.Builder(this)
-                .setTitle("Devices in WiFi Network")
-                .setMessage(peersStr.toString())
-                .setNeutralButton("Dismiss", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                })
-                .show();
+//        new AlertDialog.Builder(this)
+//                .setTitle("Devices in WiFi Network")
+//                .setMessage(peersStr.toString())
+//                .setNeutralButton("Dismiss", new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int which) {
+//                    }
+//                })
+//                .show();
     }
 
 	/*
