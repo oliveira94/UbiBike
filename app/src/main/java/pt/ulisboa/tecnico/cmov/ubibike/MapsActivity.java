@@ -18,6 +18,9 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
+
+import java.util.ArrayList;
 
 import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
 import pt.ulisboa.tecnico.cmov.ubibike.WifiDirect.SimWifiP2pBroadcastReceiver;
@@ -27,6 +30,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private LocationManager locationManager;
     private SimWifiP2pBroadcastReceiver receiver;
+    private ArrayList<LatLng>  markerPoints= new ArrayList<LatLng>();
 
     public MapsActivity() {
 
@@ -56,7 +60,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onLocationChanged(Location location) {
 
                 LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
+                markerPoints.add(loc);
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(loc));
+                mMap.addPolyline(plot());
 
             }
 
@@ -85,7 +91,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, (float) 10.00, listener);
+        manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 20, (float) 1.00, listener);
+    }
+    public PolylineOptions plot()
+    {
+        PolylineOptions p = new PolylineOptions().width(6).color(0xFFEE8888);
+        for (int i = 0; i < markerPoints.size(); i++) {
+            LatLng is = markerPoints.get(i);
+            p.add(new LatLng(is.latitude,is.longitude));
+        }
+        return p;
+
     }
 
     @Override

@@ -64,7 +64,9 @@
 
         <activity
             android:name=".MapsActivity"
-            android:label="@string/title_activity_maps" />
+            android:label="@string/title_activity_maps"
+            android:configChanges="orientation|screenSize"
+            />
         <activity
             android:name=".TestWifiDirect"
             android:label="@string/title_activity_test_wifi_direct"
