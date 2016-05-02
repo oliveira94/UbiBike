@@ -51,7 +51,6 @@ public class Chat extends Activity implements
     ExchangeMessages exchangeMessages = new ExchangeMessages();
     String user = "";
 
-
     public static final String TAG = "msgsender";
 
     private SimWifiP2pManager mManager = null;
@@ -63,7 +62,7 @@ public class Chat extends Activity implements
     private TextView mTextInput;
     private TextView mTextOutput ;
     private SimWifiP2pBroadcastReceiver mReceiver;
-    //MsgSenderActivity msgSenderActivity;
+
     String IP = "";
     SimWifiP2pDeviceList devices;
     SimWifiP2pInfo groupInfo;
@@ -153,7 +152,7 @@ public class Chat extends Activity implements
         linearLayoutVertical.addView(chatHorizontalLayout);
     }
 
-    public void UpdateOtherUserScreen(String user){
+    public void UpdateOtherUserScreen(String message){
         LinearLayout linearLayoutVertical = (LinearLayout) findViewById(R.id.idChatLinearVertical);
         LinearLayout chatHorizontalLayout = new LinearLayout(this);
 
@@ -162,15 +161,16 @@ public class Chat extends Activity implements
         EditText entryText = (EditText) findViewById(R.id.textEntryChat);
         String text = entryText.getText().toString();
 
+        //TODO where user is the message
         //update the exchangeMessages
-//        exchangeMessages.setSender(user);
-//        exchangeMessages.setMessage(text);
-//        exchangeMessages.setReceiver("joao");
+        exchangeMessages.setSender("artur");
+        exchangeMessages.setMessage(message);
+        exchangeMessages.setReceiver(user);
 
         //put the message in the database
         helper.sendNewMessage(exchangeMessages);
 
-        chatText.setText(user);
+        chatText.setText(message);
         chatText.setTextSize(22);
         chatText.setTextColor(Color.BLACK);
 
@@ -179,7 +179,7 @@ public class Chat extends Activity implements
         params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
 
         //Setting the parameters to the intended
-        chatHorizontalLayout.setGravity(Gravity.RIGHT);
+        chatHorizontalLayout.setGravity(Gravity.LEFT);//TODO
 
         //Adding the textView to the HorizontalLayout
         chatHorizontalLayout.addView(chatText, params);
@@ -189,6 +189,19 @@ public class Chat extends Activity implements
     }
 
     public void updateMessages(String user){//TODO update to receive user
+
+        //Moving the text to the new text box
+        //TextView chatText = new TextView(this);
+        EditText entryText = (EditText) findViewById(R.id.textEntryChat);
+        String text = entryText.getText().toString();
+
+        //update the exchangeMessages
+//        exchangeMessages.setSender(user);
+//        exchangeMessages.setMessage(text);
+//        exchangeMessages.setReceiver("joao");
+
+        //put the message in the database
+        //helper.sendNewMessage(exchangeMessages);
 
         db = helper.getReadableDatabase();
         String query1 = "select sender, receiver, message from mychat";
@@ -236,6 +249,9 @@ public class Chat extends Activity implements
         String WhoIs = null;
         if (user.equals(sender)) {
             WhoIs = "sender";
+        }
+        else{
+            WhoIs ="";
         }
         return WhoIs;
     }
@@ -340,7 +356,7 @@ public class Chat extends Activity implements
         protected void onPostExecute(String result) {
             if (result != null) {
                 //guiUpdateDisconnectedState();
-                updateMessages(result);
+                //updateMessages(result);//TODO see thisssss
                 mTextOutput.setText(result);
             } else {
 //                findViewById(R.id.idDisconnectButton).setEnabled(true);
@@ -378,7 +394,7 @@ public class Chat extends Activity implements
             //guiUpdateDisconnectedState();
             if (result != null) {
                 //guiUpdateDisconnectedState();
-                updateMessages("fdfdfdfd");
+                //updateMessages("fdfdfdfd");
                 mTextOutput.setText("sfsdfsdfsdfsdfdsfs");//get message
 
             } else {
