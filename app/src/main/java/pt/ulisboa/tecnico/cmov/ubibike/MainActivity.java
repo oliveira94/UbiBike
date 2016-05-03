@@ -51,10 +51,6 @@ public class MainActivity extends AppCompatActivity implements SimWifiP2pManager
     public boolean mBound = false;
     private SimWifiP2pBroadcastReceiver mReceiver;
 
-    List listOfDevices = new ArrayList();
-    List listOfIPs = new ArrayList();
-    String IP = "";
-    String receiver = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,8 +67,6 @@ public class MainActivity extends AppCompatActivity implements SimWifiP2pManager
 
     public void SignInClicked(View view) {
         Intent i = new Intent(this, LogIn.class);
-        //Intent intent = new Intent(view.getContext(), SimWifiP2pService.class);
-        //bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         startActivity(i);
     }
 
@@ -91,8 +85,6 @@ public class MainActivity extends AppCompatActivity implements SimWifiP2pManager
     @Override
     protected void onStart() {
         super.onStart();
-//        Intent intent = new Intent(this, SimWifiP2pBroadcastReceiver.class);
-//        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -103,8 +95,6 @@ public class MainActivity extends AppCompatActivity implements SimWifiP2pManager
 
     public void SignUpClicked(View view) {
         Intent i = new Intent(this, CreateAccount.class);
-//        Intent intent = new Intent(view.getContext(), SimWifiP2pService.class);
-//        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         startActivity(i);
     }
 
@@ -173,34 +163,4 @@ public class MainActivity extends AppCompatActivity implements SimWifiP2pManager
             peersStr.append(devstr);
         }
     }
-
-//    //add a IP to a list of the IP in the network
-//    public void AddDeviceIPToList(String IP){
-//        if (!listOfIPs.contains(IP)) {
-//            listOfIPs.add(IP);
-//            Toast.makeText(this, listOfIPs.toString(),
-//                    Toast.LENGTH_SHORT).show();
-//        }
-//    }
-//
-//    public void AddDevicesNameToList(String device){
-//
-//        if (!listOfDevices.contains(device)) {
-//            listOfDevices.add(device);
-//            Toast.makeText(this, listOfDevices.toString(),
-//                    Toast.LENGTH_SHORT).show();
-//        }
-//    }
-//
-//    //get Ip through device name
-//    public void GetDeviceIP(String devicename){
-//        int positonInList = listOfDevices.indexOf(devicename);
-//        IP = String.valueOf(listOfIPs.get(positonInList));
-//    }
-//
-//    //get name device through ip
-//    public void GetName(String ip){
-//        int positonInList = listOfIPs.indexOf(ip);
-//        receiver = String.valueOf(listOfDevices.get(positonInList));
-//    }
 }
