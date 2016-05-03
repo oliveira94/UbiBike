@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.cmov.ubibike;
 
-
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
@@ -15,7 +14,6 @@ import pt.ulisboa.tecnico.cmov.ubibike.WifiDirect.SimWifiP2pBroadcastReceiver;
 public class LogIn extends AppCompatActivity {
 
     DataBaseHelper helper = new DataBaseHelper(this);
-    UserData userData = new UserData();
 
     private SimWifiP2pBroadcastReceiver receiver;
 
@@ -24,7 +22,6 @@ public class LogIn extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.log_in);
 
-        //TODO ter em todas as actividades
         IntentFilter filter = new IntentFilter();
         filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_STATE_CHANGED_ACTION);
         filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_PEERS_CHANGED_ACTION);
@@ -32,7 +29,6 @@ public class LogIn extends AppCompatActivity {
         filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_GROUP_OWNERSHIP_CHANGED_ACTION);
         receiver = new SimWifiP2pBroadcastReceiver(this);
         registerReceiver(receiver, filter);
-
     }
 
     public void LogToNavigation(View view) {
@@ -44,9 +40,6 @@ public class LogIn extends AppCompatActivity {
         String Ipass = pass.getText().toString();
 
         String Password = helper.searchPassword(Iusername);
-        //Toast toast1 = Toast.makeText(LogIn.this, Password, Toast.LENGTH_SHORT);
-        //toast1.show();
-
 
         if(Ipass.equals(Password)){
             //example of set a global variable
@@ -56,8 +49,6 @@ public class LogIn extends AppCompatActivity {
             ((UserData) this.getApplication()).setAge(helper.AgeFromUser(Iusername));
 
             Intent i = new Intent(this,NavigationDrawer.class);
-            Toast toast = Toast.makeText(LogIn.this, Iusername, Toast.LENGTH_SHORT);
-            toast.show();
             i.putExtra("KEY", Iusername);
             startActivity(i);
         }
@@ -66,7 +57,5 @@ public class LogIn extends AppCompatActivity {
             Toast toast = Toast.makeText(LogIn.this, "Username or password are wrong", Toast.LENGTH_SHORT);
             toast.show();
         }
-
-
     }
 }

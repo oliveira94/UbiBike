@@ -13,7 +13,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Messenger;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -27,7 +26,6 @@ import android.widget.Toast;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,9 +36,7 @@ import pt.inesc.termite.wifidirect.SimWifiP2pInfo;
 import pt.inesc.termite.wifidirect.SimWifiP2pManager;
 import pt.inesc.termite.wifidirect.service.SimWifiP2pService;
 import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocket;
-import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketManager;
 import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketServer;
-import pt.ulisboa.tecnico.cmov.ubibike.WifiDirect.MsgSenderActivity;
 import pt.ulisboa.tecnico.cmov.ubibike.WifiDirect.SimWifiP2pBroadcastReceiver;
 
 public class Chat extends Activity implements
@@ -51,8 +47,12 @@ public class Chat extends Activity implements
     ExchangeMessages exchangeMessages = new ExchangeMessages();
     String user = "";
     String receiver = "";
-    public static final String TAG = "msgsender";
+    String IP = "";
+    //list with the devices in the neighbor
+    List listOfDevices = new ArrayList();
+    List listOfIPs = new ArrayList();
 
+    public static final String TAG = "msgsender";
     private SimWifiP2pManager mManager = null;
     private SimWifiP2pManager.Channel mChannel = null;
     private Messenger mService = null;
@@ -63,14 +63,6 @@ public class Chat extends Activity implements
     private TextView mTextOutput ;
     private SimWifiP2pBroadcastReceiver mReceiver;
 
-    String IP = "";
-    SimWifiP2pDeviceList devices;
-    SimWifiP2pInfo groupInfo;
-
-    //list with the devices in the neighbor
-    List listOfDevices = new ArrayList();
-    List listOfIPs = new ArrayList();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,24 +71,21 @@ public class Chat extends Activity implements
         TextView ReceiverName = (TextView)findViewById(R.id.bookBikeText);
         ReceiverName.setText("joao");//TODO put where the name of the receiver
 
+        //get the username
         Bundle extras = getIntent().getExtras();
         if(extras !=null) {
             user = extras.getString("USER");
         }
 
         mTextInput = (TextView)findViewById(R.id.textEntryChat);
-
         mTextOutput = (TextView) findViewById(R.id.output);
         mTextOutput.setText("");
 
+        //enable the wifi
         StartWifi();
 
-
-
+        //ptint all messages that are in the database
         updateMessages();
-
-        Toast toast = Toast.makeText(Chat.this, user, Toast.LENGTH_SHORT);
-        toast.show();
 
         // register broadcast receiver
         IntentFilter filter = new IntentFilter();
@@ -106,9 +95,6 @@ public class Chat extends Activity implements
         filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_GROUP_OWNERSHIP_CHANGED_ACTION);
         mReceiver = new SimWifiP2pBroadcastReceiver(this);
         registerReceiver(mReceiver, filter);
-
-
-
     }
 
     public void sendClickedChat(View view) {
@@ -120,7 +106,7 @@ public class Chat extends Activity implements
 
         new SendCommTask().executeOnExecutor(
                 AsyncTask.THREAD_POOL_EXECUTOR,
-                mTextInput.getText().toString());//TODO change the variable
+                mTextInput.getText().toString());
 
         LinearLayout linearLayoutVertical = (LinearLayout) findViewById(R.id.idChatLinearVertical);
         LinearLayout chatHorizontalLayout = new LinearLayout(this);
@@ -165,11 +151,11 @@ public class Chat extends Activity implements
         EditText entryText = (EditText) findViewById(R.id.textEntryChat);
         String text = entryText.getText().toString();
 
-        //TODO where user is the message
         //update the exchangeMessages
         exchangeMessages.setSender(username);
         exchangeMessages.setMessage(message);
         exchangeMessages.setReceiver(user);
+
         Toast toast = Toast.makeText(Chat.this,"sender: " +  username, Toast.LENGTH_SHORT);
         toast.show();
         Toast toast1 = Toast.makeText(Chat.this,"message: " +  message, Toast.LENGTH_SHORT);
@@ -198,20 +184,10 @@ public class Chat extends Activity implements
         linearLayoutVertical.addView(chatHorizontalLayout);
     }
 
-    public void updateMessages(){//TODO update to receive user
+    public void updateMessages(){
 
-        //Moving the text to the new text box
-        //TextView chatText = new TextView(this);
         EditText entryText = (EditText) findViewById(R.id.textEntryChat);
         String text = entryText.getText().toString();
-
-        //update the exchangeMessages
-//        exchangeMessages.setSender(user);
-//        exchangeMessages.setMessage(text);
-//        exchangeMessages.setReceiver("joao");
-
-        //put the message in the database
-        //helper.sendNewMessage(exchangeMessages);
 
         db = helper.getReadableDatabase();
         String query1 = "select sender, receiver, message from mychat";
@@ -220,17 +196,14 @@ public class Chat extends Activity implements
         String sender, message;
 
         if(cursor1.moveToFirst()){
-
             do{
-
                 LinearLayout linearLayoutVertical = (LinearLayout) findViewById(R.id.idChatLinearVertical);
                 LinearLayout chatHorizontalLayout = new LinearLayout(this);
 
                 sender = cursor1.getString(0);
-
                 receiver = cursor1.getString(1);
-
                 message = cursor1.getString(2);
+
                 TextView chatText = new TextView(this);
                 chatText.setText(message);
                 chatText.setTextSize(22);
@@ -243,7 +216,7 @@ public class Chat extends Activity implements
                 String isSender = SenderOrReceiver(sender);
                 if(isSender.equals("sender")){
                     chatHorizontalLayout.setGravity(Gravity.RIGHT);
-                }else {//TODO where we need to put a else if where the receiver will be us, and if yes, will print
+                }else {
                     chatHorizontalLayout.setGravity(Gravity.LEFT);
                 }
                 chatHorizontalLayout.addView(chatText, params);
@@ -251,12 +224,11 @@ public class Chat extends Activity implements
             }
             while (cursor1.moveToNext() && cursor1.getString(0) != "");
         }
-        Toast toast = Toast.makeText(Chat.this, "finish", Toast.LENGTH_SHORT);
-        toast.show();
     }
 
+    //see if the message was he or the other user that was sended
     public String SenderOrReceiver(String sender) {
-        String WhoIs = null;
+        String WhoIs;
         if (user.equals(sender)) {
             WhoIs = "sender";
         }
@@ -283,7 +255,7 @@ public class Chat extends Activity implements
 
     public void StartWifi(){
         Intent intent = new Intent(this, SimWifiP2pService.class);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        //bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         mBound = true;
 
         // spawn the chat server background task
@@ -301,9 +273,7 @@ public class Chat extends Activity implements
 
         @Override
         protected Void doInBackground(Void... params) {
-
             Log.d(TAG, "IncommingCommTask started (" + this.hashCode() + ").");
-
             try {
                 mSrvSocket = new SimWifiP2pSocketServer(
                         10001);
@@ -336,7 +306,6 @@ public class Chat extends Activity implements
         protected void onProgressUpdate(String... values) {
             mTextOutput.append(values[0] + "\n");
             String[] result = values[0].split(":");
-
             //where i have the message that will be sent to the other user
             UpdateOtherUserScreen(result[1], result[0]);
         }
@@ -347,34 +316,16 @@ public class Chat extends Activity implements
         @Override
         protected void onPreExecute() {
             mTextOutput.setText("Connecting...");
-
         }
 
         @Override
         protected String doInBackground(String... params) {
-//            try {
-//                mCliSocket = new SimWifiP2pSocket(params[0],
-//                        10001);
-//            } catch (UnknownHostException e) {
-//                return "Unknown Host:" + e.getMessage();
-//            } catch (IOException e) {
-//                return "IO error:" + e.getMessage();
-//            }
             return null;
         }
         @Override
         protected void onPostExecute(String result) {
             if (result != null) {
-                //guiUpdateDisconnectedState();
-                //updateMessages(result);//TODO see thisssss
                 mTextOutput.setText(result);
-            } else {
-//                findViewById(R.id.idDisconnectButton).setEnabled(true);
-//                findViewById(R.id.idConnectButton).setEnabled(false);
-//                findViewById(R.id.idSendButton).setEnabled(true);
-//                mTextInput.setHint("");
-//                mTextInput.setText("");
-//                mTextOutput.setText("");
             }
         }
     }
@@ -400,19 +351,8 @@ public class Chat extends Activity implements
         @Override
         protected void onPostExecute(Void result) {
             mTextInput.setText("");
-            //guiUpdateDisconnectedState();
             if (result != null) {
-                //guiUpdateDisconnectedState();
-                //updateMessages("fdfdfdfd");
                 mTextOutput.setText("sfsdfsdfsdfsdfdsfs");//get message
-
-            } else {
-//                findViewById(R.id.idDisconnectButton).setEnabled(true);
-//                findViewById(R.id.idConnectButton).setEnabled(false);
-//                findViewById(R.id.idSendButton).setEnabled(true);
-//                mTextInput.setHint("");
-//                mTextInput.setText("");
-//                mTextOutput.setText("");
             }
         }
     }
@@ -444,6 +384,7 @@ public class Chat extends Activity implements
         }
     }
 
+    //add a IP to a list of the IP in the network
     public void AddDeviceIPToList(String IP){
         if (!listOfIPs.contains(IP)) {
             listOfIPs.add(IP);
@@ -452,16 +393,19 @@ public class Chat extends Activity implements
         }
     }
 
+    //get Ip through device name
     public void GetDeviceIP(String devicename){
         int positonInList = listOfDevices.indexOf(devicename);
         IP = String.valueOf(listOfIPs.get(positonInList));
     }
 
+    //get name device through ip
     public void GetName(String ip){
         int positonInList = listOfIPs.indexOf(ip);
         receiver = String.valueOf(listOfDevices.get(positonInList));
     }
 
+    //add a device name to a list of device names in the network
     public void AddDevicesNameToList(String device){
 
         if (!listOfDevices.contains(device)) {

@@ -42,7 +42,6 @@ public class NavigationDrawer extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //TODO ter em todas as actividades
         IntentFilter filter = new IntentFilter();
         filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_STATE_CHANGED_ACTION);
         filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_PEERS_CHANGED_ACTION);
@@ -51,7 +50,6 @@ public class NavigationDrawer extends AppCompatActivity
         receiver = new SimWifiP2pBroadcastReceiver(this);
         registerReceiver(receiver, filter);
 
-        //TODO create a global class
         Bundle extras = getIntent().getExtras();
         if(extras !=null) {
             user = extras.getString("KEY");
@@ -92,9 +90,6 @@ public class NavigationDrawer extends AppCompatActivity
 
         DrawerLayout drawer1 = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer1.closeDrawer(GravityCompat.START);
-
-
-
     }
         @Override
         public void onBackPressed () {

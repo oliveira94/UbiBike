@@ -60,8 +60,6 @@ public class MainActivity extends AppCompatActivity {
         // initialize the WDSim API
         SimWifiP2pSocketManager.Init(getApplicationContext());
 
-
-        //TODO ter em todas as actividades
         IntentFilter filter = new IntentFilter();
         filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_STATE_CHANGED_ACTION);
         filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_PEERS_CHANGED_ACTION);

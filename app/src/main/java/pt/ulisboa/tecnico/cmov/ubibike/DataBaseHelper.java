@@ -8,8 +8,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DataBaseHelper extends SQLiteOpenHelper {
 
-
-
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "dase2.db";
     private static final String TABLE_NAME_DATA = "mydata";
@@ -31,8 +29,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     private static final String TABLE_CREATE_CHAT = "create table mychat (id integer primary key not null , " +
             "sender text not null , receiver text not null , message text not null);";
-
-
 
     public DataBaseHelper(Context context){
         super(context, DATABASE_NAME,null, DATABASE_VERSION);
