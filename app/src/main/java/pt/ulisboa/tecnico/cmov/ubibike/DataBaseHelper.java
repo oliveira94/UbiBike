@@ -11,7 +11,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
 
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "dase1.db";
+    private static final String DATABASE_NAME = "dase2.db";
     private static final String TABLE_NAME_DATA = "mydata";
     private static final String TABLE_NAME_CHAT = "mychat";
     private static final String COLUMN_ID = "id";

@@ -50,7 +50,7 @@ public class Chat extends Activity implements
     DataBaseHelper helper = new DataBaseHelper(this);
     ExchangeMessages exchangeMessages = new ExchangeMessages();
     String user = "";
-
+    String receiver = "";
     public static final String TAG = "msgsender";
 
     private SimWifiP2pManager mManager = null;
@@ -89,7 +89,11 @@ public class Chat extends Activity implements
         mTextOutput = (TextView) findViewById(R.id.output);
         mTextOutput.setText("");
 
-        updateMessages(user);
+        StartWifi();
+
+
+
+        updateMessages();
 
         Toast toast = Toast.makeText(Chat.this, user, Toast.LENGTH_SHORT);
         toast.show();
@@ -103,7 +107,7 @@ public class Chat extends Activity implements
         mReceiver = new SimWifiP2pBroadcastReceiver(this);
         registerReceiver(mReceiver, filter);
 
-        StartWifi();
+
 
     }
 
@@ -129,7 +133,7 @@ public class Chat extends Activity implements
         //update the exchangeMessages
         exchangeMessages.setSender(user);
         exchangeMessages.setMessage(text);
-        exchangeMessages.setReceiver("joao");
+        exchangeMessages.setReceiver(receiver);
 
         //put the message in the database
         helper.sendNewMessage(exchangeMessages);
@@ -152,7 +156,7 @@ public class Chat extends Activity implements
         linearLayoutVertical.addView(chatHorizontalLayout);
     }
 
-    public void UpdateOtherUserScreen(String message){
+    public void UpdateOtherUserScreen(String message, String username){
         LinearLayout linearLayoutVertical = (LinearLayout) findViewById(R.id.idChatLinearVertical);
         LinearLayout chatHorizontalLayout = new LinearLayout(this);
 
@@ -163,9 +167,15 @@ public class Chat extends Activity implements
 
         //TODO where user is the message
         //update the exchangeMessages
-        exchangeMessages.setSender("artur");
+        exchangeMessages.setSender(username);
         exchangeMessages.setMessage(message);
         exchangeMessages.setReceiver(user);
+        Toast toast = Toast.makeText(Chat.this,"sender: " +  username, Toast.LENGTH_SHORT);
+        toast.show();
+        Toast toast1 = Toast.makeText(Chat.this,"message: " +  message, Toast.LENGTH_SHORT);
+        toast1.show();
+        Toast toast2 = Toast.makeText(Chat.this, "reveiver: " +  user, Toast.LENGTH_SHORT);
+        toast2.show();
 
         //put the message in the database
         helper.sendNewMessage(exchangeMessages);
@@ -179,7 +189,7 @@ public class Chat extends Activity implements
         params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
 
         //Setting the parameters to the intended
-        chatHorizontalLayout.setGravity(Gravity.LEFT);//TODO
+        chatHorizontalLayout.setGravity(Gravity.LEFT);
 
         //Adding the textView to the HorizontalLayout
         chatHorizontalLayout.addView(chatText, params);
@@ -188,7 +198,7 @@ public class Chat extends Activity implements
         linearLayoutVertical.addView(chatHorizontalLayout);
     }
 
-    public void updateMessages(String user){//TODO update to receive user
+    public void updateMessages(){//TODO update to receive user
 
         //Moving the text to the new text box
         //TextView chatText = new TextView(this);
@@ -207,7 +217,7 @@ public class Chat extends Activity implements
         String query1 = "select sender, receiver, message from mychat";
         Cursor cursor1;
         cursor1 = db.rawQuery(query1, null);
-        String sender, receiver, message;
+        String sender, message;
 
         if(cursor1.moveToFirst()){
 
@@ -325,10 +335,10 @@ public class Chat extends Activity implements
         @Override
         protected void onProgressUpdate(String... values) {
             mTextOutput.append(values[0] + "\n");
-            Toast toast = Toast.makeText(Chat.this, values[0], Toast.LENGTH_SHORT);
-            toast.show();
+            String[] result = values[0].split(":");
+
             //where i have the message that will be sent to the other user
-            UpdateOtherUserScreen(values[0]);
+            UpdateOtherUserScreen(result[1], result[0]);
         }
     }
 
@@ -374,9 +384,8 @@ public class Chat extends Activity implements
         @Override
         protected Void doInBackground(String... msg) {
             try {
-
                 mCliSocket = new SimWifiP2pSocket(IP, 10001);
-                mCliSocket.getOutputStream().write((msg[0] + "\n").getBytes());
+                mCliSocket.getOutputStream().write((user + ":" + msg[0] + "\n").getBytes());
                 BufferedReader sockIn = new BufferedReader(
                         new InputStreamReader(mCliSocket.getInputStream()));
                 sockIn.readLine();
@@ -420,6 +429,7 @@ public class Chat extends Activity implements
             AddDevicesNameToList(deviceName);
             AddDeviceIPToList(device.getVirtIp());
             GetDeviceIP(deviceName);
+            GetName(IP);
         }
     }
 
@@ -445,6 +455,11 @@ public class Chat extends Activity implements
     public void GetDeviceIP(String devicename){
         int positonInList = listOfDevices.indexOf(devicename);
         IP = String.valueOf(listOfIPs.get(positonInList));
+    }
+
+    public void GetName(String ip){
+        int positonInList = listOfIPs.indexOf(ip);
+        receiver = String.valueOf(listOfDevices.get(positonInList));
     }
 
     public void AddDevicesNameToList(String device){
