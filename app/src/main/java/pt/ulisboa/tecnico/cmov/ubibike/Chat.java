@@ -39,18 +39,20 @@ import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocket;
 import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketServer;
 import pt.ulisboa.tecnico.cmov.ubibike.WifiDirect.SimWifiP2pBroadcastReceiver;
 
-public class Chat extends Activity implements
-        SimWifiP2pManager.PeerListListener, SimWifiP2pManager.GroupInfoListener{
+public class Chat extends Activity
+        //implements SimWifiP2pManager.PeerListListener, SimWifiP2pManager.GroupInfoListener
+{
 
     SQLiteDatabase db;
     DataBaseHelper helper = new DataBaseHelper(this);
     ExchangeMessages exchangeMessages = new ExchangeMessages();
     String user = "";
     String receiver = "";
-    String IP = "";
+
     //list with the devices in the neighbor
-    List listOfDevices = new ArrayList();
-    List listOfIPs = new ArrayList();
+//    List listOfDevices = new ArrayList();
+//    List listOfIPs = new ArrayList();
+    String IP = "";
 
     public static final String TAG = "msgsender";
     private SimWifiP2pManager mManager = null;
@@ -87,7 +89,21 @@ public class Chat extends Activity implements
         //ptint all messages that are in the database
         updateMessages();
 
+        IP = ((UserData) this.getApplication()).getIP();
+
         // register broadcast receiver
+//        IntentFilter filter = new IntentFilter();
+//        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_STATE_CHANGED_ACTION);
+//        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_PEERS_CHANGED_ACTION);
+//        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_NETWORK_MEMBERSHIP_CHANGED_ACTION);
+//        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_GROUP_OWNERSHIP_CHANGED_ACTION);
+//        mReceiver = new SimWifiP2pBroadcastReceiver(this);
+//        registerReceiver(mReceiver, filter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         IntentFilter filter = new IntentFilter();
         filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_STATE_CHANGED_ACTION);
         filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_PEERS_CHANGED_ACTION);
@@ -239,23 +255,23 @@ public class Chat extends Activity implements
     }
 
     public void UpdateButton(View v){
-        if (mBound) {
-            mManager.requestGroupInfo(mChannel, Chat.this);
-        } else {
-            Toast.makeText(v.getContext(), "Service not bound",
-                    Toast.LENGTH_SHORT).show();
-        }
-        if (mBound) {
-            mManager.requestPeers(mChannel, Chat.this);
-        } else {
-            Toast.makeText(v.getContext(), "Service not bound",
-                    Toast.LENGTH_SHORT).show();
-        }
+//        if (mBound) {
+//            mManager.requestGroupInfo(mChannel, Chat.this);
+//        } else {
+//            Toast.makeText(v.getContext(), "Service not bound",
+//                    Toast.LENGTH_SHORT).show();
+//        }
+//        if (mBound) {
+//            mManager.requestPeers(mChannel, Chat.this);
+//        } else {
+//            Toast.makeText(v.getContext(), "Service not bound",
+//                    Toast.LENGTH_SHORT).show();
+//        }
     }
 
     public void StartWifi(){
-        Intent intent = new Intent(this, SimWifiP2pService.class);
-        //bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+//        Intent intent = new Intent(this, SimWifiP2pService.class);
+//        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         mBound = true;
 
         // spawn the chat server background task
@@ -266,7 +282,7 @@ public class Chat extends Activity implements
     @Override
     public void onPause() {
         super.onPause();
-        unregisterReceiver(mReceiver);
+//        unregisterReceiver(mReceiver);
     }
 
     public class IncommingCommTask extends AsyncTask<Void, String, Void> {
@@ -335,6 +351,7 @@ public class Chat extends Activity implements
         @Override
         protected Void doInBackground(String... msg) {
             try {
+
                 mCliSocket = new SimWifiP2pSocket(IP, 10001);
                 mCliSocket.getOutputStream().write((user + ":" + msg[0] + "\n").getBytes());
                 BufferedReader sockIn = new BufferedReader(
@@ -355,83 +372,91 @@ public class Chat extends Activity implements
                 mTextOutput.setText("sfsdfsdfsdfsdfdsfs");//get message
             }
         }
+
+
     }
 
-    @Override
-    public void onGroupInfoAvailable(SimWifiP2pDeviceList devices, SimWifiP2pInfo groupInfo) {
-        StringBuilder peersStr = new StringBuilder();
-        for (String deviceName : groupInfo.getDevicesInNetwork()) {
+//    @Override
+//    public void onGroupInfoAvailable(SimWifiP2pDeviceList devices, SimWifiP2pInfo groupInfo) {
+//        StringBuilder peersStr = new StringBuilder();
+//        for (String deviceName : groupInfo.getDevicesInNetwork()) {
+//
+//            SimWifiP2pDevice device = devices.getByName(deviceName);
+//            String devstr = "" + deviceName + " (" +
+//                    ((device == null)?"??":device.getVirtIp()) + ")\n";
+//            peersStr.append(devstr);
+//            AddDevicesNameToList(deviceName);
+//            AddDeviceIPToList(device.getVirtIp());
+//            GetDeviceIP(deviceName);
+//            GetName(IP);
+//        }
+//    }
 
-            SimWifiP2pDevice device = devices.getByName(deviceName);
-            String devstr = "" + deviceName + " (" +
-                    ((device == null)?"??":device.getVirtIp()) + ")\n";
-            peersStr.append(devstr);
-            AddDevicesNameToList(deviceName);
-            AddDeviceIPToList(device.getVirtIp());
-            GetDeviceIP(deviceName);
-            GetName(IP);
-        }
-    }
+//    @Override
+//    public void onPeersAvailable(SimWifiP2pDeviceList peers) {
+//        StringBuilder peersStr = new StringBuilder();
+//
+//        // compile list of devices in range
+//        for (SimWifiP2pDevice device : peers.getDeviceList()) {
+//            String devstr = "" + device.deviceName + " (" + device.getVirtIp() + ")\n";
+//            peersStr.append(devstr);
+//        }
+//    }
 
-    @Override
-    public void onPeersAvailable(SimWifiP2pDeviceList peers) {
-        StringBuilder peersStr = new StringBuilder();
-
-        // compile list of devices in range
-        for (SimWifiP2pDevice device : peers.getDeviceList()) {
-            String devstr = "" + device.deviceName + " (" + device.getVirtIp() + ")\n";
-            peersStr.append(devstr);
-        }
-    }
-
-    //add a IP to a list of the IP in the network
-    public void AddDeviceIPToList(String IP){
-        if (!listOfIPs.contains(IP)) {
-            listOfIPs.add(IP);
-            Toast.makeText(this, listOfIPs.toString(),
-                    Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    //get Ip through device name
-    public void GetDeviceIP(String devicename){
-        int positonInList = listOfDevices.indexOf(devicename);
-        IP = String.valueOf(listOfIPs.get(positonInList));
-    }
-
-    //get name device through ip
-    public void GetName(String ip){
-        int positonInList = listOfIPs.indexOf(ip);
-        receiver = String.valueOf(listOfDevices.get(positonInList));
-    }
+//    //add a IP to a list of the IP in the network
+//    public void AddDeviceIPToList(String IP){
+//        if (!listOfIPs.contains(IP)) {
+//            listOfIPs.add(IP);
+//            Toast.makeText(this, listOfIPs.toString(),
+//                    Toast.LENGTH_SHORT).show();
+//        }
+//    }
+//
+//    //get Ip through device name
+//    public void GetDeviceIP(String devicename){
+//        int positonInList = listOfDevices.indexOf(devicename);
+//        IP = String.valueOf(listOfIPs.get(positonInList));
+//    }
+//
+//    //get name device through ip
+//    public void GetName(String ip){
+//        int positonInList = listOfIPs.indexOf(ip);
+//        receiver = String.valueOf(listOfDevices.get(positonInList));
+//    }
 
     //add a device name to a list of device names in the network
-    public void AddDevicesNameToList(String device){
+//    public void AddDevicesNameToList(String device){
+//
+//        if (!listOfDevices.contains(device)) {
+//            listOfDevices.add(device);
+//            Toast.makeText(this, listOfDevices.toString(),
+//                    Toast.LENGTH_SHORT).show();
+//        }
+//    }
 
-        if (!listOfDevices.contains(device)) {
-            listOfDevices.add(device);
-            Toast.makeText(this, listOfDevices.toString(),
-                    Toast.LENGTH_SHORT).show();
-        }
+//    private ServiceConnection mConnection = new ServiceConnection() {
+//        // callbacks for service binding, passed to bindService()
+//
+//        @Override
+//        public void onServiceConnected(ComponentName className, IBinder service) {
+//            mService = new Messenger(service);
+//            mManager = new SimWifiP2pManager(mService);
+//            mChannel = mManager.initialize(getApplication(), getMainLooper(), null);
+//            mBound = true;
+//        }
+//
+//        @Override
+//        public void onServiceDisconnected(ComponentName arg0) {
+//            mService = null;
+//            mManager = null;
+//            mChannel = null;
+//            mBound = false;
+//        }
+//    };
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        unregisterReceiver(mReceiver);
     }
-
-    private ServiceConnection mConnection = new ServiceConnection() {
-        // callbacks for service binding, passed to bindService()
-
-        @Override
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            mService = new Messenger(service);
-            mManager = new SimWifiP2pManager(mService);
-            mChannel = mManager.initialize(getApplication(), getMainLooper(), null);
-            mBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            mService = null;
-            mManager = null;
-            mChannel = null;
-            mBound = false;
-        }
-    };
 }
