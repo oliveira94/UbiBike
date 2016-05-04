@@ -2,11 +2,20 @@ package pt.ulisboa.tecnico.cmov.ubibike;
 
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
+import java.net.URL;
 
 import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
 import pt.ulisboa.tecnico.cmov.ubibike.WifiDirect.SimWifiP2pBroadcastReceiver;
@@ -15,6 +24,9 @@ public class LogIn extends AppCompatActivity {
 
     DataBaseHelper helper = new DataBaseHelper(this);
     private SimWifiP2pBroadcastReceiver mReceiver;
+    String Iusername;
+    String Ipass;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,26 +57,82 @@ public class LogIn extends AppCompatActivity {
         EditText username = (EditText)findViewById(R.id.lognameid);
         EditText pass = (EditText)findViewById(R.id.logpasswordid);
 
-        String Iusername = username.getText().toString();
-        String Ipass = pass.getText().toString();
+        Iusername = username.getText().toString();
+        Ipass = pass.getText().toString();
 
-        String Password = helper.searchPassword(Iusername);
+        if(Iusername.isEmpty() || Ipass.isEmpty())
+        {
+            Toast.makeText(LogIn.this, "You need to fill all fields!", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        if(Ipass.equals(Password)){
+        new serverRequestLogIn().execute(Iusername);
+    }
+
+    private void serverResponse(String response) {
+
+
+        //response comes in name:password:points:age or noUsername in case it doesn't exist
+        if (response.equals("FailedConnection"))
+        {
+            Toast.makeText(LogIn.this, "Problem connecting to the server!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (response.equals("noUsername")) {
+            Toast.makeText(LogIn.this, "Username does not exist!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String[] result = response.split(":");
+
+        if (Ipass.equals(result[1]))    //If password is correct
+        {
             //example of set a global variable
-            ((UserData) this.getApplication()).setName(Iusername);
-            ((UserData) this.getApplication()).setPassword(Iusername);
-            ((UserData) this.getApplication()).setPoints(helper.PointsFromUser(Iusername));
-            ((UserData) this.getApplication()).setAge(helper.AgeFromUser(Iusername));
+            ((UserData) this.getApplication()).setName(result[0]);
+            ((UserData) this.getApplication()).setPoints(Integer.parseInt(result[2]));
+            ((UserData) this.getApplication()).setAge(Integer.parseInt(result[3]));
 
-            Intent i = new Intent(this,NavigationDrawer.class);
+            Intent i = new Intent(this, NavigationDrawer.class);
             i.putExtra("KEY", Iusername);
             startActivity(i);
+        } else
+            Toast.makeText(LogIn.this, "Password is wrong!", Toast.LENGTH_SHORT).show();
+
+    }
+
+    private class serverRequestLogIn extends AsyncTask<String, Void, String> {
+
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            String urlServer = "http://10.0.2.2:8080/logIn?username=";
+            urlServer += params[0];
+
+            StringBuffer result = new StringBuffer("");
+            try{
+                URL url = new URL(urlServer);
+                HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+                connection.setDoInput(true);
+                connection.setConnectTimeout(3000);
+                connection.setReadTimeout(3000);
+                connection.connect();
+                InputStream inputStream = connection.getInputStream();
+                BufferedReader rd = new BufferedReader(new InputStreamReader(inputStream));
+                String line;
+                while ((line = rd.readLine()) != null) result.append(line);
+
+            }catch (SocketTimeoutException e) {
+                return "FailedConnection";
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return result.toString();
         }
-        else
-        {
-            Toast toast = Toast.makeText(LogIn.this, "Username or password are wrong", Toast.LENGTH_SHORT);
-            toast.show();
+
+        @Override
+        protected void onPostExecute(String result) {
+            serverResponse(result);
         }
     }
 }

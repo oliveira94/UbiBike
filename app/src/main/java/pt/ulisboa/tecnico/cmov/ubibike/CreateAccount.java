@@ -2,11 +2,20 @@ package pt.ulisboa.tecnico.cmov.ubibike;
 
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
+import java.net.URL;
 
 import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
 import pt.ulisboa.tecnico.cmov.ubibike.WifiDirect.SimWifiP2pBroadcastReceiver;
@@ -16,6 +25,11 @@ public class CreateAccount extends AppCompatActivity {
 
     DataBaseHelper helper = new DataBaseHelper(this);
     private SimWifiP2pBroadcastReceiver mReceiver;
+    String Iname;
+    String Iage;
+    String Iusername;
+    String Ipass1;
+    String Ipass2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,50 +63,100 @@ public class CreateAccount extends AppCompatActivity {
         EditText pass1 = (EditText)findViewById(R.id.pass1id);
         EditText pass2 = (EditText)findViewById(R.id.pass2id);
 
-        String Iname = name.getText().toString();
-        String Iage = age.getText().toString();
-        String Iusername = username.getText().toString();
-        String Ipass1 = pass1.getText().toString();
-        String Ipass2 = pass2.getText().toString();
+        Iname = name.getText().toString();
+        Iage = age.getText().toString();
+        Iusername = username.getText().toString();
+        Ipass1 = pass1.getText().toString();
+        Ipass2 = pass2.getText().toString();
 
-        //check if the username inserted already exists
-        if(helper.checkUsername(Iusername)){
-            Toast usernameMessage = Toast.makeText(CreateAccount.this, "That username already exists, change it!", Toast.LENGTH_SHORT);
-            usernameMessage.show();
-        }
-        else
+
+        if(Iname.isEmpty() || Iage.isEmpty() || Iusername.isEmpty() || Ipass1.isEmpty() || Ipass2.isEmpty())
         {
-            if(!Ipass2.equals(Ipass1)){
-                //Passwords don't match
-                Toast password = Toast.makeText(CreateAccount.this, "Passwords don't match", Toast.LENGTH_SHORT);
-                password.show();
+            Toast.makeText(CreateAccount.this, "You need to fill all fields!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (!Ipass1.equals(Ipass2))
+        {
+            Toast.makeText(CreateAccount.this, "Passwords do not match!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        new serverRequestCreate().execute(Iusername, Ipass1, Iname, Iage);
+    }
+
+    public void serverResponse(String result) {
+
+        if (result.equals("FailedConnection"))
+        {
+            Toast.makeText(CreateAccount.this, "Problem connecting to the server!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (result.equals("true"))
+            Toast.makeText(CreateAccount.this, "Account was created successfully!", Toast.LENGTH_SHORT).show();
+        else {
+            Toast.makeText(CreateAccount.this, "Username already exists! Please choose another", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
+        //crete a object with info for later put it in the database
+        UserData userData = new UserData();
+        userData.setName(Iname);
+        userData.setAge(Integer.parseInt(Iage));
+        userData.setUsername(Iusername);
+
+        //update global class
+        ((UserData) this.getApplication()).setName(Iname);
+        ((UserData) this.getApplication()).setPoints(helper.PointsFromUser(Iname));
+        ((UserData) this.getApplication()).setUsername(Iusername);
+        ((UserData) this.getApplication()).setAge(Integer.parseInt(Iage));
+
+        //put userdata in the database
+        helper.insertUserData(userData);
+
+        Toast password = Toast.makeText(CreateAccount.this, "Account created", Toast.LENGTH_SHORT);
+        password.show();
+
+        Intent i = new Intent(this, NavigationDrawer.class);
+        i.putExtra("KEY", Iusername);
+        startActivity(i);
+
+
+    }
+
+    private class serverRequestCreate extends AsyncTask<String, Void, String> {
+
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            String urlServer = "http://10.0.2.2:8080/create?username=";
+            urlServer += params[0] + "&password=" + params[1] + "&name=" + params[2] + "&age=" + params[3];
+
+            StringBuffer result = new StringBuffer("");
+            try{
+                URL url = new URL(urlServer);
+                HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+                connection.setDoInput(true);
+                connection.setConnectTimeout(3000);
+                connection.setReadTimeout(3000);
+                connection.connect();
+                InputStream inputStream = connection.getInputStream();
+                BufferedReader rd = new BufferedReader(new InputStreamReader(inputStream));
+                String line;
+                while ((line = rd.readLine()) != null) result.append(line);
+
+            }catch (SocketTimeoutException e) {
+                return "FailedConnection";
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            else
-            {
-                //crete a object with info for later put it in the database
-                UserData userData = new UserData();
-                userData.setName(Iname);
-                userData.setAge(Integer.parseInt(Iage));
-                userData.setUsername(Iusername);
-                userData.setPassword(Ipass1);
+            return result.toString();
+        }
 
-                //update global class
-                ((UserData) this.getApplication()).setName(Iname);
-                ((UserData) this.getApplication()).setPassword(Ipass1);
-                ((UserData) this.getApplication()).setPoints(helper.PointsFromUser(Iname));
-                ((UserData) this.getApplication()).setUsername(Iusername);
-                ((UserData) this.getApplication()).setAge(Integer.parseInt(Iage));
-
-                //put userdata in the database
-                helper.insertUserData(userData);
-
-                Toast password = Toast.makeText(CreateAccount.this, "Account created", Toast.LENGTH_SHORT);
-                password.show();
-
-                Intent i = new Intent(this,NavigationDrawer.class);
-                i.putExtra("KEY", Iusername);
-                startActivity(i);
-            }
+        @Override
+        protected void onPostExecute(String result) {
+            serverResponse(result);
         }
     }
 }
