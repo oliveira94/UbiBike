@@ -62,7 +62,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/ageid"
-                android:layout_gravity="bottom" />
+                android:layout_gravity="bottom"
+                android:inputType="number"/>
         </LinearLayout>
 
         <LinearLayout
@@ -114,7 +115,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/pass1id"
-                android:layout_gravity="bottom" />
+                android:layout_gravity="bottom"
+                android:inputType="textPassword"/>
         </LinearLayout>
 
         <LinearLayout
@@ -140,7 +142,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/pass2id"
-                android:layout_gravity="bottom" />
+                android:layout_gravity="bottom"
+                android:inputType="textPassword"/>
         </LinearLayout>
 
         <FrameLayout

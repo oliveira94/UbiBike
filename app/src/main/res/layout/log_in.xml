@@ -59,7 +59,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/logpasswordid"
-                android:layout_gravity="bottom" />
+                android:layout_gravity="bottom"
+                android:inputType="textPassword"/>
         </LinearLayout>
 
         <LinearLayout

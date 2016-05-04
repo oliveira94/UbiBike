@@ -1,9 +1,14 @@
 package pt.ulisboa.tecnico.cmov.ubibike;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.Messenger;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -18,8 +23,14 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
+import pt.inesc.termite.wifidirect.SimWifiP2pDevice;
+import pt.inesc.termite.wifidirect.SimWifiP2pDeviceList;
+import pt.inesc.termite.wifidirect.SimWifiP2pInfo;
+import pt.inesc.termite.wifidirect.SimWifiP2pManager;
+import pt.inesc.termite.wifidirect.service.SimWifiP2pService;
 import pt.ulisboa.tecnico.cmov.ubibike.Fragments.BookBike;
 import pt.ulisboa.tecnico.cmov.ubibike.Fragments.Friends;
 import pt.ulisboa.tecnico.cmov.ubibike.Fragments.Historic;
@@ -29,11 +40,17 @@ import pt.ulisboa.tecnico.cmov.ubibike.Fragments.Points;
 import pt.ulisboa.tecnico.cmov.ubibike.WifiDirect.SimWifiP2pBroadcastReceiver;
 
 public class NavigationDrawer extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, SimWifiP2pManager.GroupInfoListener, SimWifiP2pManager.PeerListListener {
 
     String user = "";
     InicialPage inicialpage = new InicialPage();
     private SimWifiP2pBroadcastReceiver mReceiver;
+
+    public boolean mBound = false;
+
+    private SimWifiP2pManager mManager = null;
+    private SimWifiP2pManager.Channel mChannel = null;
+    private Messenger mService = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +63,9 @@ public class NavigationDrawer extends AppCompatActivity
         if(extras !=null) {
             user = extras.getString("KEY");
         }
+
+        Intent intent = new Intent(this, SimWifiP2pService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -216,6 +236,65 @@ public class NavigationDrawer extends AppCompatActivity
 
 
     public void ActClicked(View view){
+        if (mBound) {
+            mManager.requestGroupInfo(mChannel, NavigationDrawer.this);
+        } else {
+            Toast.makeText(view.getContext(), "Service not bound",
+                    Toast.LENGTH_SHORT).show();
+        }
+        if (mBound) {
+            mManager.requestPeers(mChannel, NavigationDrawer.this);
+        } else {
+            Toast.makeText(view.getContext(), "Service not bound",
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
 
+    private ServiceConnection mConnection = new ServiceConnection() {
+        // callbacks for service binding, passed to bindService()
+
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            mService = new Messenger(service);
+            mManager = new SimWifiP2pManager(mService);
+            mChannel = mManager.initialize(getApplication(), getMainLooper(), null);
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            mService = null;
+            mManager = null;
+            mChannel = null;
+            mBound = false;
+        }
+    };
+
+
+    @Override
+    public void onGroupInfoAvailable(SimWifiP2pDeviceList devices, SimWifiP2pInfo groupInfo) {
+                StringBuilder peersStr = new StringBuilder();
+        for (String deviceName : groupInfo.getDevicesInNetwork()) {
+
+            SimWifiP2pDevice device = devices.getByName(deviceName);
+            String devstr = "" + deviceName + " (" +
+                    ((device == null) ? "??" : device.getVirtIp()) + ")\n";
+            peersStr.append(devstr);
+            ((UserData) this.getApplication()).AddDevicesNameToList(deviceName);
+            ((UserData) this.getApplication()).AddDeviceIPToList(device.getVirtIp());
+            ((UserData) this.getApplication()).GetDeviceIP(deviceName);
+            ((UserData) this.getApplication()).GetName(((UserData) this.getApplication()).getIP());
+        }
+    }
+
+    @Override
+    public void onPeersAvailable(SimWifiP2pDeviceList peers) {
+        StringBuilder peersStr = new StringBuilder();
+
+        // compile list of devices in range
+        for (SimWifiP2pDevice device : peers.getDeviceList()) {
+            String devstr = "" + device.deviceName + " (" + device.getVirtIp() + ")\n";
+            peersStr.append(devstr);
+        }
     }
 }

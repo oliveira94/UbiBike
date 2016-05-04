@@ -43,7 +43,9 @@ import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketServer;
 //import pt.ulisboa.tecnico.cmov.ubibike.WifiDirect.MsgSenderActivity;
 import pt.ulisboa.tecnico.cmov.ubibike.WifiDirect.SimWifiP2pBroadcastReceiver;
 
-public class MainActivity extends AppCompatActivity implements SimWifiP2pManager.GroupInfoListener, SimWifiP2pManager.PeerListListener {
+public class MainActivity extends AppCompatActivity
+        //implements SimWifiP2pManager.GroupInfoListener, SimWifiP2pManager.PeerListListener
+{
 
     private SimWifiP2pManager mManager = null;
     private SimWifiP2pManager.Channel mChannel = null;
@@ -59,8 +61,8 @@ public class MainActivity extends AppCompatActivity implements SimWifiP2pManager
         // initialize the WDSim API
         SimWifiP2pSocketManager.Init(getApplicationContext());
 
-        Intent intent = new Intent(this, SimWifiP2pService.class);
-        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+//        Intent intent = new Intent(this, SimWifiP2pService.class);
+//        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
     }
 
@@ -97,65 +99,65 @@ public class MainActivity extends AppCompatActivity implements SimWifiP2pManager
         startActivity(i);
     }
 
-    private ServiceConnection mConnection = new ServiceConnection() {
-        // callbacks for service binding, passed to bindService()
-
-        @Override
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            mService = new Messenger(service);
-            mManager = new SimWifiP2pManager(mService);
-            mChannel = mManager.initialize(getApplication(), getMainLooper(), null);
-            mBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            mService = null;
-            mManager = null;
-            mChannel = null;
-            mBound = false;
-        }
-    };
+//    private ServiceConnection mConnection = new ServiceConnection() {
+//        // callbacks for service binding, passed to bindService()
+//
+//        @Override
+//        public void onServiceConnected(ComponentName className, IBinder service) {
+//            mService = new Messenger(service);
+//            mManager = new SimWifiP2pManager(mService);
+//            mChannel = mManager.initialize(getApplication(), getMainLooper(), null);
+//            mBound = true;
+//        }
+//
+//        @Override
+//        public void onServiceDisconnected(ComponentName arg0) {
+//            mService = null;
+//            mManager = null;
+//            mChannel = null;
+//            mBound = false;
+//        }
+//    };
 
     public void OnlineMode(View view) {
-        if (mBound) {
-            mManager.requestGroupInfo(mChannel, MainActivity.this);
-        } else {
-            Toast.makeText(view.getContext(), "Service not bound",
-                    Toast.LENGTH_SHORT).show();
-        }
-        if (mBound) {
-            mManager.requestPeers(mChannel, MainActivity.this);
-        } else {
-            Toast.makeText(view.getContext(), "Service not bound",
-                    Toast.LENGTH_SHORT).show();
-        }
+//        if (mBound) {
+//            mManager.requestGroupInfo(mChannel, MainActivity.this);
+//        } else {
+//            Toast.makeText(view.getContext(), "Service not bound",
+//                    Toast.LENGTH_SHORT).show();
+//        }
+//        if (mBound) {
+//            mManager.requestPeers(mChannel, MainActivity.this);
+//        } else {
+//            Toast.makeText(view.getContext(), "Service not bound",
+//                    Toast.LENGTH_SHORT).show();
+//        }
     }
 
-    @Override
-    public void onGroupInfoAvailable(SimWifiP2pDeviceList devices, SimWifiP2pInfo groupInfo) {
-        StringBuilder peersStr = new StringBuilder();
-        for (String deviceName : groupInfo.getDevicesInNetwork()) {
-
-            SimWifiP2pDevice device = devices.getByName(deviceName);
-            String devstr = "" + deviceName + " (" +
-                    ((device == null) ? "??" : device.getVirtIp()) + ")\n";
-            peersStr.append(devstr);
-            ((UserData) this.getApplication()).AddDevicesNameToList(deviceName);
-            ((UserData) this.getApplication()).AddDeviceIPToList(device.getVirtIp());
-            ((UserData) this.getApplication()).GetDeviceIP(deviceName);
-            ((UserData) this.getApplication()).GetName(((UserData) this.getApplication()).getIP());
-        }
-    }
-
-    @Override
-    public void onPeersAvailable(SimWifiP2pDeviceList peers) {
-        StringBuilder peersStr = new StringBuilder();
-
-        // compile list of devices in range
-        for (SimWifiP2pDevice device : peers.getDeviceList()) {
-            String devstr = "" + device.deviceName + " (" + device.getVirtIp() + ")\n";
-            peersStr.append(devstr);
-        }
-    }
+//    @Override
+//    public void onGroupInfoAvailable(SimWifiP2pDeviceList devices, SimWifiP2pInfo groupInfo) {
+//        StringBuilder peersStr = new StringBuilder();
+//        for (String deviceName : groupInfo.getDevicesInNetwork()) {
+//
+//            SimWifiP2pDevice device = devices.getByName(deviceName);
+//            String devstr = "" + deviceName + " (" +
+//                    ((device == null) ? "??" : device.getVirtIp()) + ")\n";
+//            peersStr.append(devstr);
+//            ((UserData) this.getApplication()).AddDevicesNameToList(deviceName);
+//            ((UserData) this.getApplication()).AddDeviceIPToList(device.getVirtIp());
+//            ((UserData) this.getApplication()).GetDeviceIP(deviceName);
+//            ((UserData) this.getApplication()).GetName(((UserData) this.getApplication()).getIP());
+//        }
+//    }
+//
+//    @Override
+//    public void onPeersAvailable(SimWifiP2pDeviceList peers) {
+//        StringBuilder peersStr = new StringBuilder();
+//
+//        // compile list of devices in range
+//        for (SimWifiP2pDevice device : peers.getDeviceList()) {
+//            String devstr = "" + device.deviceName + " (" + device.getVirtIp() + ")\n";
+//            peersStr.append(devstr);
+//        }
+//    }
 }
