@@ -14,14 +14,12 @@ import pt.ulisboa.tecnico.cmov.ubibike.WifiDirect.SimWifiP2pBroadcastReceiver;
 public class LogIn extends AppCompatActivity {
 
     DataBaseHelper helper = new DataBaseHelper(this);
-
     private SimWifiP2pBroadcastReceiver mReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.log_in);
-
     }
 
     @Override
@@ -37,8 +35,8 @@ public class LogIn extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
+    protected void onPause() {
+        super.onPause();
         unregisterReceiver(mReceiver);
     }
 

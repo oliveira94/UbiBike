@@ -42,14 +42,6 @@ public class NavigationDrawer extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-//        IntentFilter filter = new IntentFilter();
-//        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_STATE_CHANGED_ACTION);
-//        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_PEERS_CHANGED_ACTION);
-//        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_NETWORK_MEMBERSHIP_CHANGED_ACTION);
-//        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_GROUP_OWNERSHIP_CHANGED_ACTION);
-//        mReceiver = new SimWifiP2pBroadcastReceiver(this);
-//        registerReceiver(mReceiver, filter);
-
         Bundle extras = getIntent().getExtras();
         if(extras !=null) {
             user = extras.getString("KEY");
@@ -99,8 +91,13 @@ public class NavigationDrawer extends AppCompatActivity
             } else {
                 super.onBackPressed();
             }
-            unregisterReceiver(mReceiver);
         }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mReceiver);
+    }
 
     @Override
     protected void onResume() {
@@ -112,7 +109,6 @@ public class NavigationDrawer extends AppCompatActivity
         filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_GROUP_OWNERSHIP_CHANGED_ACTION);
         mReceiver = new SimWifiP2pBroadcastReceiver(this);
         registerReceiver(mReceiver, filter);
-
     }
 
     @Override

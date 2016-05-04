@@ -88,8 +88,8 @@ public class MainActivity extends AppCompatActivity implements SimWifiP2pManager
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
+    protected void onPause() {
+        super.onPause();
         unregisterReceiver(mReceiver);
     }
 
@@ -143,13 +143,9 @@ public class MainActivity extends AppCompatActivity implements SimWifiP2pManager
                     ((device == null) ? "??" : device.getVirtIp()) + ")\n";
             peersStr.append(devstr);
             ((UserData) this.getApplication()).AddDevicesNameToList(deviceName);
-            //AddDevicesNameToList(deviceName);//TODO
             ((UserData) this.getApplication()).AddDeviceIPToList(device.getVirtIp());
-            //AddDeviceIPToList(device.getVirtIp());
             ((UserData) this.getApplication()).GetDeviceIP(deviceName);
-            //GetDeviceIP(deviceName);
             ((UserData) this.getApplication()).GetName(((UserData) this.getApplication()).getIP());
-           //GetName(IP);
         }
     }
 

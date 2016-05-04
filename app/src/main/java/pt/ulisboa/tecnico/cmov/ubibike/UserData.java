@@ -6,7 +6,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class UserData extends Application {
 
     int age, points;

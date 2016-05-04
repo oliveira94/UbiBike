@@ -3,6 +3,7 @@
     <string name="SignInText">Sign In</string>
     <string name="SignUpText">Sign Up</string>
     <string name="title_activity_naviagation_drawer">NaviagationDrawer</string>
+    <string name="port">10001</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>

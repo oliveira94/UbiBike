@@ -39,8 +39,6 @@ public class InicialPage extends Fragment {
         usernameTextView = (TextView)view.findViewById(R.id.ageupdate);
         usernameTextView.setText("Age: " + bundleAge);
 
-
-
         return view;
     }
 }

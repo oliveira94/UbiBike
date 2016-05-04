@@ -26,6 +26,7 @@ import android.widget.Toast;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,13 +43,11 @@ import pt.ulisboa.tecnico.cmov.ubibike.WifiDirect.SimWifiP2pBroadcastReceiver;
 public class Chat extends Activity
         //implements SimWifiP2pManager.PeerListListener, SimWifiP2pManager.GroupInfoListener
 {
-
     SQLiteDatabase db;
     DataBaseHelper helper = new DataBaseHelper(this);
     ExchangeMessages exchangeMessages = new ExchangeMessages();
     String user = "";
     String receiver = "";
-
     String IP = "";
 
     public static final String TAG = "msgsender";
@@ -67,8 +66,8 @@ public class Chat extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        TextView ReceiverName = (TextView)findViewById(R.id.bookBikeText);
-        ReceiverName.setText("joao");//TODO put where the name of the receiver
+
+
 
         //get the username
         Bundle extras = getIntent().getExtras();
@@ -99,6 +98,9 @@ public class Chat extends Activity
         filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_GROUP_OWNERSHIP_CHANGED_ACTION);
         mReceiver = new SimWifiP2pBroadcastReceiver(this);
         registerReceiver(mReceiver, filter);
+        // spawn the chat server background task
+        new IncommingCommTask().executeOnExecutor(
+                AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     public void sendClickedChat(View view) {
@@ -208,6 +210,9 @@ public class Chat extends Activity
                 receiver = cursor1.getString(1);
                 message = cursor1.getString(2);
 
+                TextView ReceiverName = (TextView)findViewById(R.id.bookBikeText);
+                ReceiverName.setText(sender);
+
                 TextView chatText = new TextView(this);
                 chatText.setText(message);
                 chatText.setTextSize(22);
@@ -243,15 +248,18 @@ public class Chat extends Activity
     }
 
     public void StartWifi(){
+        if(!mBound){
+//            // spawn the chat server background task
+//            new IncommingCommTask().executeOnExecutor(
+//                    AsyncTask.THREAD_POOL_EXECUTOR);
+        }
         mBound = true;
-        // spawn the chat server background task
-        new IncommingCommTask().executeOnExecutor(
-                AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        unregisterReceiver(mReceiver);
     }
 
     public class IncommingCommTask extends AsyncTask<Void, String, Void> {
@@ -260,13 +268,18 @@ public class Chat extends Activity
         protected Void doInBackground(Void... params) {
             Log.d(TAG, "IncommingCommTask started (" + this.hashCode() + ").");
             try {
+
                 mSrvSocket = new SimWifiP2pSocketServer(
-                        10001);
+                        Integer.parseInt(getString(R.string.port)));
             } catch (IOException e) {
                 e.printStackTrace();
             }
             while (!Thread.currentThread().isInterrupted()) {
                 try {
+                    if(mSrvSocket == null){
+                        mSrvSocket = new SimWifiP2pSocketServer(
+                                1000);
+                    }
                     SimWifiP2pSocket sock = mSrvSocket.accept();
                     try {
                         BufferedReader sockIn = new BufferedReader(
@@ -278,6 +291,7 @@ public class Chat extends Activity
                         Log.d("Error reading socket:", e.getMessage());
                     } finally {
                         sock.close();
+                        mSrvSocket.close();
                     }
                 } catch (IOException e) {
                     Log.d("Error socket:", e.getMessage());
@@ -305,6 +319,14 @@ public class Chat extends Activity
 
         @Override
         protected String doInBackground(String... params) {
+            try {
+                mCliSocket = new SimWifiP2pSocket(params[0],
+                        Integer.parseInt(getString(R.string.port)));
+            } catch (UnknownHostException e) {
+                return "Unknown Host:" + e.getMessage();
+            } catch (IOException e) {
+                return "IO error:" + e.getMessage();
+            }
             return null;
         }
         @Override
@@ -321,7 +343,7 @@ public class Chat extends Activity
         protected Void doInBackground(String... msg) {
             try {
 
-                mCliSocket = new SimWifiP2pSocket(IP, 10001);
+                //mCliSocket = new SimWifiP2pSocket(IP, 10001);
                 mCliSocket.getOutputStream().write((user + ":" + msg[0] + "\n").getBytes());
                 BufferedReader sockIn = new BufferedReader(
                         new InputStreamReader(mCliSocket.getInputStream()));
@@ -341,11 +363,5 @@ public class Chat extends Activity
                 mTextOutput.setText("sfsdfsdfsdfsdfdsfs");//get message
             }
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        unregisterReceiver(mReceiver);
     }
 }
