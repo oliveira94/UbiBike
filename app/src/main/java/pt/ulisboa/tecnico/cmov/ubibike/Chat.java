@@ -276,6 +276,7 @@ public class Chat extends Activity
             }
             while (!Thread.currentThread().isInterrupted()) {
                 try {
+                    //if the socket is null, associate to a new port
                     if(mSrvSocket == null){
                         mSrvSocket = new SimWifiP2pSocketServer(
                                 1000);
