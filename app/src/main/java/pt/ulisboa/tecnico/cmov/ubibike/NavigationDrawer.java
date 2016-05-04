@@ -180,7 +180,7 @@ public class NavigationDrawer extends AppCompatActivity
                 fragmenttransaction.replace(R.id.container, new Friends());
                 fragmenttransaction.commit();
 
-            } else if (id == R.id.BookBikeItem) {
+            }else if (id == R.id.BookBikeItem) {
 
                 fragmenttransaction.replace(R.id.container, new BookBike());
                 fragmenttransaction.commit();
@@ -236,7 +236,6 @@ public class NavigationDrawer extends AppCompatActivity
         et.setText("");
     }
 
-
     public void ActClicked(View view){
         if (mBound) {
             mManager.requestGroupInfo(mChannel, NavigationDrawer.this);
@@ -271,7 +270,6 @@ public class NavigationDrawer extends AppCompatActivity
             mBound = false;
         }
     };
-
 
     @Override
     public void onGroupInfoAvailable(SimWifiP2pDeviceList devices, SimWifiP2pInfo groupInfo) {
