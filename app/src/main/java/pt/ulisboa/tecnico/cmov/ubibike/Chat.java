@@ -40,9 +40,7 @@ import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocket;
 import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketServer;
 import pt.ulisboa.tecnico.cmov.ubibike.WifiDirect.SimWifiP2pBroadcastReceiver;
 
-public class Chat extends Activity
-        //implements SimWifiP2pManager.PeerListListener, SimWifiP2pManager.GroupInfoListener
-{
+public class Chat extends Activity{
     SQLiteDatabase db;
     DataBaseHelper helper = new DataBaseHelper(this);
     ExchangeMessages exchangeMessages = new ExchangeMessages();
@@ -51,10 +49,9 @@ public class Chat extends Activity
     String IP = "";
     int port = 10001;
 
+    boolean DontWriteAnything = true;
+
     public static final String TAG = "msgsender";
-    private SimWifiP2pManager mManager = null;
-    private SimWifiP2pManager.Channel mChannel = null;
-    private Messenger mService = null;
     private boolean mBound = false;
     private SimWifiP2pSocketServer mSrvSocket = null;
     private SimWifiP2pSocket mCliSocket = null;
@@ -68,9 +65,6 @@ public class Chat extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-
-
-
         //get the username
         Bundle extras = getIntent().getExtras();
         if(extras !=null) {
@@ -82,13 +76,6 @@ public class Chat extends Activity
         mTextOutput = (TextView) findViewById(R.id.output);
         mTextOutput.setText("");
 
-        //enable the wifi
-        StartWifi();
-
-        //ptint all messages that are in the database
-        updateMessages();
-
-        IP = ((UserData) this.getApplication()).getIP();
     }
 
     @Override
@@ -101,12 +88,20 @@ public class Chat extends Activity
         filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_GROUP_OWNERSHIP_CHANGED_ACTION);
         mReceiver = new SimWifiP2pBroadcastReceiver(this);
         registerReceiver(mReceiver, filter);
+
+        //print all messages that are in the database
+        updateMessages();
+
+        IP = ((UserData) this.getApplication()).getIP();
+
         // spawn the chat server background task
         new IncommingCommTask().executeOnExecutor(
                 AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     public void sendClickedChat(View view) {
+
+        DontWriteAnything = false;
 
         // spawn the chat server background task
         new OutgoingCommTask().executeOnExecutor(
@@ -165,11 +160,11 @@ public class Chat extends Activity
         exchangeMessages.setMessage(message);
         exchangeMessages.setReceiver(user);
 
-        Toast toast = Toast.makeText(Chat.this,"sender: " +  username, Toast.LENGTH_SHORT);
+        Toast toast = Toast.makeText(Chat.this, "sender: " + username, Toast.LENGTH_SHORT);
         toast.show();
         Toast toast1 = Toast.makeText(Chat.this,"message: " +  message, Toast.LENGTH_SHORT);
         toast1.show();
-        Toast toast2 = Toast.makeText(Chat.this, "reveiver: " +  user, Toast.LENGTH_SHORT);
+        Toast toast2 = Toast.makeText(Chat.this, "receiver: " +  user, Toast.LENGTH_SHORT);
         toast2.show();
 
         //put the message in the database
@@ -250,18 +245,19 @@ public class Chat extends Activity
         return WhoIs;
     }
 
-    public void StartWifi(){
-        if(!mBound){
-//            // spawn the chat server background task
-//            new IncommingCommTask().executeOnExecutor(
-//                    AsyncTask.THREAD_POOL_EXECUTOR);
-        }
-        mBound = true;
-    }
-
     @Override
     public void onPause() {
         super.onPause();
+        if(DontWriteAnything){
+            // spawn the chat server background task
+            new OutgoingCommTask().executeOnExecutor(
+                    AsyncTask.THREAD_POOL_EXECUTOR,
+                    mTextInput.getText().toString());
+
+            new SendCommTask().executeOnExecutor(
+                    AsyncTask.THREAD_POOL_EXECUTOR,
+                    mTextInput.getText().toString());
+        }
         unregisterReceiver(mReceiver);
     }
 
@@ -355,6 +351,8 @@ public class Chat extends Activity
             String[] result = values[0].split(":");
             //where i have the message that will be sent to the other user
             UpdateOtherUserScreen(result[1], result[0]);
+            Toast toast = Toast.makeText(Chat.this, "passed on progress update" , Toast.LENGTH_SHORT);
+            toast.show();
         }
     }
 
@@ -367,14 +365,19 @@ public class Chat extends Activity
 
         @Override
         protected String doInBackground(String... params) {
-            try {
-                mCliSocket = new SimWifiP2pSocket(params[0],
-                        port);
-            } catch (UnknownHostException e) {
-                return "Unknown Host:" + e.getMessage();
-            } catch (IOException e) {
-                return "IO error:" + e.getMessage();
-            }
+
+                if(!DontWriteAnything)
+                {
+                    try {
+                        mCliSocket = new SimWifiP2pSocket(params[0],
+                                port);
+                    } catch (UnknownHostException e) {
+                        return "Unknown Host:" + e.getMessage();
+                    } catch (IOException e) {
+                        return "IO error:" + e.getMessage();
+                    }
+                }
+
             return null;
         }
         @Override
@@ -389,17 +392,20 @@ public class Chat extends Activity
 
         @Override
         protected Void doInBackground(String... msg) {
-            try {
 
-                mCliSocket = new SimWifiP2pSocket(IP, 10001);
-                mCliSocket.getOutputStream().write((user + ":" + msg[0] + "\n").getBytes());
-                BufferedReader sockIn = new BufferedReader(
-                        new InputStreamReader(mCliSocket.getInputStream()));
-                sockIn.readLine();
-                mCliSocket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+                if(!DontWriteAnything)
+                {
+                    try {
+                        mCliSocket = new SimWifiP2pSocket(IP, 10001);
+                        mCliSocket.getOutputStream().write((user + ":" + msg[0] + "\n").getBytes());
+                        BufferedReader sockIn = new BufferedReader(
+                                new InputStreamReader(mCliSocket.getInputStream()));
+                        sockIn.readLine();
+                        mCliSocket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             mCliSocket = null;
             return null;
         }
