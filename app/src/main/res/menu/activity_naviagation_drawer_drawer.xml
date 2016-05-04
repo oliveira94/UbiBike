@@ -15,10 +15,6 @@
             android:icon="@drawable/ic_menu_gallery"
             android:title="Friends" />
         <item
-            android:id="@+id/PointsItem"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Points" />
-        <item
             android:id="@+id/BookBikeItem"
             android:icon="@drawable/ic_menu_gallery"
             android:title="Book Bike" />

@@ -12,63 +12,66 @@ public class UserData extends Application {
     String name, username, password, IP, receiver;
     List listOfDevices = new ArrayList();
     List listOfIPs = new ArrayList();
+    List listOfFriends = new ArrayList();
 
-    public void setAge(int age){
+    public void setAge(int age) {
         this.age = age;
     }
 
-    public int getAge(){
+    public int getAge() {
         return this.age;
     }
 
-    public void setPoints(int points){
+    public void setPoints(int points) {
         this.points = points;
     }
 
-    public int getPoints(){
+    public int getPoints() {
         return this.points;
     }
 
-    public void setName(String name){
+    public void setName(String name) {
         this.name = name;
     }
 
-    public String getName(){
+    public String getName() {
         return this.name;
     }
 
-    public void setUsername(String username){
+    public void setUsername(String username) {
         this.username = username;
     }
 
-    public String getUsername(){
+    public String getUsername() {
         return this.username;
     }
 
-    public void setPassword(String password){
+    public void setPassword(String password) {
         this.password = password;
     }
 
-    public String getPassword(){
+    public String getPassword() {
         return this.password;
     }
-    public void setIP(String IP){
+
+    public void setIP(String IP) {
         this.IP = IP;
     }
 
-    public String getIP(){
+    public String getIP() {
         return this.IP;
     }
-    public void setReceiver(String receiver){
+
+    public void setReceiver(String receiver) {
         this.receiver = receiver;
     }
 
-    public String getReceiver(){
+    public String getReceiver() {
         return this.receiver;
     }
 
     //add a IP to a list of the IP in the network
-    public void AddDeviceIPToList(String IP){
+    public void AddDeviceIPToList(String IP) {
         if (!listOfIPs.contains(IP)) {
             listOfIPs.add(IP);
             Toast.makeText(this, listOfIPs.toString(),
@@ -76,7 +79,7 @@ public class UserData extends Application {
         }
     }
 
-    public void AddDevicesNameToList(String device){
+    public void AddDevicesNameToList(String device) {
 
         if (!listOfDevices.contains(device)) {
             listOfDevices.add(device);
@@ -86,16 +89,27 @@ public class UserData extends Application {
     }
 
     //get Ip through device name
-    public void GetDeviceIP(String devicename){
+    public void GetDeviceIP(String devicename) {
         int positonInList = listOfDevices.indexOf(devicename);
         IP = String.valueOf(listOfIPs.get(positonInList));
     }
 
     //get name device through ip
-    public void GetName(String ip){
+    public void GetName(String ip) {
         int positonInList = listOfIPs.indexOf(ip);
         receiver = String.valueOf(listOfDevices.get(positonInList));
     }
 
+    public void AddFriend(String friend) {
+        if (!listOfDevices.contains(friend)) {
+            listOfDevices.add(friend);
+        }
+    }
+
+    public List getListOfFriends()
+    {
+        return listOfFriends;
+
+    }
 
 }

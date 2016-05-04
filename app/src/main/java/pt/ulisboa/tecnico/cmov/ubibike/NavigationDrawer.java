@@ -44,6 +44,7 @@ public class NavigationDrawer extends AppCompatActivity
 
     String user = "";
     InicialPage inicialpage = new InicialPage();
+    Points points = new Points();
     private SimWifiP2pBroadcastReceiver mReceiver;
 
     public boolean mBound = false;
@@ -96,6 +97,8 @@ public class NavigationDrawer extends AppCompatActivity
         UpdateHeaderPoints.setText("Points: " + Integer.toString(points));
 
         inicialpage.setArguments(bundle); //set the bundle on the fragment
+
+
 
         fragmenttransaction.replace(R.id.container, inicialpage);
         fragmenttransaction.commit();
@@ -177,11 +180,6 @@ public class NavigationDrawer extends AppCompatActivity
                 fragmenttransaction.replace(R.id.container, new Friends());
                 fragmenttransaction.commit();
 
-            } else if (id == R.id.PointsItem) {
-
-                fragmenttransaction.replace(R.id.container, new Points());
-                fragmenttransaction.commit();
-
             } else if (id == R.id.BookBikeItem) {
 
                 fragmenttransaction.replace(R.id.container, new BookBike());
@@ -217,9 +215,13 @@ public class NavigationDrawer extends AppCompatActivity
         EditText et= (EditText) findViewById(R.id.ADD);
 
         String edittx= String.valueOf(et.getText().toString());
+
+        //TODO
+
         if (edittx.equals("")) {
         }else
         {
+            ((UserData) this.getApplication()).AddFriend(edittx);
             tx.setText(edittx);
             tx.setTextSize(22);
             tx.setTextColor(Color.BLACK);

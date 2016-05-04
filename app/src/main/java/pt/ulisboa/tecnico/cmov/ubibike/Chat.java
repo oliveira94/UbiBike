@@ -59,6 +59,7 @@ public class Chat extends Activity
     private SimWifiP2pSocketServer mSrvSocket = null;
     private SimWifiP2pSocket mCliSocket = null;
     private TextView mTextInput;
+    private TextView pointInput;
     private TextView mTextOutput ;
     private SimWifiP2pBroadcastReceiver mReceiver;
 
@@ -77,6 +78,7 @@ public class Chat extends Activity
         }
 
         mTextInput = (TextView)findViewById(R.id.textEntryChat);
+        pointInput = (TextView)findViewById(R.id.entrypoints);
         mTextOutput = (TextView) findViewById(R.id.output);
         mTextOutput.setText("");
 
@@ -261,6 +263,50 @@ public class Chat extends Activity
     public void onPause() {
         super.onPause();
         unregisterReceiver(mReceiver);
+    }
+
+    public void sendPointsClicked(View view) {
+        // spawn the chat server background task
+        new OutgoingCommTask().executeOnExecutor(
+                AsyncTask.THREAD_POOL_EXECUTOR,
+                pointInput.getText().toString());
+
+        new SendCommTask().executeOnExecutor(
+                AsyncTask.THREAD_POOL_EXECUTOR,
+                pointInput.getText().toString());
+
+        LinearLayout linearLayoutVertical = (LinearLayout) findViewById(R.id.idChatLinearVertical);
+        LinearLayout chatHorizontalLayout = new LinearLayout(this);
+
+        //Moving the text to the new text box
+        TextView chatText = new TextView(this);
+        EditText entryText = (EditText) findViewById(R.id.entrypoints);
+        String text = entryText.getText().toString();
+
+        //update the exchangeMessages
+        exchangeMessages.setSender(user);
+        exchangeMessages.setMessage(text);
+        exchangeMessages.setReceiver(receiver);
+
+        //put the message in the database
+        helper.sendNewMessage(exchangeMessages);
+
+        chatText.setText(text);
+        chatText.setTextSize(22);
+        chatText.setTextColor(Color.BLACK);
+
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+
+        //Setting the parameters to the intended
+        chatHorizontalLayout.setGravity(Gravity.RIGHT);
+
+        //Adding the textView to the HorizontalLayout
+        chatHorizontalLayout.addView(chatText, params);
+
+        //Adding the whole HorizontalLayout to the VerticalLayout
+        linearLayoutVertical.addView(chatHorizontalLayout);
     }
 
     public class IncommingCommTask extends AsyncTask<Void, String, Void> {
