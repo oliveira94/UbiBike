@@ -10,6 +10,7 @@ import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -20,6 +21,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 
 import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
@@ -31,6 +34,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationManager locationManager;
     private SimWifiP2pBroadcastReceiver receiver;
     private ArrayList<LatLng>  markerPoints= new ArrayList<LatLng>();
+    TextView tx;
+
 
     public MapsActivity() {
 
@@ -50,7 +55,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_GROUP_OWNERSHIP_CHANGED_ACTION);
         receiver = new SimWifiP2pBroadcastReceiver(this);
         registerReceiver(receiver, filter);
-
+        tx=(TextView) findViewById(R.id.KM);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -63,6 +68,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 markerPoints.add(loc);
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(loc));
                 mMap.addPolyline(plot());
+                tx.setText(String.valueOf(distance() + "Km"));
 
             }
 
@@ -110,5 +116,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
             return;
         mMap.setMyLocationEnabled(true);
+    }
+
+    public double distance()
+    {
+        double dist =0.0;
+        NumberFormat NF= new DecimalFormat("#.0");
+        for (int i =0; i<markerPoints.size()-1;i++)
+        {
+
+            Location LocA= new Location("pointA");
+            LocA.setLatitude(markerPoints.get(i).latitude);
+            LocA.setLongitude(markerPoints.get(i).longitude);
+
+            Location LocB= new Location("pointB");
+            LocB.setLatitude(markerPoints.get(i + 1).latitude);
+            LocB.setLongitude(markerPoints.get(i+1).longitude);
+
+            dist+=  LocB.distanceTo(LocA);
+
+
+        }
+        dist = dist/1000;
+        String dd= NF.format(dist);
+        dist= Double.valueOf(dd);
+        return dist;
+
     }
 }
