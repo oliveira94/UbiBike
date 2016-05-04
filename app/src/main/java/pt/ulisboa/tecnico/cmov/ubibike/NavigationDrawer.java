@@ -213,4 +213,9 @@ public class NavigationDrawer extends AppCompatActivity
         }
         et.setText("");
     }
+
+
+    public void ActClicked(View view){
+
+    }
 }

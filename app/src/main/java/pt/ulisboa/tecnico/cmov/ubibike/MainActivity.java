@@ -51,7 +51,6 @@ public class MainActivity extends AppCompatActivity implements SimWifiP2pManager
     public boolean mBound = false;
     private SimWifiP2pBroadcastReceiver mReceiver;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -49,6 +49,7 @@ public class Chat extends Activity
     String user = "";
     String receiver = "";
     String IP = "";
+    int port = 10001;
 
     public static final String TAG = "msgsender";
     private SimWifiP2pManager mManager = null;
@@ -268,9 +269,8 @@ public class Chat extends Activity
         protected Void doInBackground(Void... params) {
             Log.d(TAG, "IncommingCommTask started (" + this.hashCode() + ").");
             try {
-
                 mSrvSocket = new SimWifiP2pSocketServer(
-                        Integer.parseInt(getString(R.string.port)));
+                        port);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -278,8 +278,9 @@ public class Chat extends Activity
                 try {
                     //if the socket is null, associate to a new port
                     if(mSrvSocket == null){
+                        port--;
                         mSrvSocket = new SimWifiP2pSocketServer(
-                                1000);
+                                port);
                     }
                     SimWifiP2pSocket sock = mSrvSocket.accept();
                     try {
@@ -322,7 +323,7 @@ public class Chat extends Activity
         protected String doInBackground(String... params) {
             try {
                 mCliSocket = new SimWifiP2pSocket(params[0],
-                        Integer.parseInt(getString(R.string.port)));
+                        port);
             } catch (UnknownHostException e) {
                 return "Unknown Host:" + e.getMessage();
             } catch (IOException e) {
@@ -344,7 +345,7 @@ public class Chat extends Activity
         protected Void doInBackground(String... msg) {
             try {
 
-                //mCliSocket = new SimWifiP2pSocket(IP, 10001);
+                mCliSocket = new SimWifiP2pSocket(IP, 10001);
                 mCliSocket.getOutputStream().write((user + ":" + msg[0] + "\n").getBytes());
                 BufferedReader sockIn = new BufferedReader(
                         new InputStreamReader(mCliSocket.getInputStream()));
