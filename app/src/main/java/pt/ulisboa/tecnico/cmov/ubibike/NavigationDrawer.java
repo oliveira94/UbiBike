@@ -28,6 +28,9 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.lang.reflect.Type;
 import java.sql.DatabaseMetaData;
 import java.util.ArrayList;
@@ -228,7 +231,13 @@ public class NavigationDrawer extends AppCompatActivity
         if (edittx.equals("")) {
         }else
         {
+            Gson gson = new Gson();
+
             ((UserData) this.getApplication()).AddFriend(edittx);
+            String inputString= gson.toJson(((UserData) this.getApplication()).getListOfFriends());
+
+            System.out.println("inputString= " + inputString);
+
             tx.setText(edittx);
             tx.setTextSize(22);
             tx.setTextColor(Color.BLACK);

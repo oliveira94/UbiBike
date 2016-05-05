@@ -93,7 +93,7 @@ public class LogIn extends AppCompatActivity {
             ((UserData) this.getApplication()).setAge(Integer.parseInt(result[3]));
 
             
-            new serverRequestDistance().execute(Iusername);
+            //new serverRequestDistance().execute(Iusername);
 
             Intent i = new Intent(this, NavigationDrawer.class);
             i.putExtra("KEY", Iusername);

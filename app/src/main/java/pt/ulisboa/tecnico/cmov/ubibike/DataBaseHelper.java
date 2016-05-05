@@ -9,12 +9,14 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DataBaseHelper extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "dase2.db";
+    private static final String DATABASE_NAME = "dase3.db";
     private static final String TABLE_NAME_DATA = "mydata";
     private static final String TABLE_NAME_CHAT = "mychat";
+    private static final String TABLE_NAME_FRIENDS = "myfriends";
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_NAME = "name";
     private static final String COLUMN_AGE = "age";
+    private static final String COLUMN_FRIENDS = "friends";
     private static final String COLUMN_POINTS = "points";
     private static final String COLUMN_USERNAME = "username";
     private static final String COLUMN_PASSWORD = "password";
@@ -25,10 +27,13 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     SQLiteDatabase db;
 
     private static final String TABLE_CREATE_DATA = "create table mydata (id integer primary key not null , " +
-       "username text not null , password text not null , name text not null , points integer ,  age integer not null);";
+       "username text not null , password text not null , name text not null , points integer , age integer not null);";
 
     private static final String TABLE_CREATE_CHAT = "create table mychat (id integer primary key not null , " +
             "sender text not null , receiver text not null , message text not null);";
+
+    private static final String TABLE_CREATE_FRIENDS = "create table myfriends (id integer primary key not null , " +
+            "username text not null , friends text);";
 
     public DataBaseHelper(Context context){
         super(context, DATABASE_NAME,null, DATABASE_VERSION);
@@ -38,6 +43,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(TABLE_CREATE_DATA);
         db.execSQL(TABLE_CREATE_CHAT);
+        db.execSQL(TABLE_CREATE_FRIENDS);
         this.db = db;
     }
 
@@ -184,6 +190,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.execSQL(queryData);
         String queryChat = "DROP TABLE IF EXISTS " + TABLE_NAME_CHAT;
         db.execSQL(queryChat);
+        String queryFriends = "DROP TABLE IF EXISTS " + TABLE_NAME_FRIENDS;
+        db.execSQL(queryFriends);
         this.onCreate(db);
     }
 }
