@@ -57,6 +57,8 @@ public class NavigationDrawer extends AppCompatActivity
     Points points = new Points();
     private SimWifiP2pBroadcastReceiver mReceiver;
 
+    DataBaseHelper helper = new DataBaseHelper(this);
+
     public boolean mBound = false;
 
     private SimWifiP2pManager mManager = null;
@@ -235,6 +237,9 @@ public class NavigationDrawer extends AppCompatActivity
 
             ((UserData) this.getApplication()).AddFriend(edittx);
             String inputString= gson.toJson(((UserData) this.getApplication()).getListOfFriends());
+
+            //insert the list of friends in the database
+            helper.insertFriends(((UserData) this.getApplication()).getUsername(), inputString);
 
             System.out.println("inputString= " + inputString);
 

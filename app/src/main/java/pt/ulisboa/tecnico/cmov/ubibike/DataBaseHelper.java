@@ -71,6 +71,23 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     }
 
+    public void insertFriends(String user, String friends){
+        db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        String query = "select * from mufriends";
+        Cursor cursor = db.rawQuery(query, null);
+
+        int counter = cursor.getCount();
+
+        values.put(COLUMN_ID, counter);
+        values.put(COLUMN_USERNAME, user);
+        values.put(COLUMN_FRIENDS,friends);
+
+        db.insert(TABLE_NAME_DATA, null, values);
+        db.close();
+    }
+
     //method to store a message between a sender and a receiver in the database
     public void sendNewMessage(ExchangeMessages exchangeMessages){
         db = this.getWritableDatabase();
