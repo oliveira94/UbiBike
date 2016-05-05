@@ -48,7 +48,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     //method that insert a new user data in the database
-    public void insertUserData(UserData userData){
+    public void insertUserData(String name, int age, String username){
 
         db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -60,10 +60,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
 
         values.put(COLUMN_ID, counter);
-        values.put(COLUMN_NAME, userData.getName());
-        values.put(COLUMN_AGE,userData.getAge());
-        values.put(COLUMN_USERNAME, userData.getUsername());
-        values.put(COLUMN_PASSWORD, userData.getPassword());
+        values.put(COLUMN_NAME, name);
+        values.put(COLUMN_AGE,age);
+        values.put(COLUMN_USERNAME,username);
         values.put(COLUMN_POINTS, 0);
 
         db.insert(TABLE_NAME_DATA, null, values);

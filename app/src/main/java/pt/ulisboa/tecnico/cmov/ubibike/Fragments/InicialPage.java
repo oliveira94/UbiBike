@@ -57,7 +57,7 @@ public class InicialPage extends Fragment {
         usernameTextView = (TextView) view.findViewById(R.id.ageupdate);
         usernameTextView.setText("Age: " + bundleAge);
 
-        distance = ((UserData)this.getActivity().getApplication()).getDistance();
+        distance = UserData.totalDistance;
 //        double distanceValue = Double.valueOf(distance);
 //        DecimalFormat DF = new DecimalFormat("#.0");
 //        distance = DF.format(distanceValue);

@@ -88,11 +88,11 @@ public class LogIn extends AppCompatActivity {
         if (Ipass.equals(result[1]))    //If password is correct
         {
             //example of set a global variable
-            ((UserData) this.getApplication()).setName(result[0]);
-            ((UserData) this.getApplication()).setPoints(Integer.parseInt(result[2]));
-            ((UserData) this.getApplication()).setAge(Integer.parseInt(result[3]));
+            UserData.name = result[0];
+            UserData.points = Integer.parseInt(result[2]);
+            UserData.age = Integer.parseInt(result[3]);
 
-            
+
 //            new serverRequestDistance().execute(Iusername);
 //
             Intent i = new Intent(this, NavigationDrawer.class);
@@ -178,7 +178,6 @@ public class LogIn extends AppCompatActivity {
 
     public void serverResponseDistance(String response)
     {
-        ((UserData)this.getApplication()).setDistance(response);
-
+        UserData.totalDistance = response;
     }
 }

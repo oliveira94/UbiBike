@@ -92,7 +92,7 @@ public class Chat extends Activity{
         //print all messages that are in the database
         updateMessages();
 
-        IP = ((UserData) this.getApplication()).getIP();
+        IP = UserData.IP;
 
         // spawn the chat server background task
         new IncommingCommTask().executeOnExecutor(

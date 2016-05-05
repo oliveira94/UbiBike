@@ -6,38 +6,14 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserData extends Application {
+public class UserData extends Application{
 
-    int age, points;
-    String name, username, password, IP, receiver, totalDistance;
-    List listOfDevices = new ArrayList();
-    List listOfIPs = new ArrayList();
-    List listOfFriends = new ArrayList();
+    public static int age, points;
+    public static String name, username, IP, receiver, totalDistance;
+    public static List listOfDevices = new ArrayList();
+    public static List listOfIPs = new ArrayList();
+    public static List listOfFriends = new ArrayList();
 
-    public void setDistance(String distance)
-    {
-        this.totalDistance=distance;
-    }
-    public String getDistance()
-    {
-        return totalDistance;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
-    public int getAge() {
-        return this.age;
-    }
-
-    public void setPoints(int points) {
-        this.points = points;
-    }
-
-    public int getPoints() {
-        return this.points;
-    }
 
     public void setName(String name) {
         this.name = name;
@@ -45,38 +21,6 @@ public class UserData extends Application {
 
     public String getName() {
         return this.name;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getUsername() {
-        return this.username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getPassword() {
-        return this.password;
-    }
-
-    public void setIP(String IP) {
-        this.IP = IP;
-    }
-
-    public String getIP() {
-        return this.IP;
-    }
-
-    public void setReceiver(String receiver) {
-        this.receiver = receiver;
-    }
-
-    public String getReceiver() {
-        return this.receiver;
     }
 
     //add a IP to a list of the IP in the network
@@ -119,7 +63,5 @@ public class UserData extends Application {
     {
         return listOfFriends;
     }
-
-
 
 }

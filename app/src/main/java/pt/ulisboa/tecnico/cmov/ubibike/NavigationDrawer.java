@@ -96,10 +96,10 @@ public class NavigationDrawer extends AppCompatActivity
         bundle.putString("USER", user); //attach data to the bundle
 
         //example of a get of a global variable
-        int points = ((UserData) this.getApplication()).getPoints();
+        int points = UserData.points;
         bundle.putString("POINTS", Integer.toString(points));
 
-        int age = ((UserData) this.getApplication()).getAge();
+        int age = UserData.age;
         bundle.putString("AGE", Integer.toString(age));
 
         TextView UpdateHeaderName = (TextView)findViewById(R.id.headername);
@@ -239,7 +239,7 @@ public class NavigationDrawer extends AppCompatActivity
             String inputString= gson.toJson(((UserData) this.getApplication()).getListOfFriends());
 
             //insert the list of friends in the database
-            helper.insertFriends(((UserData) this.getApplication()).getUsername(), inputString);
+            helper.insertFriends(UserData.username, inputString);
 
             System.out.println("inputString= " + inputString);
 
@@ -304,7 +304,7 @@ public class NavigationDrawer extends AppCompatActivity
             ((UserData) this.getApplication()).AddDevicesNameToList(deviceName);
             ((UserData) this.getApplication()).AddDeviceIPToList(device.getVirtIp());
             ((UserData) this.getApplication()).GetDeviceIP(deviceName);
-            ((UserData) this.getApplication()).GetName(((UserData) this.getApplication()).getIP());
+            ((UserData) this.getApplication()).GetName(UserData.IP);
         }
     }
 

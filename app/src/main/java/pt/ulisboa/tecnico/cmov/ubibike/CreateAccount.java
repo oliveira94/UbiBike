@@ -100,27 +100,17 @@ public class CreateAccount extends AppCompatActivity {
 
 
         //crete a object with info for later put it in the database
-        UserData userData = new UserData();
-        userData.setName(Iname);
-        userData.setAge(Integer.parseInt(Iage));
-        userData.setUsername(Iusername);
-
-        //update global class
-        ((UserData) this.getApplication()).setName(Iname);
-        ((UserData) this.getApplication()).setPoints(helper.PointsFromUser(Iname));
-        ((UserData) this.getApplication()).setUsername(Iusername);
-        ((UserData) this.getApplication()).setAge(Integer.parseInt(Iage));
+        UserData.name = Iname;
+        UserData.age = Integer.parseInt(Iage);
+        UserData.username = Iusername;
+        UserData.points = helper.PointsFromUser(Iname);
 
         //put userdata in the database
-        helper.insertUserData(userData);
-
-        Toast password = Toast.makeText(CreateAccount.this, "Account created", Toast.LENGTH_SHORT);
-        password.show();
+        helper.insertUserData(UserData.name, UserData.age, UserData.username);
 
         Intent i = new Intent(this, NavigationDrawer.class);
         i.putExtra("KEY", Iusername);
         startActivity(i);
-
 
     }
 
