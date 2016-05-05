@@ -118,7 +118,8 @@ public class UserData extends Application {
     public List getListOfFriends()
     {
         return listOfFriends;
-
     }
+
+
 
 }

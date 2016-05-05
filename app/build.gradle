@@ -26,11 +26,12 @@ dependencies {
     compile 'com.android.support:design:22.2.1'
     compile 'com.android.support:support-v4:22.2.1'
     compile 'com.google.android.gms:play-services:8.4.0'
-    compile(name:'Termite-WifiP2P-API', ext:'aar')
+    compile files('libs/gson-2.2.2.jar')
+    compile(name: 'Termite-WifiP2P-API', ext: 'aar')
 }
 
-repositories{
-  flatDir{
-    dirs 'libs'
-  }
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
 }

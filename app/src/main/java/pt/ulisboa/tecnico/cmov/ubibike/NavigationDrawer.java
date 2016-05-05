@@ -25,6 +25,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.sql.DatabaseMetaData;
+import java.util.ArrayList;
+
 import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
 import pt.inesc.termite.wifidirect.SimWifiP2pDevice;
 import pt.inesc.termite.wifidirect.SimWifiP2pDeviceList;
@@ -210,7 +217,7 @@ public class NavigationDrawer extends AppCompatActivity
 
     public void addFriend(View view) {
         LinearLayout principalLayout= (LinearLayout) findViewById(R.id.idFriendsVertical);
-        LinearLayout secondaryLauout= new LinearLayout(this);
+        LinearLayout secondaryLayout= new LinearLayout(this);
         TextView tx= new TextView(this);
         EditText et= (EditText) findViewById(R.id.ADD);
 
@@ -230,8 +237,8 @@ public class NavigationDrawer extends AppCompatActivity
             params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
             params.setMargins(0, 20, 0, 10);
 
-            secondaryLauout.addView(tx, params);
-            principalLayout.addView(secondaryLauout);
+            secondaryLayout.addView(tx, params);
+            principalLayout.addView(secondaryLayout);
         }
         et.setText("");
     }
