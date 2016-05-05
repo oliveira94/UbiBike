@@ -29,7 +29,7 @@ public class InicialPage extends Fragment {
 
     View view;
     TextView usernameTextView;
-    String Aux = "";
+    String distance = "";
 
     //retrieve the bundle
 
@@ -56,13 +56,14 @@ public class InicialPage extends Fragment {
 
         usernameTextView = (TextView) view.findViewById(R.id.ageupdate);
         usernameTextView.setText("Age: " + bundleAge);
-        Aux=((UserData)this.getActivity().getApplication()).getKilo();
-        double dd= Double.valueOf(Aux);
+
+        distance = ((UserData)this.getActivity().getApplication()).getDistance();
+        double distanceValue = Double.valueOf(distance);
         DecimalFormat DF = new DecimalFormat("#.0");
-        Aux= DF.format(dd);
+        distance = DF.format(distanceValue);
 
         usernameTextView=(TextView) view.findViewById(R.id.TotalDistanceText);
-        usernameTextView.setText("Total Distance: "+Aux);
+        usernameTextView.setText("Total Distance: "+ distance);
         
         return view;
     }

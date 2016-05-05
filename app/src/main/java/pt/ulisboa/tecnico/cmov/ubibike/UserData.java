@@ -18,7 +18,7 @@ public class UserData extends Application {
     {
         this.totalDistance=distance;
     }
-    public String  getDistance()
+    public String getDistance()
     {
         return totalDistance;
     }
