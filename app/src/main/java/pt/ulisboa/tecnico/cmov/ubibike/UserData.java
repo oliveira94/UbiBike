@@ -13,6 +13,7 @@ public class UserData extends Application {
     List listOfDevices = new ArrayList();
     List listOfIPs = new ArrayList();
     List listOfFriends = new ArrayList();
+    DataBaseHelper helper = new DataBaseHelper(this);
 
     public void setDistance(String distance)
     {
@@ -110,8 +111,8 @@ public class UserData extends Application {
     }
 
     public void AddFriend(String friend) {
-        if (!listOfDevices.contains(friend)) {
-            listOfDevices.add(friend);
+        if (!listOfFriends.contains(friend)) {
+            listOfFriends.add(friend);
         }
     }
 
@@ -120,6 +121,8 @@ public class UserData extends Application {
         return listOfFriends;
     }
 
-
+    public DataBaseHelper getDB(){
+        return helper;
+    }
 
 }

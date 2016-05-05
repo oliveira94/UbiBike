@@ -113,6 +113,7 @@ public class CreateAccount extends AppCompatActivity {
 
         //put userdata in the database
         helper.insertUserData(userData);
+        helper.insertFriends(Iusername, "noFriends");
 
         Toast password = Toast.makeText(CreateAccount.this, "Account created", Toast.LENGTH_SHORT);
         password.show();

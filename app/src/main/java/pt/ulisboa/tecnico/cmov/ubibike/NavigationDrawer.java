@@ -190,6 +190,7 @@ public class NavigationDrawer extends AppCompatActivity
             } else if (id == R.id.FriendsItem) {
 
                 fragmenttransaction.replace(R.id.container, new Friends());
+
                 fragmenttransaction.commit();
 
             }else if (id == R.id.BookBikeItem) {
@@ -226,24 +227,18 @@ public class NavigationDrawer extends AppCompatActivity
         TextView tx= new TextView(this);
         EditText et= (EditText) findViewById(R.id.ADD);
 
-        String edittx= String.valueOf(et.getText().toString());
+        String newFriend = String.valueOf(et.getText().toString());
 
         //TODO
 
-        if (edittx.equals("")) {
+        if (newFriend.equals("")) {
+            Toast.makeText(NavigationDrawer.this, "Please enter a username!", Toast.LENGTH_SHORT).show();
         }else
         {
-            Gson gson = new Gson();
-
-            ((UserData) this.getApplication()).AddFriend(edittx);
-            String inputString= gson.toJson(((UserData) this.getApplication()).getListOfFriends());
-
             //insert the list of friends in the database
-            helper.insertFriends(((UserData) this.getApplication()).getUsername(), inputString);
+            helper.addFriend(((UserData) this.getApplication()).getUsername(), newFriend);
 
-            System.out.println("inputString= " + inputString);
-
-            tx.setText(edittx);
+            tx.setText(newFriend);
             tx.setTextSize(22);
             tx.setTextColor(Color.BLACK);
 
@@ -256,6 +251,15 @@ public class NavigationDrawer extends AppCompatActivity
         }
         et.setText("");
     }
+
+    public DataBaseHelper getDB(){
+        return helper;
+    }
+
+    public String getUser(){
+        return ((UserData) this.getApplication()).getUsername();
+    }
+
 
     public void ActClicked(View view){
         if (mBound) {
