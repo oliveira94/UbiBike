@@ -45,7 +45,7 @@ public class Friends extends Fragment {
         Type type = new TypeToken<ArrayList<String>>() {}.getType();
 
         DataBaseHelper helper = ((NavigationDrawer) getActivity()).getDB();
-        String user = ((NavigationDrawer) getActivity()).getUser();
+        String user = UserData.username;
 
 
         String friends = helper.getListOfFriends(user);
