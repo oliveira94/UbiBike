@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import pt.ulisboa.tecnico.cmov.ubibike.DataBaseHelper;
 import pt.ulisboa.tecnico.cmov.ubibike.NavigationDrawer;
 import pt.ulisboa.tecnico.cmov.ubibike.R;
+import pt.ulisboa.tecnico.cmov.ubibike.UserData;
 
 
 /**
@@ -43,7 +44,7 @@ public class Messages extends Fragment {
         Type type = new TypeToken<ArrayList<String>>() {}.getType();
 
         DataBaseHelper helper = ((NavigationDrawer) getActivity()).getDB();
-        String user = ((NavigationDrawer) getActivity()).getUser();
+        String user = UserData.username;
 
 
         String friends = helper.getListOfFriends(user);
