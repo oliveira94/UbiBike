@@ -39,7 +39,7 @@ public class Friends extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-
+        View view = inflater.inflate(R.layout.fragment_friends, container, false);
 
         Gson gson = new Gson();
         Type type = new TypeToken<ArrayList<String>>() {}.getType();
@@ -55,52 +55,34 @@ public class Friends extends Fragment {
             //TODO ler da base de dados os friends e imprimir os TextViews
             ArrayList<String> finalOutputString = gson.fromJson(friends, type);
             System.out.println("final output= " + finalOutputString);
-        }
 
+            for (int i = 0; i < finalOutputString.size(); i++){
+                LinearLayout linearLayoutVertical = (LinearLayout) view.findViewById(R.id.idFriendsVertical);
+                LinearLayout chatHorizontalLayout = new LinearLayout(getActivity());
 
+                //Moving the text to the new text box
+                TextView chatText = new TextView(getActivity());
+                String text = finalOutputString.get(i);
+
+                chatText.setText(text);
+                chatText.setTextSize(22);
+                chatText.setTextColor(Color.BLACK);
+
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+
+                //Setting the parameters to the intended
+                chatHorizontalLayout.setGravity(Gravity.LEFT);
+
+                //Adding the textView to the HorizontalLayout
+                chatHorizontalLayout.addView(chatText, params);
+
+                //Adding the whole HorizontalLayout to the VerticalLayout
+                linearLayoutVertical.addView(chatHorizontalLayout);
+            }
+            }
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_friends, container, false);
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-//        Gson gson = new Gson();
-//        Type type = new TypeToken<ArrayList<String>>() {}.getType();
-//
-//        DataBaseHelper helper = ((NavigationDrawer) getActivity()).getDB();
-//        String user = ((NavigationDrawer) getActivity()).getUser();
-//
-//        String friends = helper.getListOfFriends(user);
-//
-//        ArrayList<String> finalOutputString = gson.fromJson(friends, type);
-//
-//        System.out.println("final output= " + finalOutputString);
-
-//        LinearLayout linearLayoutVertical = (LinearLayout) getView().findViewById(R.id.idChatLinearVertical);
-//        LinearLayout chatHorizontalLayout = new LinearLayout(getActivity());
-//
-//        //Moving the text to the new text box
-//        TextView chatText = new TextView(this);
-//        EditText entryText = (EditText) findViewById(R.id.textEntryChat);
-//        String text = entryText.getText().toString();
-//
-//        chatText.setText(text);
-//        chatText.setTextSize(22);
-//        chatText.setTextColor(Color.BLACK);
-//
-//        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-//                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//        params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
-//
-//        //Setting the parameters to the intended
-//        chatHorizontalLayout.setGravity(Gravity.RIGHT);
-//
-//        //Adding the textView to the HorizontalLayout
-//        chatHorizontalLayout.addView(chatText, params);
-//
-//        //Adding the whole HorizontalLayout to the VerticalLayout
-//        linearLayoutVertical.addView(chatHorizontalLayout);
+        return view;
     }
 }

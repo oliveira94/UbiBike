@@ -65,6 +65,8 @@ public class NavigationDrawer extends AppCompatActivity
     private SimWifiP2pManager.Channel mChannel = null;
     private Messenger mService = null;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
