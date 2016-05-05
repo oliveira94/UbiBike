@@ -65,7 +65,6 @@ public class LogIn extends AppCompatActivity {
             Toast.makeText(LogIn.this, "You need to fill all fields!", Toast.LENGTH_SHORT).show();
             return;
         }
-        new serverRequestKilo().execute(Iusername);
         new serverRequestLogIn().execute(Iusername);
 
     }
@@ -92,6 +91,9 @@ public class LogIn extends AppCompatActivity {
             ((UserData) this.getApplication()).setName(result[0]);
             ((UserData) this.getApplication()).setPoints(Integer.parseInt(result[2]));
             ((UserData) this.getApplication()).setAge(Integer.parseInt(result[3]));
+
+            
+            new serverRequestDistance().execute(Iusername);
 
             Intent i = new Intent(this, NavigationDrawer.class);
             i.putExtra("KEY", Iusername);
@@ -138,13 +140,13 @@ public class LogIn extends AppCompatActivity {
     }
 
 
-    private class serverRequestKilo extends AsyncTask<String, Void, String> {
+    private class serverRequestDistance extends AsyncTask<String, Void, String> {
 
 
         @Override
         protected String doInBackground(String... params) {
 
-            String urlServer = "http://10.0.2.2:8080/getKilometers?username=";
+            String urlServer = "http://10.0.3.2:8080/getKilometers?username=";
             urlServer += params[0];
 
             StringBuffer result = new StringBuffer("");
@@ -170,13 +172,13 @@ public class LogIn extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            serverResponseKilo(result);
+            serverResponseDistance(result);
         }
     }
 
-    public void serverResponseKilo(String response)
+    public void serverResponseDistance(String response)
     {
-        ((UserData)this.getApplication()).setKilo(response);
+        ((UserData)this.getApplication()).setDistance(response);
 
     }
 }

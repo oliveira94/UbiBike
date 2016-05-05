@@ -9,18 +9,18 @@ import java.util.List;
 public class UserData extends Application {
 
     int age, points;
-    String name, username, password, IP, receiver,kilo;
+    String name, username, password, IP, receiver, totalDistance;
     List listOfDevices = new ArrayList();
     List listOfIPs = new ArrayList();
     List listOfFriends = new ArrayList();
 
-    public void setKilo(String kk)
+    public void setDistance(String distance)
     {
-        this.kilo=kk;
+        this.totalDistance=distance;
     }
-    public String  getKilo()
+    public String  getDistance()
     {
-        return this.kilo;
+        return totalDistance;
     }
 
     public void setAge(int age) {
