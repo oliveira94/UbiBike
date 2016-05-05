@@ -3,6 +3,8 @@ package pt.ulisboa.tecnico.cmov.ubibike;
 import android.app.Application;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +16,7 @@ public class UserData extends Application{
     public static List listOfDevices = new ArrayList();
     public static List listOfIPs = new ArrayList();
     public static List listOfFriends = new ArrayList();
-
+    public static ArrayList<LatLng> history = new ArrayList<>();
 
     //add a IP to a list of the IP in the network
     public void AddDeviceIPToList(String IP) {

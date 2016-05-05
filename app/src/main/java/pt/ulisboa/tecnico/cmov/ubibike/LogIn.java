@@ -13,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
@@ -127,6 +128,8 @@ public class LogIn extends AppCompatActivity {
 
             }catch (SocketTimeoutException e) {
                 return "FailedConnection";
+            } catch(ConnectException e) {
+                return "FailedConnection";
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -164,7 +167,9 @@ public class LogIn extends AppCompatActivity {
 
             }catch (SocketTimeoutException e) {
                 return "FailedConnection";
-            } catch (IOException e) {
+            }catch(ConnectException e) {
+                return "FailedConnection";
+            }catch (IOException e) {
                 e.printStackTrace();
             }
             return result.toString();
