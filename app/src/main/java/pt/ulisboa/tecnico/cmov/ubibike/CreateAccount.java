@@ -107,7 +107,7 @@ public class CreateAccount extends AppCompatActivity {
 
         //put userdata in the database
         helper.insertUserData(UserData.name, UserData.age, UserData.username);
-
+        helper.insertFriends(UserData.username, "noFriends");
 
         Intent i = new Intent(this, NavigationDrawer.class);
         i.putExtra("KEY", Iusername);
