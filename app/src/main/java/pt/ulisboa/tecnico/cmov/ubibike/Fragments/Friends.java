@@ -52,7 +52,6 @@ public class Friends extends Fragment {
 
         if(!friends.equals("noFriends"))
         {
-            //TODO ler da base de dados os friends e imprimir os TextViews
             ArrayList<String> finalOutputString = gson.fromJson(friends, type);
             System.out.println("final output= " + finalOutputString);
 
