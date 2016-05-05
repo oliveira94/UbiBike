@@ -65,8 +65,9 @@ public class LogIn extends AppCompatActivity {
             Toast.makeText(LogIn.this, "You need to fill all fields!", Toast.LENGTH_SHORT).show();
             return;
         }
-
+        new serverRequestKilo().execute(Iusername);
         new serverRequestLogIn().execute(Iusername);
+
     }
 
     private void serverResponse(String response) {
@@ -134,5 +135,48 @@ public class LogIn extends AppCompatActivity {
         protected void onPostExecute(String result) {
             serverResponse(result);
         }
+    }
+
+
+    private class serverRequestKilo extends AsyncTask<String, Void, String> {
+
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            String urlServer = "http://10.0.2.2:8080/getKilometers?username=";
+            urlServer += params[0];
+
+            StringBuffer result = new StringBuffer("");
+            try{
+                URL url = new URL(urlServer);
+                HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+                connection.setDoInput(true);
+                connection.setConnectTimeout(3000);
+                connection.setReadTimeout(3000);
+                connection.connect();
+                InputStream inputStream = connection.getInputStream();
+                BufferedReader rd = new BufferedReader(new InputStreamReader(inputStream));
+                String line;
+                while ((line = rd.readLine()) != null) result.append(line);
+
+            }catch (SocketTimeoutException e) {
+                return "FailedConnection";
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return result.toString();
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            serverResponseKilo(result);
+        }
+    }
+
+    public void serverResponseKilo(String response)
+    {
+        ((UserData)this.getApplication()).setKilo(response);
+
     }
 }
