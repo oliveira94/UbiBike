@@ -8,11 +8,13 @@ import java.util.List;
 
 public class UserData extends Application{
 
+
     public static int age, points;
     public static String name, username, IP, receiver, totalDistance;
     public static List listOfDevices = new ArrayList();
     public static List listOfIPs = new ArrayList();
     public static List listOfFriends = new ArrayList();
+
 
 
     public void setName(String name) {
@@ -54,8 +56,8 @@ public class UserData extends Application{
     }
 
     public void AddFriend(String friend) {
-        if (!listOfDevices.contains(friend)) {
-            listOfDevices.add(friend);
+        if (!listOfFriends.contains(friend)) {
+            listOfFriends.add(friend);
         }
     }
 
@@ -63,5 +65,6 @@ public class UserData extends Application{
     {
         return listOfFriends;
     }
+
 
 }
