@@ -4,6 +4,7 @@ package pt.ulisboa.tecnico.cmov.ubibike.Fragments;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,7 +31,7 @@ import pt.ulisboa.tecnico.cmov.ubibike.UserData;
 public class Messages extends Fragment {
 
     public Messages() {
-        // Required empty public constructor
+
     }
 
     @Override
@@ -39,6 +40,12 @@ public class Messages extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_messages, container, false);
 
+        if(UserData.searchClicked){
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+
+            ft.detach(this).remove(this).attach(this).commit();
+            UserData.searchClicked = false;
+        }
 
         Gson gson = new Gson();
         Type type = new TypeToken<ArrayList<String>>() {}.getType();
@@ -58,6 +65,7 @@ public class Messages extends Fragment {
             for (int i = 0; i < finalOutputString.size(); i++){
                 LinearLayout linearLayoutVertical = (LinearLayout) view.findViewById(R.id.linearverticalmessages);
                 LinearLayout chatHorizontalLayout = new LinearLayout(getActivity());
+                chatHorizontalLayout.setId(i); //
 
                 //Moving the text to the new text box
                 TextView chatText = new TextView(getActivity());

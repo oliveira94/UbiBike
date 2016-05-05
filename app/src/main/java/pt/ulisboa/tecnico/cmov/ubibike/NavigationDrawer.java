@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.cmov.ubibike;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -11,11 +13,13 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Messenger;
 import android.support.design.widget.NavigationView;
+import android.support.v4.media.session.MediaSessionCompatApi14;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,14 +30,19 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
 import pt.inesc.termite.wifidirect.SimWifiP2pDevice;
@@ -54,21 +63,19 @@ public class NavigationDrawer extends AppCompatActivity
 
     String user = "";
     InicialPage inicialpage = new InicialPage();
-    Points points = new Points();
     private SimWifiP2pBroadcastReceiver mReceiver;
     TextView tx;
     private String newFriend;
+    private String searchfriend;
     private LinearLayout principalLayout, secondaryLayout;
+    Messages messages;
 
     DataBaseHelper helper = new DataBaseHelper(this);
-
     public boolean mBound = false;
 
     private SimWifiP2pManager mManager = null;
     private SimWifiP2pManager.Channel mChannel = null;
     private Messenger mService = null;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,8 +121,6 @@ public class NavigationDrawer extends AppCompatActivity
         UpdateHeaderPoints.setText("Points: " + Integer.toString(points));
 
         inicialpage.setArguments(bundle); //set the bundle on the fragment
-
-
 
         fragmenttransaction.replace(R.id.container, inicialpage);
         fragmenttransaction.commit();
@@ -241,6 +246,53 @@ public class NavigationDrawer extends AppCompatActivity
             new serverRequestAddFriend().execute(UserData.username, newFriend);
         }
         friendName.setText("");
+    }
+
+    //method to search a friend after an input
+    public void searchFriendButton(View view) {
+        UserData.searchClicked = true;
+        EditText friend = (EditText)findViewById(R.id.searchfriend);
+        searchfriend = String.valueOf(friend.getText().toString());
+
+        Gson gson = new Gson();
+        Type type = new TypeToken<ArrayList<String>>() {}.getType();
+        String user = UserData.username;
+        String friends = helper.getListOfFriends(user);
+
+        if(!friends.equals("noFriends"))
+        {
+            ArrayList<String> finalOutputString = gson.fromJson(friends, type);
+            System.out.println("final output= " + finalOutputString);
+
+            for (int i = 0; i < finalOutputString.size(); i++){
+                String text = finalOutputString.get(i);
+                if(text.equals(searchfriend)){
+
+                    //Moving the text to the new text box
+                    TextView chatText = new TextView(this);
+
+                    LinearLayout linearLayoutVertical = (LinearLayout) findViewById(R.id.linearverticalmessages);
+                    LinearLayout chatHorizontalLayout = new LinearLayout(this);
+
+                    chatText.setText(text);
+                    chatText.setTextSize(22);
+                    chatText.setTextColor(Color.BLACK);
+
+                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+
+                    //Setting the parameters to the intended
+                    chatHorizontalLayout.setGravity(Gravity.CENTER);
+
+                    //Adding the textView to the HorizontalLayout
+                    chatHorizontalLayout.addView(chatText, params);
+
+                    //Adding the whole HorizontalLayout to the VerticalLayout
+                    linearLayoutVertical.addView(chatHorizontalLayout);
+                }
+            }
+        }
     }
 
 
