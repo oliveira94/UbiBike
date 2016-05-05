@@ -50,7 +50,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_alignParentBottom="true"
-                android:layout_alignParentTop="true">
+                android:layout_alignParentTop="true"
+                android:id="@+id/linearverticalmessages">
 
                 <FrameLayout
                     android:orientation="horizontal"
@@ -77,106 +78,10 @@
                         android:layout_gravity="left|center_vertical" />
                 </FrameLayout>
 
-                <FrameLayout
-                    android:orientation="horizontal"
-                    android:layout_width="fill_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginTop="20dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="2 new messages"
-                        android:id="@+id/textView6"
-                        android:layout_gravity="center" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:text="Sérgio"
-                        android:id="@+id/textView22"
-                        android:layout_gravity="left|center_vertical" />
-                </FrameLayout>
-
-                <FrameLayout
-                    android:orientation="horizontal"
-                    android:layout_width="fill_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginTop="20dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:text="Diogo"
-                        android:id="@+id/textView9"
-                        android:layout_gravity="left|center_vertical" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="2 new messages"
-                        android:id="@+id/textView8"
-                        android:layout_gravity="center" />
-                </FrameLayout>
-
-                <FrameLayout
-                    android:orientation="horizontal"
-                    android:layout_width="fill_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="20dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:text="Carlos"
-                        android:id="@+id/textView11"
-                        android:layout_gravity="left|center_vertical" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="--------"
-                        android:id="@+id/textView23"
-                        android:layout_gravity="center" />
-
-                </FrameLayout>
-
 
             </LinearLayout>
 
         </ScrollView>
-
-        <FrameLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Tiago"
-                android:id="@+id/textView24"
-                android:layout_gravity="left|center_vertical" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="--------"
-                android:id="@+id/textView25"
-                android:layout_gravity="center" />
-        </FrameLayout>
 
     </LinearLayout>
 </FrameLayout>

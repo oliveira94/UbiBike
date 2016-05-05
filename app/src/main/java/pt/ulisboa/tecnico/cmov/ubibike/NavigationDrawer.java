@@ -239,8 +239,7 @@ public class NavigationDrawer extends AppCompatActivity
         {
             //insert the list of friends in the database
 
-//            helper.insertFriends(UserData.username, inputString);
-//
+            helper.addFriend(UserData.username, newFriend);
 
             tx.setText(newFriend);
             tx.setTextSize(22);
