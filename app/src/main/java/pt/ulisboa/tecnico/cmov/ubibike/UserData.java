@@ -13,7 +13,8 @@ public class UserData extends Application{
 
 
     public static int age, points;
-    public static String name, username, IP, receiver, totalDistance;
+    public static String name, username, IP, receiver;
+    public static double totalDistance;
     public static List listOfDevices = new ArrayList();
     public static List listOfIPs = new ArrayList();
     public static ArrayList<String> listOfFriends = new ArrayList();

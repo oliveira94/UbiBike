@@ -15,13 +15,14 @@ import java.util.ArrayList;
 public class DataBaseHelper extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "dase5.db";
+    private static final String DATABASE_NAME = "dase7.db";
     private static final String TABLE_NAME_DATA = "mydata";
     private static final String TABLE_NAME_CHAT = "mychat";
     private static final String TABLE_NAME_FRIENDS = "myfriends";
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_NAME = "name";
     private static final String COLUMN_AGE = "age";
+    private static final String COLUMN_TOTALDISTANCE = "totaldistance";
     private static final String COLUMN_HISTORIC = "historic";
     private static final String COLUMN_FRIENDS = "friends";
     private static final String COLUMN_POINTS = "points";
@@ -33,7 +34,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     SQLiteDatabase db;
 
     private static final String TABLE_CREATE_DATA = "create table mydata (id integer primary key not null , " +
-       "username text not null , name text not null , points integer , age integer not null);";
+       "username text not null , name text not null , points integer , age integer not null , totaldistance real);";
 
     private static final String TABLE_CREATE_CHAT = "create table mychat (id integer primary key not null , " +
             "sender text not null , receiver text not null , message text not null);";
@@ -69,8 +70,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_NAME, name);
         values.put(COLUMN_AGE,age);
         values.put(COLUMN_USERNAME, username);
-
         values.put(COLUMN_POINTS, 0);
+        values.put(COLUMN_TOTALDISTANCE, 0);
 
         db.insert(TABLE_NAME_DATA, null, values);
         db.close();
@@ -94,7 +95,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             values.put(COLUMN_USERNAME, user);
             values.put(COLUMN_FRIENDS,friends);
             values.put(COLUMN_HISTORIC, history);
-
 
             db.insert(TABLE_NAME_FRIENDS, null, values);
             db.close();
@@ -130,7 +130,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.update(TABLE_NAME_FRIENDS, values, COLUMN_USERNAME + "='" + user + "'", null);
         db.close();
     }
-
 
     public void addTrip(String user, String newTrip){
         Gson gson = new Gson();
@@ -242,6 +241,57 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             while (cursor1.moveToNext());
         }
         return y;
+    }
+
+    public void AddNewDistance(String username, double distance){
+        db = this.getReadableDatabase();
+        double TotalDistance = 0.0;
+
+        String query1 = "select username, totaldistance from "+ TABLE_NAME_DATA;
+        Cursor cursor1;
+        cursor1 = db.rawQuery(query1, null);
+        String x;
+
+        if(cursor1.moveToFirst()){
+            do{
+                x = cursor1.getString(0);
+                if(x.equals(username)){
+                    TotalDistance = cursor1.getDouble(1);
+                    break;
+                }
+            }
+            while (cursor1.moveToNext());
+        }
+        TotalDistance = TotalDistance + distance;
+
+        db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(COLUMN_TOTALDISTANCE, TotalDistance);
+        db.update(TABLE_NAME_DATA, values, COLUMN_USERNAME + "='" + username + "'", null);
+        db.close();
+    }
+
+    public double getTotalDistance(String username){
+        db = this.getReadableDatabase();
+        double TotalDistance = 0.0;
+
+        String query1 = "select username, totaldistance from "+ TABLE_NAME_DATA;
+        Cursor cursor1;
+        cursor1 = db.rawQuery(query1, null);
+        String x;
+
+        if(cursor1.moveToFirst()){
+            do{
+                x = cursor1.getString(0);
+                if(x.equals(username)){
+                    TotalDistance = cursor1.getDouble(1);
+                    break;
+                }
+            }
+            while (cursor1.moveToNext());
+        }
+        return TotalDistance;
     }
 
     //get points from a username
