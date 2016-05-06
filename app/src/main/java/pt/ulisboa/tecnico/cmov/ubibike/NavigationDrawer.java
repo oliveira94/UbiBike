@@ -382,7 +382,15 @@ public class NavigationDrawer extends AppCompatActivity
         UserData.points = Integer.valueOf((String) profileData.get("points"));
         UserData.totalDistance = (String)profileData.get("distance");
         UserData.history = (ArrayList<Object>) profileData.get("history");
-        UserData.listOfFriends = (ArrayList) profileData.get("friendsList");
+        UserData.listOfFriends = (ArrayList<String>) profileData.get("friendsList");
+
+        helper.insertUserData(UserData.name, UserData.age, UserData.username);
+        helper.insertFriends(UserData.username,"noFriends");
+
+        for (String friend : UserData.listOfFriends)
+            helper.addFriend(UserData.username, friend);
+
+        //TODO helper.addHistory
 
         Intent intent = new Intent(this, SimWifiP2pService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);

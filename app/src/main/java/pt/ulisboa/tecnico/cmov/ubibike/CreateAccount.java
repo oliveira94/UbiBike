@@ -112,7 +112,6 @@ public class CreateAccount extends AppCompatActivity {
         helper.insertFriends(UserData.username, "noFriends");
 
         Intent i = new Intent(this, NavigationDrawer.class);
-        i.putExtra("KEY", Iusername);
         startActivity(i);
 
     }
