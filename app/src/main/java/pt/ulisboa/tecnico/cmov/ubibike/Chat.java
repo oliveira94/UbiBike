@@ -50,9 +50,7 @@ public class Chat extends Activity{
     int port = 10001;
 
     boolean DontWriteAnything = true;
-
     public static final String TAG = "msgsender";
-    private boolean mBound = false;
     private SimWifiP2pSocketServer mSrvSocket = null;
     private SimWifiP2pSocket mCliSocket = null;
     private TextView mTextInput;
