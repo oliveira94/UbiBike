@@ -92,12 +92,9 @@ public class LogIn extends AppCompatActivity {
             UserData.name = result[0];
             UserData.points = Integer.parseInt(result[2]);
             UserData.age = Integer.parseInt(result[3]);
+            UserData.username = Iusername;
 
-
-//            new serverRequestDistance().execute(Iusername);
-//
             Intent i = new Intent(this, NavigationDrawer.class);
-            i.putExtra("KEY", Iusername);
             startActivity(i);
         } else
             Toast.makeText(LogIn.this, "Password is wrong!", Toast.LENGTH_SHORT).show();
@@ -140,49 +137,5 @@ public class LogIn extends AppCompatActivity {
         protected void onPostExecute(String result) {
             serverResponse(result);
         }
-    }
-
-
-    private class serverRequestDistance extends AsyncTask<String, Void, String> {
-
-
-        @Override
-        protected String doInBackground(String... params) {
-
-            String urlServer = "http://10.0.3.2:8080/getKilometers?username=";
-            urlServer += params[0];
-
-            StringBuffer result = new StringBuffer("");
-            try{
-                URL url = new URL(urlServer);
-                HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-                connection.setDoInput(true);
-                connection.setConnectTimeout(3000);
-                connection.setReadTimeout(3000);
-                connection.connect();
-                InputStream inputStream = connection.getInputStream();
-                BufferedReader rd = new BufferedReader(new InputStreamReader(inputStream));
-                String line;
-                while ((line = rd.readLine()) != null) result.append(line);
-
-            }catch (SocketTimeoutException e) {
-                return "FailedConnection";
-            }catch(ConnectException e) {
-                return "FailedConnection";
-            }catch (IOException e) {
-                e.printStackTrace();
-            }
-            return result.toString();
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            serverResponseDistance(result);
-        }
-    }
-
-    public void serverResponseDistance(String response)
-    {
-        UserData.totalDistance = response;
     }
 }

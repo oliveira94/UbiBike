@@ -39,23 +39,18 @@ public class InicialPage extends Fragment {
                              Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.fragment_inicial_page, container, false);
-        Bundle bundle = getArguments();
 
-        //get the data on the bundle
-        String bundleText = bundle.getString("USER");
-        String bundlePoints = bundle.getString("POINTS");
-        String bundleAge = bundle.getString("AGE");
 
 
         //find view & set the text
         usernameTextView = (TextView) view.findViewById(R.id.usernametext);
-        usernameTextView.setText(bundleText);
+        usernameTextView.setText(UserData.username);
 
         usernameTextView = (TextView) view.findViewById(R.id.pointsText);
-        usernameTextView.setText("Current Points: " + bundlePoints);
+        usernameTextView.setText("Current Points: " + UserData.points);
 
         usernameTextView = (TextView) view.findViewById(R.id.ageupdate);
-        usernameTextView.setText("Age: " + bundleAge);
+        usernameTextView.setText("Age: " + UserData.age);
 
         distance = UserData.totalDistance;
 //        double distanceValue = Double.valueOf(distance);

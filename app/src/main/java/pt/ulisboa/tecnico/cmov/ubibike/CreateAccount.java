@@ -147,6 +147,7 @@ public class CreateAccount extends AppCompatActivity {
             }
             catch (IOException e) {
                 e.printStackTrace();
+                return "FailedConnection";
             }
             return result.toString();
         }
