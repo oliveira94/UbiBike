@@ -13,13 +13,17 @@ public class UserData extends Application{
 
 
     public static int age, points;
-    public static String name, username, IP, receiver, totalDistance;
+    public static String name, username, IP, receiver;
+    public static double totalDistance;
     public static List listOfDevices = new ArrayList();
     public static List listOfIPs = new ArrayList();
     public static ArrayList<String> listOfFriends = new ArrayList();
     public static ArrayList<Object> history = new ArrayList<>();
     public static boolean searchClicked = false;
     public static SecretKey secretKey;
+    public static boolean beaconAround = false;
+    public static boolean route = false;
+
 
     //add a IP to a list of the IP in the network
     public void AddDeviceIPToList(String IP) {
@@ -56,6 +60,8 @@ public class UserData extends Application{
             listOfFriends.add(friend);
         }
     }
+
+
 
     public List getListOfFriends()
     {

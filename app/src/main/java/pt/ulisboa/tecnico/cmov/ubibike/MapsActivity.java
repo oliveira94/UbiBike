@@ -40,9 +40,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ArrayList<LatLng>  markerPoints= new ArrayList<LatLng>();
     private Location currentLocation = new Location ("current locaction");
     private double distance = 0.0;
+    private int points=0;
     TextView tx;
     private Map<ArrayList<LatLng>,String> coordinates = new HashMap<>();
-    //DataBaseHelper database = new DatabaseHelper (this);
+    DataBaseHelper helper = new DataBaseHelper(this);
 
     public MapsActivity() {
 
@@ -71,9 +72,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onLocationChanged(Location location) {
 
-                currentLocation=location;
+                currentLocation = location;
                 LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
-                if (markerPoints.size()!=0)
+                if (markerPoints.size() != 0)
                 {
 
                     tx.setText(String.valueOf(distance() + "Km"));
@@ -126,31 +127,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onPause ()
     {
         super.onPause();
-        Calendar calendar= Calendar.getInstance();
-        SimpleDateFormat dateFormat= new SimpleDateFormat("dd-MM-yyyy HH:mm");
-        String date= dateFormat.format(calendar.getTime());
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        String date = dateFormat.format(calendar.getTime());
         coordinates.put(markerPoints, date);
         UserData.history.add(coordinates);
-        // METODO PARA ENVIAR PARA A DB DO SERVER
-        //METODO PARA GUARDAR OS DADOS NA DB LOCAL
+        calculatePoints();
+        UserData.points = points;
+        UserData.totalDistance += distance;
+        helper.AddNewDistance(UserData.username,distance);
+        //TODO PARA ENVIAR PARA O SERVER
 
 
+    }
+    //metodo para calcular os pontos dados a um utilizador consoante os kilometros feitos
+    public void calculatePoints()
+    {
+        points = (int)(distance/2);
     }
     //metodo para calcular a distancia com base nas coordenadas (currentLocantion - lastLocation)
     public double distance()
     {
-        double AuxDistance=0.0;
-        int lastLocationPosition=markerPoints.size()-1;
-        Location lastLocation= new Location ("lastLocation");
+        double AuxDistance = 0.0;
+        int lastLocationPosition = markerPoints.size()-1;
+        Location lastLocation = new Location ("lastLocation");
         lastLocation.setLongitude(markerPoints.get(lastLocationPosition).longitude);
         lastLocation.setLatitude(markerPoints.get(lastLocationPosition).latitude);
-        AuxDistance=lastLocation.distanceTo(currentLocation);
-        AuxDistance=AuxDistance/1000;
-        DecimalFormat decimalFormat= new DecimalFormat("#.0");
-        String auxFormat=decimalFormat.format(AuxDistance);
-
-        AuxDistance=Double.valueOf(auxFormat);
-
-        return distance+=AuxDistance;
+        AuxDistance = lastLocation.distanceTo(currentLocation);
+        AuxDistance = AuxDistance/1000;
+        DecimalFormat decimalFormat = new DecimalFormat("#.0");
+        String auxFormat = decimalFormat.format(AuxDistance);
+        AuxDistance = Double.valueOf(auxFormat);
+        return distance += AuxDistance;
     }
 }
