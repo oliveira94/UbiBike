@@ -390,7 +390,7 @@ public class NavigationDrawer extends AppCompatActivity
         UserData.name = (String) profileData.get("name");
         UserData.age = Integer.valueOf((String)profileData.get("age"));
         UserData.points = Integer.valueOf((String) profileData.get("points"));
-        UserData.totalDistance = (Double)profileData.get("distance");
+        UserData.totalDistance = Double.valueOf((String) profileData.get("distance"));
         UserData.history = (ArrayList<Object>) profileData.get("history");
         UserData.listOfFriends = (ArrayList<String>) profileData.get("friendsList");
 
@@ -424,9 +424,6 @@ public class NavigationDrawer extends AppCompatActivity
         TextView UpdateHeaderPoints = (TextView)findViewById(R.id.headerpoints);
         String points = "Points: " + UserData.points;
         UpdateHeaderPoints.setText(points);
-
-
-
 
         fragmenttransaction.replace(R.id.container, inicialpage);
         fragmenttransaction.commit();

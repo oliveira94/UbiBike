@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class DataBaseHelper extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "dase7.db";
+    private static final String DATABASE_NAME = "dase9.db";
     private static final String TABLE_NAME_DATA = "mydata";
     private static final String TABLE_NAME_CHAT = "mychat";
     private static final String TABLE_NAME_FRIENDS = "myfriends";
@@ -70,7 +70,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_NAME, name);
         values.put(COLUMN_AGE,age);
         values.put(COLUMN_USERNAME, username);
-        values.put(COLUMN_POINTS, 0);
+        values.put(COLUMN_POINTS, 100);
         values.put(COLUMN_TOTALDISTANCE, 0);
 
         db.insert(TABLE_NAME_DATA, null, values);
@@ -242,6 +242,40 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
         return y;
     }
+
+
+    //if is a add points AddOrSub is true
+    public void ChangePoints(String username, int points){
+        db = this.getReadableDatabase();
+        int updatepoints = 0;
+
+        String query1 = "select username, points from "+ TABLE_NAME_DATA;
+        Cursor cursor1;
+        cursor1 = db.rawQuery(query1, null);
+        String x;
+
+        if(cursor1.moveToFirst()){
+            do{
+                x = cursor1.getString(0);
+                if(x.equals(username)){
+                    updatepoints = cursor1.getInt(1);
+                    break;
+                }
+            }
+            while (cursor1.moveToNext());
+        }
+
+            updatepoints = updatepoints + points;
+
+
+        db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(COLUMN_POINTS, updatepoints);
+        db.update(TABLE_NAME_DATA, values, COLUMN_USERNAME + "='" + username + "'", null);
+        db.close();
+    }
+
 
     public void AddNewDistance(String username, double distance){
         db = this.getReadableDatabase();

@@ -59,28 +59,6 @@
                 android:layout_height="match_parent"
                 android:id="@+id/idChatLinearVertical">
 
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="right"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginRight="10dp"
-                    android:id="@+id/sentHorizontalLayoutChat">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:text="Olá"
-                        android:id="@+id/textView27" />
-                </LinearLayout>
-
-                <EditText
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/output" />
-
             </LinearLayout>
         </ScrollView>
 

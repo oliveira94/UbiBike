@@ -49,13 +49,16 @@ public class Chat extends Activity{
     String IP = "";
     int port = 10001;
 
+    //false if is message, true if is points
+    boolean MessageOrPoints = false;
+
     boolean DontWriteAnything = true;
     public static final String TAG = "msgsender";
     private SimWifiP2pSocketServer mSrvSocket = null;
     private SimWifiP2pSocket mCliSocket = null;
     private TextView mTextInput;
     private TextView pointInput;
-    private TextView mTextOutput ;
+    //private TextView mTextOutput ;
     private SimWifiP2pBroadcastReceiver mReceiver;
 
     @Override
@@ -71,8 +74,8 @@ public class Chat extends Activity{
 
         mTextInput = (TextView)findViewById(R.id.textEntryChat);
         pointInput = (TextView)findViewById(R.id.entrypoints);
-        mTextOutput = (TextView) findViewById(R.id.output);
-        mTextOutput.setText("");
+        //mTextOutput = (TextView) findViewById(R.id.output);
+        //mTextOutput.setText("");
 
     }
 
@@ -100,6 +103,7 @@ public class Chat extends Activity{
     public void sendClickedChat(View view) {
 
         DontWriteAnything = false;
+
 
         // spawn the chat server background task
         new OutgoingCommTask().executeOnExecutor(
@@ -269,38 +273,18 @@ public class Chat extends Activity{
                 AsyncTask.THREAD_POOL_EXECUTOR,
                 pointInput.getText().toString());
 
-        LinearLayout linearLayoutVertical = (LinearLayout) findViewById(R.id.idChatLinearVertical);
-        LinearLayout chatHorizontalLayout = new LinearLayout(this);
+        MessageOrPoints = true;
 
         //Moving the text to the new text box
         TextView chatText = new TextView(this);
         EditText entryText = (EditText) findViewById(R.id.entrypoints);
-        String text = entryText.getText().toString();
+        String pointstext = entryText.getText().toString();
+        int points = Integer.parseInt(pointstext);
+        UserData.points -= points;
+        helper.ChangePoints(user, -points);
+        System.out.println(UserData.points);
+        MessageOrPoints = false;
 
-        //update the exchangeMessages
-        exchangeMessages.setSender(user);
-        exchangeMessages.setMessage(text);
-        exchangeMessages.setReceiver(receiver);
-
-        //put the message in the database
-        helper.sendNewMessage(exchangeMessages);
-
-        chatText.setText(text);
-        chatText.setTextSize(22);
-        chatText.setTextColor(Color.BLACK);
-
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
-
-        //Setting the parameters to the intended
-        chatHorizontalLayout.setGravity(Gravity.RIGHT);
-
-        //Adding the textView to the HorizontalLayout
-        chatHorizontalLayout.addView(chatText, params);
-
-        //Adding the whole HorizontalLayout to the VerticalLayout
-        linearLayoutVertical.addView(chatHorizontalLayout);
     }
 
     public class IncommingCommTask extends AsyncTask<Void, String, Void> {
@@ -345,12 +329,24 @@ public class Chat extends Activity{
 
         @Override
         protected void onProgressUpdate(String... values) {
-            mTextOutput.append(values[0] + "\n");
-            String[] result = values[0].split(":");
-            //where i have the message that will be sent to the other user
-            UpdateOtherUserScreen(result[1], result[0]);
-            Toast toast = Toast.makeText(Chat.this, "passed on progress update" , Toast.LENGTH_SHORT);
-            toast.show();
+            if(!MessageOrPoints){
+                //mTextOutput.append(values[0] + "\n");
+                String[] result = values[0].split(":");
+                //where i have the message that will be sent to the other user
+                UpdateOtherUserScreen(result[1], result[0]);
+                Toast toast = Toast.makeText(Chat.this, "passed on progress update" , Toast.LENGTH_SHORT);
+                toast.show();
+            }
+            else
+            {
+                String[] result = values[0].split(":");
+                String pointsText = result[1];
+                int points = Integer.parseInt(pointsText);
+                UserData.points += points;
+                helper.ChangePoints(user, points);
+                Toast toast = Toast.makeText(Chat.this, UserData.points, Toast.LENGTH_SHORT);
+                toast.show();
+            }
         }
     }
 
@@ -358,7 +354,7 @@ public class Chat extends Activity{
         //
         @Override
         protected void onPreExecute() {
-            mTextOutput.setText("Connecting...");
+            //mTextOutput.setText("Connecting...");
         }
 
         @Override
@@ -381,7 +377,7 @@ public class Chat extends Activity{
         @Override
         protected void onPostExecute(String result) {
             if (result != null) {
-                mTextOutput.setText(result);
+               // mTextOutput.setText(result);
             }
         }
     }
@@ -412,7 +408,7 @@ public class Chat extends Activity{
         protected void onPostExecute(Void result) {
             mTextInput.setText("");
             if (result != null) {
-                mTextOutput.setText("sfsdfsdfsdfsdfdsfs");//get message
+               // mTextOutput.setText("sfsdfsdfsdfsdfdsfs");//get message
             }
         }
     }

@@ -29,7 +29,7 @@ public class InicialPage extends Fragment {
 
     View view;
     TextView usernameTextView;
-    String distance = "";
+    double distance = 0.0;
 
     //retrieve the bundle
 
