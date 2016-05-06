@@ -22,6 +22,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_NAME = "name";
     private static final String COLUMN_AGE = "age";
+    private static final String COLUMN_HISTORIC = "historic";
     private static final String COLUMN_FRIENDS = "friends";
     private static final String COLUMN_POINTS = "points";
     private static final String COLUMN_USERNAME = "username";
@@ -38,7 +39,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             "sender text not null , receiver text not null , message text not null);";
 
     private static final String TABLE_CREATE_FRIENDS = "create table myfriends (id integer primary key not null , " +
-            "username text not null , friends text);";
+            "username text not null , friends text , historic text);";
 
     public DataBaseHelper(Context context){
         super(context, DATABASE_NAME,null, DATABASE_VERSION);
@@ -64,11 +65,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         int counter = cursor.getCount();
 
-
         values.put(COLUMN_ID, counter);
         values.put(COLUMN_NAME, name);
         values.put(COLUMN_AGE,age);
-        values.put(COLUMN_USERNAME,username);
+        values.put(COLUMN_USERNAME, username);
 
         values.put(COLUMN_POINTS, 0);
 
@@ -77,7 +77,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public void insertFriends(String user, String friends){
+    public void insertFriendsAndHistoric(String user, String friends, String historic){
         db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -89,6 +89,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_ID, counter);
         values.put(COLUMN_USERNAME, user);
         values.put(COLUMN_FRIENDS,friends);
+        values.put(COLUMN_HISTORIC, historic);
 
         db.insert(TABLE_NAME_FRIENDS, null, values);
         db.close();
@@ -116,6 +117,28 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+
+    public void addTrip(String user, String newTrip){
+        Gson gson = new Gson();
+        Type type = new TypeToken<ArrayList<String>>() {}.getType();
+        ArrayList<String> tripList;
+        String listOfTrips = getListOfFriends(user);
+
+        if(listOfTrips.equals("noTrips"))
+            tripList = new ArrayList<>();
+        else
+            tripList = gson.fromJson(listOfTrips, type);
+
+        tripList.add(newTrip);
+        String newFriendsList= gson.toJson(tripList);
+
+        db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_HISTORIC, newFriendsList);
+        db.update(TABLE_NAME_FRIENDS, values, COLUMN_USERNAME + "='" + user + "'", null);
+        db.close();
+    }
+
     public String getListOfFriends(String user){
         db = this.getReadableDatabase();
         String friendsList = "noFriends";
@@ -138,6 +161,30 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         return friendsList;
     }
+
+    public String getListOfTrips(String user){
+        db = this.getReadableDatabase();
+        String tripsList = "noTrips";
+
+        String query1 = "select username, historic from "+ TABLE_NAME_FRIENDS;
+        Cursor cursor1;
+        cursor1 = db.rawQuery(query1, null);
+        String x;
+
+        if(cursor1.moveToFirst()){
+            do{
+                x = cursor1.getString(0);
+                if(x.equals(user)){
+                    tripsList = cursor1.getString(1);
+                    break;
+                }
+            }
+            while (cursor1.moveToNext());
+        }
+
+        return tripsList;
+    }
+
 
     //method to store a message between a sender and a receiver in the database
     public void sendNewMessage(ExchangeMessages exchangeMessages){

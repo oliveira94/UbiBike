@@ -468,6 +468,7 @@ public class NavigationDrawer extends AppCompatActivity
             String devstr = "" + deviceName + " (" +
                     ((device == null) ? "??" : device.getVirtIp()) + ")\n";
             peersStr.append(devstr);
+
             ((UserData) this.getApplication()).AddDevicesNameToList(deviceName);
             ((UserData) this.getApplication()).AddDeviceIPToList(device.getVirtIp());
             ((UserData) this.getApplication()).GetDeviceIP(deviceName);
