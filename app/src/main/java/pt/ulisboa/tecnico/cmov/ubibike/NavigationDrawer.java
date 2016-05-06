@@ -38,6 +38,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
@@ -45,6 +46,7 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 
 import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
@@ -393,7 +395,7 @@ public class NavigationDrawer extends AppCompatActivity
         UserData.listOfFriends = (ArrayList<String>) profileData.get("friendsList");
 
         helper.insertUserData(UserData.name, UserData.age, UserData.username);
-        helper.insertFriendsAndHistory(UserData.username,"noFriends", "noTrips");
+        helper.insertFriendsAndHistory(UserData.username, "noFriends", "noTrips");
 
         for (String friend : UserData.listOfFriends)
             helper.addFriend(UserData.username, friend);
@@ -489,7 +491,30 @@ public class NavigationDrawer extends AppCompatActivity
             ((UserData) this.getApplication()).AddDeviceIPToList(device.getVirtIp());
             ((UserData) this.getApplication()).GetDeviceIP(deviceName);
             ((UserData) this.getApplication()).GetName(UserData.IP);
+
         }
+
+        if (devices.getDeviceList().size()!=0)
+        {
+
+            detectBeacon(devices);
+        }
+
+
+
+    }
+
+    public void detectBeacon(SimWifiP2pDeviceList devices)
+    {
+
+        String device= devices.getDeviceList().toString();
+        int AA=0;
+         if (device.contains("Beacon"))
+         {
+             Intent intent= new Intent (this, MapsActivity.class);
+             startActivity(intent);
+         }
+
     }
 
     @Override

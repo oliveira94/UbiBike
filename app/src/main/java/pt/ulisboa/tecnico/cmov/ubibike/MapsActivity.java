@@ -139,12 +139,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //metodo para calcular a distancia com base nas coordenadas (currentLocantion - lastLocation)
     public double distance()
     {
+        double AuxDistance=0.0;
         int lastLocationPosition=markerPoints.size()-1;
         Location lastLocation= new Location ("lastLocation");
         lastLocation.setLongitude(markerPoints.get(lastLocationPosition).longitude);
         lastLocation.setLatitude(markerPoints.get(lastLocationPosition).latitude);
-        distance+=lastLocation.distanceTo(currentLocation);
+        AuxDistance=lastLocation.distanceTo(currentLocation);
+        AuxDistance=AuxDistance/1000;
+        DecimalFormat decimalFormat= new DecimalFormat("#.0");
+        String auxFormat=decimalFormat.format(AuxDistance);
 
-        return distance;
+        AuxDistance=Double.valueOf(auxFormat);
+
+        return distance+=AuxDistance;
     }
 }
