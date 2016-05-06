@@ -40,6 +40,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ArrayList<LatLng>  markerPoints= new ArrayList<LatLng>();
     private Location currentLocation = new Location ("current locaction");
     private double distance = 0.0;
+    private int points=0;
     TextView tx;
     private Map<ArrayList<LatLng>,String> coordinates = new HashMap<>();
     //DataBaseHelper database = new DatabaseHelper (this);
@@ -131,10 +132,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String date= dateFormat.format(calendar.getTime());
         coordinates.put(markerPoints, date);
         UserData.history.add(coordinates);
+        calculatePoints();
+        //METODO para enviar os pontos para BD
         // METODO PARA ENVIAR PARA A DB DO SERVER
         //METODO PARA GUARDAR OS DADOS NA DB LOCAL
 
 
+    }
+    //metodo para calcular os pontos dados a um utilizador consoante os kilometros feitos
+    public void calculatePoints()
+    {
+        points=(int)(distance/2);
     }
     //metodo para calcular a distancia com base nas coordenadas (currentLocantion - lastLocation)
     public double distance()
