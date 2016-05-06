@@ -390,7 +390,7 @@ public class NavigationDrawer extends AppCompatActivity
         UserData.name = (String) profileData.get("name");
         UserData.age = Integer.valueOf((String)profileData.get("age"));
         UserData.points = Integer.valueOf((String) profileData.get("points"));
-        UserData.totalDistance = (String)profileData.get("distance");
+        UserData.totalDistance = (Double)profileData.get("distance");
         UserData.history = (ArrayList<Object>) profileData.get("history");
         UserData.listOfFriends = (ArrayList<String>) profileData.get("friendsList");
 
@@ -500,19 +500,18 @@ public class NavigationDrawer extends AppCompatActivity
             detectBeacon(devices);
         }
 
-
-
     }
 
     public void detectBeacon(SimWifiP2pDeviceList devices)
     {
 
         String device= devices.getDeviceList().toString();
-        int AA=0;
          if (device.contains("Beacon"))
          {
-             Intent intent= new Intent (this, MapsActivity.class);
-             startActivity(intent);
+             UserData.beaconAround = true;
+         }else
+         {
+             UserData.beaconAround = false;
          }
 
     }

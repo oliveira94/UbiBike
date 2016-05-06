@@ -72,9 +72,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onLocationChanged(Location location) {
 
-                currentLocation=location;
+                currentLocation = location;
                 LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
-                if (markerPoints.size()!=0)
+                if (markerPoints.size() != 0)
                 {
 
                     tx.setText(String.valueOf(distance() + "Km"));
@@ -127,38 +127,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onPause ()
     {
         super.onPause();
-        Calendar calendar= Calendar.getInstance();
-        SimpleDateFormat dateFormat= new SimpleDateFormat("dd-MM-yyyy HH:mm");
-        String date= dateFormat.format(calendar.getTime());
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        String date = dateFormat.format(calendar.getTime());
         coordinates.put(markerPoints, date);
         UserData.history.add(coordinates);
         calculatePoints();
-        //METODO para enviar os pontos para BD
-        // METODO PARA ENVIAR PARA A DB DO SERVER
-        //METODO PARA GUARDAR OS DADOS NA DB LOCAL
+        UserData.points = points;
+        UserData.totalDistance += distance;
+
+        //TODO para enviar os pontos para BD
+        //TODO PARA ENVIAR PARA A DB DO SERVER
 
 
     }
     //metodo para calcular os pontos dados a um utilizador consoante os kilometros feitos
     public void calculatePoints()
     {
-        points=(int)(distance/2);
+        points = (int)(distance/2);
     }
     //metodo para calcular a distancia com base nas coordenadas (currentLocantion - lastLocation)
     public double distance()
     {
-        double AuxDistance=0.0;
-        int lastLocationPosition=markerPoints.size()-1;
-        Location lastLocation= new Location ("lastLocation");
+        double AuxDistance = 0.0;
+        int lastLocationPosition = markerPoints.size()-1;
+        Location lastLocation = new Location ("lastLocation");
         lastLocation.setLongitude(markerPoints.get(lastLocationPosition).longitude);
         lastLocation.setLatitude(markerPoints.get(lastLocationPosition).latitude);
-        AuxDistance=lastLocation.distanceTo(currentLocation);
-        AuxDistance=AuxDistance/1000;
-        DecimalFormat decimalFormat= new DecimalFormat("#.0");
-        String auxFormat=decimalFormat.format(AuxDistance);
-
-        AuxDistance=Double.valueOf(auxFormat);
-
-        return distance+=AuxDistance;
+        AuxDistance = lastLocation.distanceTo(currentLocation);
+        AuxDistance = AuxDistance/1000;
+        DecimalFormat decimalFormat = new DecimalFormat("#.0");
+        String auxFormat = decimalFormat.format(AuxDistance);
+        AuxDistance = Double.valueOf(auxFormat);
+        return distance += AuxDistance;
     }
 }
