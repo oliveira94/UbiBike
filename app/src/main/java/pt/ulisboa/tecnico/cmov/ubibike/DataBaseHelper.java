@@ -77,7 +77,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public void insertFriendsAndHistoric(String user, String friends, String historic){
+    public void insertFriendsAndHistory(String user, String friends, String history){
         db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -93,7 +93,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             values.put(COLUMN_ID, counter);
             values.put(COLUMN_USERNAME, user);
             values.put(COLUMN_FRIENDS,friends);
-            values.put(COLUMN_HISTORIC, historic);
+            values.put(COLUMN_HISTORIC, history);
 
 
             db.insert(TABLE_NAME_FRIENDS, null, values);
@@ -136,7 +136,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Gson gson = new Gson();
         Type type = new TypeToken<ArrayList<String>>() {}.getType();
         ArrayList<String> tripList;
-        String listOfTrips = getListOfFriends(user);
+        String listOfTrips = getListOfTrips(user);
 
         if(listOfTrips.equals("noTrips"))
             tripList = new ArrayList<>();
@@ -144,11 +144,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             tripList = gson.fromJson(listOfTrips, type);
 
         tripList.add(newTrip);
-        String newFriendsList= gson.toJson(tripList);
+        String newTripsList= gson.toJson(tripList);
 
         db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(COLUMN_HISTORIC, newFriendsList);
+        values.put(COLUMN_HISTORIC, newTripsList);
         db.update(TABLE_NAME_FRIENDS, values, COLUMN_USERNAME + "='" + user + "'", null);
         db.close();
     }
