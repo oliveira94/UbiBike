@@ -312,7 +312,7 @@ public class NavigationDrawer extends AppCompatActivity
 
     private void serverResponseAddFriend(String result)
     {
-        if (result.equals("true"))
+        if (result.equals("success"))
         {
             helper.addFriend(UserData.username, newFriend);
             Toast.makeText(NavigationDrawer.this, "User added successfully!", Toast.LENGTH_SHORT).show();
@@ -326,6 +326,14 @@ public class NavigationDrawer extends AppCompatActivity
 
             secondaryLayout.addView(tx, params);
             principalLayout.addView(secondaryLayout);
+        }
+        else if (result.equals("alreadyFriend"))
+        {
+            Toast.makeText(NavigationDrawer.this, "That user is already your friend!", Toast.LENGTH_SHORT).show();
+        }
+        else if (result.equals("yourself"))
+        {
+            Toast.makeText(NavigationDrawer.this, "You can't friend yourself!", Toast.LENGTH_SHORT).show();
         }
         else if(result.equals("false"))
         {

@@ -59,6 +59,9 @@ public class InicialPage extends Fragment {
 
         usernameTextView=(TextView) view.findViewById(R.id.TotalDistanceText);
         usernameTextView.setText("Total Distance: "+ distance);
+
+        usernameTextView = (TextView) view.findViewById(R.id.NumberFriendsText);
+        usernameTextView.setText("Number of Friends: " + UserData.listOfFriends.size());
         
         return view;
     }
