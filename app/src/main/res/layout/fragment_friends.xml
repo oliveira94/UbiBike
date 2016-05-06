@@ -29,14 +29,7 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentTop="true">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="João"
-                    android:id="@+id/textView1"
-                    android:layout_gravity="left|center_vertical"></TextView>
-            </LinearLayout>
+        </LinearLayout>
 
     </LinearLayout>
     </ScrollView>

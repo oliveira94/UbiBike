@@ -312,7 +312,7 @@ public class NavigationDrawer extends AppCompatActivity
 
     private void serverResponseAddFriend(String result)
     {
-        if (result.equals("true"))
+        if (result.equals("success"))
         {
             helper.addFriend(UserData.username, newFriend);
             Toast.makeText(NavigationDrawer.this, "User added successfully!", Toast.LENGTH_SHORT).show();
@@ -326,6 +326,14 @@ public class NavigationDrawer extends AppCompatActivity
 
             secondaryLayout.addView(tx, params);
             principalLayout.addView(secondaryLayout);
+        }
+        else if (result.equals("alreadyFriend"))
+        {
+            Toast.makeText(NavigationDrawer.this, "That user is already your friend!", Toast.LENGTH_SHORT).show();
+        }
+        else if (result.equals("yourself"))
+        {
+            Toast.makeText(NavigationDrawer.this, "You can't friend yourself!", Toast.LENGTH_SHORT).show();
         }
         else if(result.equals("false"))
         {
@@ -382,7 +390,15 @@ public class NavigationDrawer extends AppCompatActivity
         UserData.points = Integer.valueOf((String) profileData.get("points"));
         UserData.totalDistance = (String)profileData.get("distance");
         UserData.history = (ArrayList<Object>) profileData.get("history");
-        UserData.listOfFriends = (ArrayList) profileData.get("friendsList");
+        UserData.listOfFriends = (ArrayList<String>) profileData.get("friendsList");
+
+        helper.insertUserData(UserData.name, UserData.age, UserData.username);
+        helper.insertFriends(UserData.username,"noFriends");
+
+        for (String friend : UserData.listOfFriends)
+            helper.addFriend(UserData.username, friend);
+
+        //TODO helper.addHistory
 
         Intent intent = new Intent(this, SimWifiP2pService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);

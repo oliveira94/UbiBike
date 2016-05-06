@@ -5,6 +5,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class UserData extends Application{
     public static String name, username, IP, receiver, totalDistance;
     public static List listOfDevices = new ArrayList();
     public static List listOfIPs = new ArrayList();
-    public static List listOfFriends = new ArrayList();
+    public static ArrayList<String> listOfFriends = new ArrayList();
     public static ArrayList<Object> history = new ArrayList<>();
     public static boolean searchClicked = false;
 

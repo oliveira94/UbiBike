@@ -81,18 +81,32 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        String query = "select * from myfriends";
-        Cursor cursor = db.rawQuery(query, null);
+        if(friends.equals("noFriends"))
+        {
 
-        int counter = cursor.getCount();
+            String query = "select * from myfriends";
+            Cursor cursor = db.rawQuery(query, null);
+            db.delete(TABLE_NAME_FRIENDS, COLUMN_USERNAME + "='" + user + "'", null);
 
-        values.put(COLUMN_ID, counter);
-        values.put(COLUMN_USERNAME, user);
-        values.put(COLUMN_FRIENDS,friends);
-        values.put(COLUMN_HISTORIC, historic);
+            int counter = cursor.getCount();
 
-        db.insert(TABLE_NAME_FRIENDS, null, values);
-        db.close();
+            values.put(COLUMN_ID, counter);
+            values.put(COLUMN_USERNAME, user);
+            values.put(COLUMN_FRIENDS,friends);
+            values.put(COLUMN_HISTORIC, historic);
+
+
+            db.insert(TABLE_NAME_FRIENDS, null, values);
+            db.close();
+        }
+        else
+        {
+            Gson gson = new Gson();
+            Type type = new TypeToken<ArrayList<String>>() {}.getType();
+            ArrayList<String> listOfFriends = gson.fromJson(friends, type);
+            for (String newFriend : listOfFriends)
+                addFriend(user, newFriend);
+        }
     }
 
     public void addFriend(String user, String newFriend)
