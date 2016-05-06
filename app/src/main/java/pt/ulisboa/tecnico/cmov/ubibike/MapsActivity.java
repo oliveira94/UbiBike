@@ -43,7 +43,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private int points=0;
     TextView tx;
     private Map<ArrayList<LatLng>,String> coordinates = new HashMap<>();
-    //DataBaseHelper database = new DatabaseHelper (this);
+    DataBaseHelper helper = new DataBaseHelper(this);
 
     public MapsActivity() {
 
@@ -135,9 +135,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         calculatePoints();
         UserData.points = points;
         UserData.totalDistance += distance;
-
-        //TODO para enviar os pontos para BD
-        //TODO PARA ENVIAR PARA A DB DO SERVER
+        helper.AddNewDistance(UserData.username,distance);
+        //TODO PARA ENVIAR PARA O SERVER
 
 
     }
