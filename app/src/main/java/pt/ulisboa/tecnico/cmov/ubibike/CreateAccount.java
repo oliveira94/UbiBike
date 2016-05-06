@@ -19,6 +19,8 @@ import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 
+import javax.crypto.spec.SecretKeySpec;
+
 import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
 import pt.ulisboa.tecnico.cmov.ubibike.WifiDirect.SimWifiP2pBroadcastReceiver;
 
@@ -32,6 +34,7 @@ public class CreateAccount extends AppCompatActivity {
     String Iusername;
     String Ipass1;
     String Ipass2;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +109,8 @@ public class CreateAccount extends AppCompatActivity {
         UserData.age = Integer.parseInt(Iage);
         UserData.username = Iusername;
         UserData.points = helper.PointsFromUser(Iname);
+        byte[] encoded = (Ipass1 + Iname + Iage).getBytes();
+        UserData.secretKey = new SecretKeySpec(encoded, "HmacMD5");
 
         //put userdata in the database
         helper.insertUserData(UserData.name, UserData.age, UserData.username);
