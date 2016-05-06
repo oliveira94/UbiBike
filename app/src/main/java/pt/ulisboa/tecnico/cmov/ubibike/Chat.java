@@ -102,8 +102,8 @@ public class Chat extends Activity{
 
     public void sendClickedChat(View view) {
 
-        DontWriteAnything = false;
-
+//        DontWriteAnything = false;
+        MessageOrPoints = false;
 
         // spawn the chat server background task
         new OutgoingCommTask().executeOnExecutor(
@@ -264,6 +264,10 @@ public class Chat extends Activity{
     }
 
     public void sendPointsClicked(View view) {
+
+
+        MessageOrPoints = true;
+
         // spawn the chat server background task
         new OutgoingCommTask().executeOnExecutor(
                 AsyncTask.THREAD_POOL_EXECUTOR,
@@ -273,8 +277,6 @@ public class Chat extends Activity{
                 AsyncTask.THREAD_POOL_EXECUTOR,
                 pointInput.getText().toString());
 
-        MessageOrPoints = true;
-
         //Moving the text to the new text box
         TextView chatText = new TextView(this);
         EditText entryText = (EditText) findViewById(R.id.entrypoints);
@@ -283,7 +285,7 @@ public class Chat extends Activity{
         UserData.points -= points;
         helper.ChangePoints(user, -points);
         System.out.println(UserData.points);
-        MessageOrPoints = false;
+
 
     }
 
@@ -329,25 +331,51 @@ public class Chat extends Activity{
 
         @Override
         protected void onProgressUpdate(String... values) {
-            if(!MessageOrPoints){
-                //mTextOutput.append(values[0] + "\n");
-                String[] result = values[0].split(":");
-                //where i have the message that will be sent to the other user
-                UpdateOtherUserScreen(result[1], result[0]);
-                Toast toast = Toast.makeText(Chat.this, "passed on progress update" , Toast.LENGTH_SHORT);
-                toast.show();
+//            if(!MessageOrPoints){
+//                String[] result = values[0].split(":");
+//                UpdateOtherUserScreen(result[1], result[0]);
+//                System.out.println("passed where1");
+//
+//            }
+//            else
+//            {
+//                String[] result = values[0].split(":");
+//                UserData.points += Integer.parseInt(result[1]);
+//                helper.ChangePoints(receiver, Integer.parseInt(result[1]));
+//                System.out.println("passed where2");
+//            }
+
+            String[] result = values[0].split(":");
+            if(isNumber(result[1])){
+                UserData.points += Integer.parseInt(result[1]);
+                helper.ChangePoints(receiver, Integer.parseInt(result[1]));
+                System.out.println("passed where2");
             }
-            else
-            {
-                String[] result = values[0].split(":");
-                String pointsText = result[1];
-                int points = Integer.parseInt(pointsText);
-                UserData.points += points;
-                helper.ChangePoints(user, points);
-                Toast toast = Toast.makeText(Chat.this, UserData.points, Toast.LENGTH_SHORT);
-                toast.show();
+            else {
+                UpdateOtherUserScreen(result[1], result[0]);
+                System.out.println("passed where1");
             }
         }
+    }
+
+    public static boolean isNumber(String string) {
+        if (string == null || string.isEmpty()) {
+            return false;
+        }
+        int i = 0;
+        if (string.charAt(0) == '-') {
+            if (string.length() > 1) {
+                i++;
+            } else {
+                return false;
+            }
+        }
+        for (; i < string.length(); i++) {
+            if (!Character.isDigit(string.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public class OutgoingCommTask extends AsyncTask<String, Void, String> {
@@ -360,8 +388,8 @@ public class Chat extends Activity{
         @Override
         protected String doInBackground(String... params) {
 
-                if(!DontWriteAnything)
-                {
+//                if(!DontWriteAnything)
+//                {
                     try {
                         mCliSocket = new SimWifiP2pSocket(params[0],
                                 port);
@@ -370,8 +398,8 @@ public class Chat extends Activity{
                     } catch (IOException e) {
                         return "IO error:" + e.getMessage();
                     }
-                }
-
+//                }
+//
             return null;
         }
         @Override
@@ -387,8 +415,8 @@ public class Chat extends Activity{
         @Override
         protected Void doInBackground(String... msg) {
 
-                if(!DontWriteAnything)
-                {
+//                if(!DontWriteAnything)
+//                {
                     try {
                         mCliSocket = new SimWifiP2pSocket(IP, 10001);
                         mCliSocket.getOutputStream().write((user + ":" + msg[0] + "\n").getBytes());
@@ -399,7 +427,7 @@ public class Chat extends Activity{
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                }
+              //  }
             mCliSocket = null;
             return null;
         }
@@ -407,9 +435,7 @@ public class Chat extends Activity{
         @Override
         protected void onPostExecute(Void result) {
             mTextInput.setText("");
-            if (result != null) {
-               // mTextOutput.setText("sfsdfsdfsdfsdfdsfs");//get message
-            }
+
         }
     }
 }
