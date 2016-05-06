@@ -11,6 +11,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -23,7 +24,11 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
 import pt.ulisboa.tecnico.cmov.ubibike.WifiDirect.SimWifiP2pBroadcastReceiver;
@@ -31,11 +36,13 @@ import pt.ulisboa.tecnico.cmov.ubibike.WifiDirect.SimWifiP2pBroadcastReceiver;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private LocationManager locationManager;
     private SimWifiP2pBroadcastReceiver receiver;
     private ArrayList<LatLng>  markerPoints= new ArrayList<LatLng>();
+    private Location currentLocation = new Location ("current locaction");
+    private double distance = 0.0;
     TextView tx;
-
+    private Map<ArrayList<LatLng>,String> coordinates = new HashMap<>();
+    //DataBaseHelper database = new DatabaseHelper (this);
 
     public MapsActivity() {
 
@@ -64,11 +71,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onLocationChanged(Location location) {
 
+                currentLocation=location;
                 LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
+                if (markerPoints.size()!=0)
+                {
+
+                    tx.setText(String.valueOf(distance() + "Km"));
+
+                }
                 markerPoints.add(loc);
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(loc));
                 mMap.addPolyline(plot());
-                tx.setText(String.valueOf(distance() + "Km"));
 
             }
 
@@ -88,16 +101,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         };
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
         }
-        manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 20, (float) 1.00, listener);
+        manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 20, (float) 70.00, listener);
     }
     public PolylineOptions plot()
     {
@@ -117,30 +122,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return;
         mMap.setMyLocationEnabled(true);
     }
+    @Override
+    public void onPause ()
+    {
+        super.onPause();
+        Calendar calendar= Calendar.getInstance();
+        SimpleDateFormat dateFormat= new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        String date= dateFormat.format(calendar.getTime());
+        coordinates.put(markerPoints, date);
+        UserData.history.add(coordinates);
+        // METODO PARA ENVIAR PARA A DB DO SERVER
+        //METODO PARA GUARDAR OS DADOS NA DB LOCAL
 
+
+    }
+    //metodo para calcular a distancia com base nas coordenadas (currentLocantion - lastLocation)
     public double distance()
     {
-        double dist =0.0;
-        NumberFormat NF= new DecimalFormat("#.0");
-        for (int i =0; i<markerPoints.size()-1;i++)
-        {
+        int lastLocationPosition=markerPoints.size()-1;
+        Location lastLocation= new Location ("lastLocation");
+        lastLocation.setLongitude(markerPoints.get(lastLocationPosition).longitude);
+        lastLocation.setLatitude(markerPoints.get(lastLocationPosition).latitude);
+        distance+=lastLocation.distanceTo(currentLocation);
 
-            Location LocA= new Location("pointA");
-            LocA.setLatitude(markerPoints.get(i).latitude);
-            LocA.setLongitude(markerPoints.get(i).longitude);
-
-            Location LocB= new Location("pointB");
-            LocB.setLatitude(markerPoints.get(i + 1).latitude);
-            LocB.setLongitude(markerPoints.get(i+1).longitude);
-
-            dist+=  LocB.distanceTo(LocA);
-
-
-        }
-        dist = dist/1000;
-        String dd= NF.format(dist);
-        dist= Double.valueOf(dd);
-        return dist;
-
+        return distance;
     }
 }

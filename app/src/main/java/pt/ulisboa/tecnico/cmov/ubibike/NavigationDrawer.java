@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.cmov.ubibike;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -11,11 +13,14 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Messenger;
 import android.support.design.widget.NavigationView;
+import android.support.v4.media.session.MediaSessionCompatApi14;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,7 +31,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -42,12 +46,15 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+
 import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
 import pt.inesc.termite.wifidirect.SimWifiP2pDevice;
 import pt.inesc.termite.wifidirect.SimWifiP2pDeviceList;
 import pt.inesc.termite.wifidirect.SimWifiP2pInfo;
 import pt.inesc.termite.wifidirect.SimWifiP2pManager;
 import pt.inesc.termite.wifidirect.service.SimWifiP2pService;
+import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocket;
+import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketServer;
 import pt.ulisboa.tecnico.cmov.ubibike.Fragments.BookBike;
 import pt.ulisboa.tecnico.cmov.ubibike.Fragments.Friends;
 import pt.ulisboa.tecnico.cmov.ubibike.Fragments.Historic;
@@ -61,23 +68,25 @@ public class NavigationDrawer extends AppCompatActivity
 
     String user = "";
     InicialPage inicialpage = new InicialPage();
-    Points points = new Points();
+    ExchangeMessages exchangeMessages = new ExchangeMessages();
     private SimWifiP2pBroadcastReceiver mReceiver;
     TextView tx;
     private String newFriend;
+    private String searchfriend;
     private LinearLayout principalLayout, secondaryLayout;
     private Gson gson = new Gson();
     Toolbar toolbar;
 
-    DataBaseHelper helper = new DataBaseHelper(this);
+    public static final String TAG = "receivinggmsg";
+    private SimWifiP2pSocketServer mSrvSocket = null;
+    int port = 10001;
 
+    DataBaseHelper helper = new DataBaseHelper(this);
     public boolean mBound = false;
 
     private SimWifiP2pManager mManager = null;
     private SimWifiP2pManager.Channel mChannel = null;
     private Messenger mService = null;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +126,10 @@ public class NavigationDrawer extends AppCompatActivity
         filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_GROUP_OWNERSHIP_CHANGED_ACTION);
         mReceiver = new SimWifiP2pBroadcastReceiver(this);
         registerReceiver(mReceiver, filter);
+
+        // spawn the chat server background task
+        new ListeningMsgCommTask().executeOnExecutor(
+                AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     @Override
@@ -209,6 +222,53 @@ public class NavigationDrawer extends AppCompatActivity
             new serverRequestAddFriend().execute(UserData.username, newFriend);
         }
         friendName.setText("");
+    }
+
+    //method to search a friend after an input
+    public void searchFriendButton(View view) {
+        UserData.searchClicked = true;
+        EditText friend = (EditText)findViewById(R.id.searchfriend);
+        searchfriend = String.valueOf(friend.getText().toString());
+
+        Gson gson = new Gson();
+        Type type = new TypeToken<ArrayList<String>>() {}.getType();
+        String user = UserData.username;
+        String friends = helper.getListOfFriends(user);
+
+        if(!friends.equals("noFriends"))
+        {
+            ArrayList<String> finalOutputString = gson.fromJson(friends, type);
+            System.out.println("final output= " + finalOutputString);
+
+            for (int i = 0; i < finalOutputString.size(); i++){
+                String text = finalOutputString.get(i);
+                if(text.equals(searchfriend)){
+
+                    //Moving the text to the new text box
+                    TextView chatText = new TextView(this);
+
+                    LinearLayout linearLayoutVertical = (LinearLayout) findViewById(R.id.linearverticalmessages);
+                    LinearLayout chatHorizontalLayout = new LinearLayout(this);
+
+                    chatText.setText(text);
+                    chatText.setTextSize(22);
+                    chatText.setTextColor(Color.BLACK);
+
+                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+
+                    //Setting the parameters to the intended
+                    chatHorizontalLayout.setGravity(Gravity.CENTER);
+
+                    //Adding the textView to the HorizontalLayout
+                    chatHorizontalLayout.addView(chatText, params);
+
+                    //Adding the whole HorizontalLayout to the VerticalLayout
+                    linearLayoutVertical.addView(chatHorizontalLayout);
+                }
+            }
+        }
     }
 
 
@@ -423,6 +483,63 @@ public class NavigationDrawer extends AppCompatActivity
         for (SimWifiP2pDevice device : peers.getDeviceList()) {
             String devstr = "" + device.deviceName + " (" + device.getVirtIp() + ")\n";
             peersStr.append(devstr);
+        }
+    }
+
+    public class ListeningMsgCommTask extends AsyncTask<Void, String, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            Log.d(TAG, "IncommingCommTask started (" + this.hashCode() + ").");
+            try {
+                mSrvSocket = new SimWifiP2pSocketServer(
+                        port);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    //if the socket is null, associate to a new port
+                    if(mSrvSocket == null){
+                        port--;
+                        mSrvSocket = new SimWifiP2pSocketServer(
+                                port);
+                    }
+                    SimWifiP2pSocket sock = mSrvSocket.accept();
+                    try {
+                        BufferedReader sockIn = new BufferedReader(
+                                new InputStreamReader(sock.getInputStream()));
+                        String st = sockIn.readLine();
+                        publishProgress(st);
+                        sock.getOutputStream().write(("\n").getBytes());
+                    } catch (IOException e) {
+                        Log.d("Error reading socket:", e.getMessage());
+                    } finally {
+                        sock.close();
+                        mSrvSocket.close();
+                    }
+                } catch (IOException e) {
+                    Log.d("Error socket:", e.getMessage());
+                    break;
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            //mTextOutput.append(values[0] + "\n");
+            String[] result = values[0].split(":");
+            //update the exchangeMessages
+            exchangeMessages.setSender(result[0]);
+            exchangeMessages.setMessage(result[1]);
+            exchangeMessages.setReceiver(UserData.username);
+
+            Toast toast = Toast.makeText(NavigationDrawer.this, result[0] + " sent you a new message.", Toast.LENGTH_SHORT);
+            toast.show();
+
+            //put the message in the database
+            helper.sendNewMessage(exchangeMessages);
         }
     }
 }

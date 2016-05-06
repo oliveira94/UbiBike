@@ -17,6 +17,7 @@ public class UserData extends Application{
     public static List listOfIPs = new ArrayList();
     public static List listOfFriends = new ArrayList();
     public static ArrayList<Object> history = new ArrayList<>();
+    public static boolean searchClicked = false;
 
     //add a IP to a list of the IP in the network
     public void AddDeviceIPToList(String IP) {
