@@ -393,7 +393,7 @@ public class NavigationDrawer extends AppCompatActivity
         UserData.listOfFriends = (ArrayList<String>) profileData.get("friendsList");
 
         helper.insertUserData(UserData.name, UserData.age, UserData.username);
-        helper.insertFriends(UserData.username,"noFriends");
+        helper.insertFriendsAndHistory(UserData.username,"noFriends", "noTrips");
 
         for (String friend : UserData.listOfFriends)
             helper.addFriend(UserData.username, friend);
