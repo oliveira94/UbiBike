@@ -107,7 +107,7 @@ public class LogIn extends AppCompatActivity {
         @Override
         protected String doInBackground(String... params) {
 
-            String urlServer = "http://10.0.2.2:8080/logIn?username=";
+            String urlServer = UserData.serverAddress + "/logIn?username=";
             urlServer += params[0];
 
             StringBuffer result = new StringBuffer("");

@@ -127,7 +127,7 @@ public class CreateAccount extends AppCompatActivity {
         @Override
         protected String doInBackground(String... params) {
 
-            String urlServer = "http://10.0.2.2:8080/create?username=";
+            String urlServer = UserData.serverAddress + "/create?username=";
             urlServer += params[0] + "&password=" + params[1] + "&name=" + params[2] + "&age=" + params[3];
 
             StringBuffer result = new StringBuffer("");

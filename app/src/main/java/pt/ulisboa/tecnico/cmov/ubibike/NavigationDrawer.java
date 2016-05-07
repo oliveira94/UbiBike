@@ -280,7 +280,7 @@ public class NavigationDrawer extends AppCompatActivity
         @Override
         protected String doInBackground(String... params) {
 
-            String urlServer = "http://10.0.3.2:8080/addFriend?username=";
+            String urlServer = UserData.serverAddress + "/addFriend?username=";
             urlServer += params[0] + "&newFriend=" + params[1];
 
             StringBuffer result = new StringBuffer("");
@@ -349,7 +349,7 @@ public class NavigationDrawer extends AppCompatActivity
         @Override
         protected String doInBackground(String... params) {
 
-            String urlServer = "http://10.0.2.2:8080/getProfile?username=";
+            String urlServer = UserData.serverAddress + "/getProfile?username=";
             urlServer += params[0];
 
             StringBuffer result = new StringBuffer("");
