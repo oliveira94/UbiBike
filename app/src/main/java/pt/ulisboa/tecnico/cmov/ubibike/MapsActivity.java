@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -26,8 +27,17 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 
+import java.net.ConnectException;
+import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -188,7 +198,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             //adiccionar a distancia percorrida à base de dados
             helper.AddNewDistance(UserData.username, distance);
             mMap.clear();
-            //TODO PARA ENVIAR PARA O SERVER
+
+            new serverRequestAddDistance().execute(UserData.username, String.valueOf(distance));
+
         } else {
             mMap.clear();
             UserData.route = false;
@@ -221,5 +233,47 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String auxFormat = decimalFormat.format(AuxDistance);
         AuxDistance = Double.valueOf(auxFormat);
         return distance += AuxDistance;
+    }
+
+    private class serverRequestAddDistance extends AsyncTask<String, Void, String> {
+
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            String urlServer = UserData.serverAddress + "/addDistance?username=";
+            urlServer += params[0] + "&newDistance=" + params[1];
+
+            StringBuffer result = new StringBuffer("");
+            try{
+                URL url = new URL(urlServer);
+                HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+                connection.setDoInput(true);
+                connection.setConnectTimeout(3000);
+                connection.setReadTimeout(3000);
+                connection.connect();
+                InputStream inputStream = connection.getInputStream();
+                BufferedReader rd = new BufferedReader(new InputStreamReader(inputStream));
+                String line;
+                while ((line = rd.readLine()) != null) result.append(line);
+
+            }catch (SocketTimeoutException e) {
+                return "FailedConnection";
+            } catch(ConnectException e) {
+                return "FailedConnection";
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return result.toString();
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            if (result.equals("FailedConnection"))
+                Toast.makeText(MapsActivity.this, "Can't connect to the server!", Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(MapsActivity.this, "Distance added to the server successfully!", Toast.LENGTH_SHORT).show();
+
+        }
     }
 }

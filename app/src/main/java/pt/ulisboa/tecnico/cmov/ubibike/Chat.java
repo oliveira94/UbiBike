@@ -334,7 +334,7 @@ public class Chat extends Activity{
             Log.d(TAG, "IncommingCommTask started (" + this.hashCode() + ").");
             try
             {
-                port--;//TODO see if make a diferrence
+                port--;
                 mSrvSocket = new SimWifiP2pSocketServer(port);
 
             } catch (IOException e) {

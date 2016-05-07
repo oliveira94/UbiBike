@@ -385,6 +385,7 @@ public class NavigationDrawer extends AppCompatActivity
         UserData.totalDistance = Double.valueOf((String) profileData.get("distance"));
         UserData.history = (ArrayList<Object>) profileData.get("history");
         UserData.listOfFriends = (ArrayList<String>) profileData.get("friendsList");
+        //TODO receber do servidor os devices
 
         helper.insertUserData(UserData.name, UserData.age, UserData.username);
         helper.insertFriendsAndHistory(UserData.username, "noFriends", "noTrips", "noDevices");
@@ -393,6 +394,8 @@ public class NavigationDrawer extends AppCompatActivity
             helper.addFriend(UserData.username, friend);
 
         //TODO helper.addHistory
+
+        //TODO helper.addDevices
 
         Intent intent = new Intent(this, SimWifiP2pService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
@@ -428,8 +431,6 @@ public class NavigationDrawer extends AppCompatActivity
         return helper;
     }
 
-    //TODO funçao para retornar a lista dos devices
-
     public void ActClicked(View view){
         if (mBound) {
             mManager.requestGroupInfo(mChannel, NavigationDrawer.this);
@@ -443,6 +444,8 @@ public class NavigationDrawer extends AppCompatActivity
             Toast.makeText(view.getContext(), "Service not bound",
                     Toast.LENGTH_SHORT).show();
         }
+
+        //TODO actualizar informações para o servidor, actProfile, para adicionar devices, friends, pontos, distancia, etc
     }
 
     private ServiceConnection mConnection = new ServiceConnection() {
