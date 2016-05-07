@@ -81,7 +81,7 @@ public class NavigationDrawer extends AppCompatActivity
 
     public static final String TAG = "receivinggmsg";
     private SimWifiP2pSocketServer mSrvSocket = null;
-    int port = 9990;
+    int port = 10001;
 
     DataBaseHelper helper = new DataBaseHelper(this);
     public boolean mBound = false;
@@ -129,7 +129,7 @@ public class NavigationDrawer extends AppCompatActivity
         mReceiver = new SimWifiP2pBroadcastReceiver(this);
         registerReceiver(mReceiver, filter);
 
-        // spawn the chat server background task
+//        // spawn the chat server background task
         new ListeningMsgCommTask().executeOnExecutor(
                 AsyncTask.THREAD_POOL_EXECUTOR);
     }
@@ -567,19 +567,61 @@ public class NavigationDrawer extends AppCompatActivity
         @Override
         protected void onProgressUpdate(String... values) {
             //mTextOutput.append(values[0] + "\n");
-            String[] result = values[0].split(":");
+            //String[] result = values[0].split(":");
             //update the exchangeMessages
-            exchangeMessages.setSender(result[0]);
-            exchangeMessages.setMessage(result[1]);
-            exchangeMessages.setReceiver(UserData.username);
+//            exchangeMessages.setSender(result[0]);
+//            exchangeMessages.setMessage(result[1]);
+//            exchangeMessages.setReceiver(UserData.username);
+//
+//            Toast toast = Toast.makeText(NavigationDrawer.this, result[0] + " sent you a new message.", Toast.LENGTH_SHORT);
+//            toast.show();
+//
+//            //put the message in the database
+//            helper.sendNewMessage(exchangeMessages);
 
-            Toast toast = Toast.makeText(NavigationDrawer.this, result[0] + " sent you a new message.", Toast.LENGTH_SHORT);
-            toast.show();
+            String[] result = values[0].split(":");
+            if(result.length > 1){
+                if(isNumber(result[1])){
+//                    UserData.points += Integer.parseInt(result[1]);
+//                    helper.ChangePoints(receiver, Integer.parseInt(result[1]));
+//                    System.out.println("passed where2");
+                    UserData.points += Integer.parseInt(result[1]);
+                    helper.ChangePoints(UserData.username, Integer.parseInt(result[1]));
+                    Toast toast = Toast.makeText(NavigationDrawer.this, result[0] + " sent you points.", Toast.LENGTH_SHORT);
+                    toast.show();
+                }
+                else {
+                    exchangeMessages.setSender(result[0]);
+                    exchangeMessages.setMessage(result[1]);
+                    exchangeMessages.setReceiver(UserData.username);
 
-            //put the message in the database
-            helper.sendNewMessage(exchangeMessages);
+                    Toast toast = Toast.makeText(NavigationDrawer.this, result[0] + " sent you a new message.", Toast.LENGTH_SHORT);
+                    toast.show();
 
-
+                    //put the message in the database
+                    helper.sendNewMessage(exchangeMessages);
+                }
+            }
         }
+    }
+
+    public static boolean isNumber(String string) {
+        if (string == null || string.isEmpty()) {
+            return false;
+        }
+        int i = 0;
+        if (string.charAt(0) == '-') {
+            if (string.length() > 1) {
+                i++;
+            } else {
+                return false;
+            }
+        }
+        for (; i < string.length(); i++) {
+            if (!Character.isDigit(string.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 }

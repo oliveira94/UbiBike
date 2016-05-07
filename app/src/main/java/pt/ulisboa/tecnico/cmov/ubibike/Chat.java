@@ -250,7 +250,7 @@ public class Chat extends Activity{
     @Override
     public void onPause() {
         super.onPause();
-        if(DontWriteAnything){
+        //if(DontWriteAnything){
             // spawn the chat server background task
             new OutgoingCommTask().executeOnExecutor(
                     AsyncTask.THREAD_POOL_EXECUTOR,
@@ -259,7 +259,7 @@ public class Chat extends Activity{
             new SendCommTask().executeOnExecutor(
                     AsyncTask.THREAD_POOL_EXECUTOR,
                     mTextInput.getText().toString());
-        }
+       // }
         unregisterReceiver(mReceiver);
     }
 
