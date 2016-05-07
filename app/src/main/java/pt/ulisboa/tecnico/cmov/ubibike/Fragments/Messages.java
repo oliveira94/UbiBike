@@ -67,17 +67,19 @@ public class Messages extends Fragment {
                 LinearLayout linearLayoutVertical = (LinearLayout) view.findViewById(R.id.linearverticalmessages);
                 LinearLayout chatHorizontalLayout = new LinearLayout(getActivity());
                 chatHorizontalLayout.setId(i); //
+
+                //Moving the text to the new text box
+                TextView chatText = new TextView(getActivity());
+                final String text = finalOutputString.get(i);
+
                 chatHorizontalLayout.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View v) {
                         Intent i = new Intent(getActivity(), Chat.class);
                         i.putExtra("USER", UserData.username);
+                        i.putExtra("RECEIVER" , text);
                         startActivity(i);
                     }
                 });
-
-                //Moving the text to the new text box
-                TextView chatText = new TextView(getActivity());
-                String text = finalOutputString.get(i);
 
                 chatText.setText(text);
                 chatText.setTextSize(22);

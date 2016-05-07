@@ -48,6 +48,7 @@ public class Chat extends Activity{
     String receiver = "";
     String IP = "";
     int port = 10001;
+    String receiverFromMessages = "";
 
     //false if is message, true if is points
     boolean MessageOrPoints = false;
@@ -70,7 +71,11 @@ public class Chat extends Activity{
         Bundle extras = getIntent().getExtras();
         if(extras !=null) {
             user = extras.getString("USER");
+            receiverFromMessages = extras.getString("RECEIVER");
         }
+
+        TextView ReceiverName = (TextView)findViewById(R.id.bookBikeText);
+        ReceiverName.setText(receiverFromMessages);
 
         mTextInput = (TextView)findViewById(R.id.textEntryChat);
         pointInput = (TextView)findViewById(R.id.entrypoints);
@@ -190,7 +195,7 @@ public class Chat extends Activity{
         linearLayoutVertical.addView(chatHorizontalLayout);
     }
 
-    public void updateMessages(){
+    public void updateMessages() {
 
         EditText entryText = (EditText) findViewById(R.id.textEntryChat);
         String text = entryText.getText().toString();
@@ -201,35 +206,56 @@ public class Chat extends Activity{
         cursor1 = db.rawQuery(query1, null);
         String sender, message;
 
-        if(cursor1.moveToFirst()){
-            do{
-                LinearLayout linearLayoutVertical = (LinearLayout) findViewById(R.id.idChatLinearVertical);
-                LinearLayout chatHorizontalLayout = new LinearLayout(this);
+        if (cursor1.moveToFirst()) {
+            do {
 
                 sender = cursor1.getString(0);
                 receiver = cursor1.getString(1);
                 message = cursor1.getString(2);
 
-                TextView ReceiverName = (TextView)findViewById(R.id.bookBikeText);
-                ReceiverName.setText(sender);
+                if (sender.equals(receiverFromMessages)) {
+                    LinearLayout linearLayoutVertical = (LinearLayout) findViewById(R.id.idChatLinearVertical);
+                    LinearLayout chatHorizontalLayout = new LinearLayout(this);
+                    TextView chatText = new TextView(this);
+                    chatText.setText(message);
+                    chatText.setTextSize(22);
+                    chatText.setTextColor(Color.BLACK);
 
-                TextView chatText = new TextView(this);
-                chatText.setText(message);
-                chatText.setTextSize(22);
-                chatText.setTextColor(Color.BLACK);
-
-                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
-
-                String isSender = SenderOrReceiver(sender);
-                if(isSender.equals("sender")){
-                    chatHorizontalLayout.setGravity(Gravity.RIGHT);
-                }else {
+                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+                    //                    String isSender = SenderOrReceiver(sender);
+                    //                    if(isSender.equals("sender")){
+                    //                        chatHorizontalLayout.setGravity(Gravity.RIGHT);
+                    //                    }else {
+                    //                        chatHorizontalLayout.setGravity(Gravity.LEFT);
+                    //                    }
                     chatHorizontalLayout.setGravity(Gravity.LEFT);
+                    chatHorizontalLayout.addView(chatText, params);
+                    linearLayoutVertical.addView(chatHorizontalLayout);
+                } else if (receiver.equals(user)) {
+                    LinearLayout linearLayoutVertical = (LinearLayout) findViewById(R.id.idChatLinearVertical);
+                    LinearLayout chatHorizontalLayout = new LinearLayout(this);
+
+                    TextView chatText = new TextView(this);
+                    chatText.setText(message);
+                    chatText.setTextSize(22);
+                    chatText.setTextColor(Color.BLACK);
+
+                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+
+                    //                    String isSender = SenderOrReceiver(sender);
+                    //                    if(isSender.equals("sender")){
+                    //                        chatHorizontalLayout.setGravity(Gravity.RIGHT);
+                    //                    }else {
+                    //                        chatHorizontalLayout.setGravity(Gravity.LEFT);
+                    //                    }
+                    chatHorizontalLayout.setGravity(Gravity.RIGHT);
+                    chatHorizontalLayout.addView(chatText, params);
+                    linearLayoutVertical.addView(chatHorizontalLayout);
                 }
-                chatHorizontalLayout.addView(chatText, params);
-                linearLayoutVertical.addView(chatHorizontalLayout);
             }
             while (cursor1.moveToNext() && cursor1.getString(0) != "");
         }
