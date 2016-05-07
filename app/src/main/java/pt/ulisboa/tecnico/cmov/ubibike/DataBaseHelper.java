@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class DataBaseHelper extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "dase10.db";
+    private static final String DATABASE_NAME = "dase11.db";
     private static final String TABLE_NAME_DATA = "mydata";
     private static final String TABLE_NAME_CHAT = "mychat";
     private static final String TABLE_NAME_FRIENDS = "myfriends";
@@ -242,7 +242,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
         return y;
     }
-
 
     //if is a add points AddOrSub is true
     public void ChangePoints(String username, int points){

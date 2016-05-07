@@ -566,25 +566,10 @@ public class NavigationDrawer extends AppCompatActivity
 
         @Override
         protected void onProgressUpdate(String... values) {
-            //mTextOutput.append(values[0] + "\n");
-            //String[] result = values[0].split(":");
-            //update the exchangeMessages
-//            exchangeMessages.setSender(result[0]);
-//            exchangeMessages.setMessage(result[1]);
-//            exchangeMessages.setReceiver(UserData.username);
-//
-//            Toast toast = Toast.makeText(NavigationDrawer.this, result[0] + " sent you a new message.", Toast.LENGTH_SHORT);
-//            toast.show();
-//
-//            //put the message in the database
-//            helper.sendNewMessage(exchangeMessages);
 
             String[] result = values[0].split(":");
             if(result.length > 1){
                 if(isNumber(result[1])){
-//                    UserData.points += Integer.parseInt(result[1]);
-//                    helper.ChangePoints(receiver, Integer.parseInt(result[1]));
-//                    System.out.println("passed where2");
                     UserData.points += Integer.parseInt(result[1]);
                     helper.ChangePoints(UserData.username, Integer.parseInt(result[1]));
                     Toast toast = Toast.makeText(NavigationDrawer.this, result[0] + " sent you points.", Toast.LENGTH_SHORT);

@@ -265,28 +265,32 @@ public class Chat extends Activity{
 
     public void sendPointsClicked(View view) {
 
-
         MessageOrPoints = true;
-
-        // spawn the chat server background task
-        new OutgoingCommTask().executeOnExecutor(
-                AsyncTask.THREAD_POOL_EXECUTOR,
-                pointInput.getText().toString());
-
-        new SendCommTask().executeOnExecutor(
-                AsyncTask.THREAD_POOL_EXECUTOR,
-                pointInput.getText().toString());
 
         //Moving the text to the new text box
         TextView chatText = new TextView(this);
         EditText entryText = (EditText) findViewById(R.id.entrypoints);
         String pointstext = entryText.getText().toString();
         int points = Integer.parseInt(pointstext);
-        UserData.points -= points;
-        helper.ChangePoints(user, -points);
-        System.out.println(UserData.points);
 
+        if(UserData.points >= points){
+            UserData.points -= points;
+            helper.ChangePoints(user, -points);
+            System.out.println(UserData.points);
 
+            // spawn the chat server background task
+            new OutgoingCommTask().executeOnExecutor(
+                    AsyncTask.THREAD_POOL_EXECUTOR,
+                    pointInput.getText().toString());
+
+            new SendCommTask().executeOnExecutor(
+                    AsyncTask.THREAD_POOL_EXECUTOR,
+                    pointInput.getText().toString());
+        }
+        else{
+            Toast toast = Toast.makeText(Chat.this, "You can't sent so many points", Toast.LENGTH_SHORT);
+            toast.show();
+        }
     }
 
     public class IncommingCommTask extends AsyncTask<Void, String, Void> {
@@ -331,20 +335,6 @@ public class Chat extends Activity{
 
         @Override
         protected void onProgressUpdate(String... values) {
-//            if(!MessageOrPoints){
-//                String[] result = values[0].split(":");
-//                UpdateOtherUserScreen(result[1], result[0]);
-//                System.out.println("passed where1");
-//
-//            }
-//            else
-//            {
-//                String[] result = values[0].split(":");
-//                UserData.points += Integer.parseInt(result[1]);
-//                helper.ChangePoints(receiver, Integer.parseInt(result[1]));
-//                System.out.println("passed where2");
-//            }
-
 
             String[] result = values[0].split(":");
             if(result.length > 1){
