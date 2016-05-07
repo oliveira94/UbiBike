@@ -349,7 +349,7 @@ public class NavigationDrawer extends AppCompatActivity
         @Override
         protected String doInBackground(String... params) {
 
-            String urlServer = "http://10.0.3.2:8080/getProfile?username=";
+            String urlServer = "http://10.0.2.2:8080/getProfile?username=";
             urlServer += params[0];
 
             StringBuffer result = new StringBuffer("");
@@ -390,7 +390,7 @@ public class NavigationDrawer extends AppCompatActivity
         UserData.name = (String) profileData.get("name");
         UserData.age = Integer.valueOf((String)profileData.get("age"));
         UserData.points = Integer.valueOf((String) profileData.get("points"));
-        UserData.totalDistance = (Double)profileData.get("distance");
+        UserData.totalDistance = Double.valueOf((String)profileData.get("distance"));
         UserData.history = (ArrayList<Object>) profileData.get("history");
         UserData.listOfFriends = (ArrayList<String>) profileData.get("friendsList");
 

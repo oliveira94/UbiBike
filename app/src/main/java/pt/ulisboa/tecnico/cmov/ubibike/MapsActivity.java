@@ -39,7 +39,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private SimWifiP2pBroadcastReceiver receiver;
     private ArrayList<LatLng>  markerPoints= new ArrayList<LatLng>();
     private Location currentLocation = new Location ("current locaction");
+    //distancia percorrida enquanto o mapa esta ligado
     private double distance = 0.0;
+    //pontos obtidos nesta rota
     private int points=0;
     TextView tx;
     private Map<ArrayList<LatLng>,String> coordinates = new HashMap<>();
@@ -54,7 +56,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-
+/*
         //TODO ter em todas as actividades
         IntentFilter filter = new IntentFilter();
         filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_STATE_CHANGED_ACTION);
@@ -62,49 +64,58 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_NETWORK_MEMBERSHIP_CHANGED_ACTION);
         filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_GROUP_OWNERSHIP_CHANGED_ACTION);
         receiver = new SimWifiP2pBroadcastReceiver(this);
-        registerReceiver(receiver, filter);
+        registerReceiver(receiver, filter);*/
+        //textview para mostrar os km efectuados pelo dispositivo
         tx=(TextView) findViewById(R.id.KM);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         LocationManager manager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        LocationListener listener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
+        if (UserData.route==true)
+        {
 
-                currentLocation = location;
-                LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
-                if (markerPoints.size() != 0)
-                {
+        }else {
+            LocationListener listener = new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    //variavel onde está a posição actual do dispositivo
+                    currentLocation = location;
+                    LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
+                    if (markerPoints.size() != 0) {
 
-                    tx.setText(String.valueOf(distance() + "Km"));
+                        tx.setText(String.valueOf(distance() + "Km"));
+
+                    }
+                    //adicionar a localização do dispositivo
+                    markerPoints.add(loc);
+                    //centrar o mappa na posição actual do dispositivo
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(loc));
+                    //desenhar no mapa a rota percorrida pelo dispositivo
+                    mMap.addPolyline(plot());
 
                 }
-                markerPoints.add(loc);
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(loc));
-                mMap.addPolyline(plot());
 
+                @Override
+                public void onStatusChanged(String provider, int status, Bundle extras) {
+
+                }
+
+                @Override
+                public void onProviderEnabled(String provider) {
+
+                }
+
+                @Override
+                public void onProviderDisabled(String provider) {
+
+                }
+            };
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             }
-
-            @Override
-            public void onStatusChanged(String provider, int status, Bundle extras) {
-
-            }
-
-            @Override
-            public void onProviderEnabled(String provider) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String provider) {
-
-            }
-        };
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 20, (float) 70.00, listener);
         }
-        manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 20, (float) 70.00, listener);
     }
+    //metodo para desenhar a rota no mapa
     public PolylineOptions plot()
     {
         PolylineOptions p = new PolylineOptions().width(6).color(0xFFEE8888);
@@ -127,14 +138,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onPause ()
     {
         super.onPause();
+
+        //linhas para ver a data para de seguida
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         String date = dateFormat.format(calendar.getTime());
+
         coordinates.put(markerPoints, date);
+        //actualizar o percurso na variavel na classe global
         UserData.history.add(coordinates);
+        //calcular os pontos  obtidos na viagem
         calculatePoints();
-        UserData.points = points;
+        //actualizar os pontos na classe global
+        UserData.points += points;
+        //actializar a variavel da distancia da classe global
         UserData.totalDistance += distance;
+        //variavel para saber se o mapa foi inicializadp atravez do histório
+        UserData.route=false;
+        //adiccionar a distancia percorrida à base de dados
         helper.AddNewDistance(UserData.username,distance);
         //TODO PARA ENVIAR PARA O SERVER
 
@@ -149,12 +170,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public double distance()
     {
         double AuxDistance = 0.0;
+        //obter a ultima coordenada inserida no array
         int lastLocationPosition = markerPoints.size()-1;
+        //retirar do array a ultima distancia inserida
         Location lastLocation = new Location ("lastLocation");
         lastLocation.setLongitude(markerPoints.get(lastLocationPosition).longitude);
         lastLocation.setLatitude(markerPoints.get(lastLocationPosition).latitude);
+        //variavel AuxDistance é uma variavel auxiliar para calcular a distancia
         AuxDistance = lastLocation.distanceTo(currentLocation);
         AuxDistance = AuxDistance/1000;
+        //formatar a distancia
         DecimalFormat decimalFormat = new DecimalFormat("#.0");
         String auxFormat = decimalFormat.format(AuxDistance);
         AuxDistance = Double.valueOf(auxFormat);
