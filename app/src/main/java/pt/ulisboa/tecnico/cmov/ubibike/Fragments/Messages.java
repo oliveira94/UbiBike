@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.cmov.ubibike.Fragments;
 
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,6 +20,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
+import pt.ulisboa.tecnico.cmov.ubibike.Chat;
 import pt.ulisboa.tecnico.cmov.ubibike.DataBaseHelper;
 import pt.ulisboa.tecnico.cmov.ubibike.NavigationDrawer;
 import pt.ulisboa.tecnico.cmov.ubibike.R;
@@ -53,18 +55,25 @@ public class Messages extends Fragment {
         DataBaseHelper helper = ((NavigationDrawer) getActivity()).getDB();
         String user = UserData.username;
 
-        String friends = helper.getListOfFriends(user);
+        String devices = helper.getListOfDevices(user);
 
-        if(!friends.equals("noFriends"))
+        if(!devices.equals("noDevices"))
         {
             //TODO ler da base de dados os friends e imprimir os TextViews
-            ArrayList<String> finalOutputString = gson.fromJson(friends, type);
+            ArrayList<String> finalOutputString = gson.fromJson(devices, type);
             System.out.println("final output= " + finalOutputString);
 
             for (int i = 0; i < finalOutputString.size(); i++){
                 LinearLayout linearLayoutVertical = (LinearLayout) view.findViewById(R.id.linearverticalmessages);
                 LinearLayout chatHorizontalLayout = new LinearLayout(getActivity());
                 chatHorizontalLayout.setId(i); //
+                chatHorizontalLayout.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        Intent i = new Intent(getActivity(), Chat.class);
+                        i.putExtra("USER", UserData.username);
+                        startActivity(i);
+                    }
+                });
 
                 //Moving the text to the new text box
                 TextView chatText = new TextView(getActivity());
@@ -88,7 +97,6 @@ public class Messages extends Fragment {
                 linearLayoutVertical.addView(chatHorizontalLayout);
             }
         }
-
         return view;
     }
 }
