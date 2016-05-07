@@ -345,15 +345,18 @@ public class Chat extends Activity{
 //                System.out.println("passed where2");
 //            }
 
+
             String[] result = values[0].split(":");
-            if(isNumber(result[1])){
-                UserData.points += Integer.parseInt(result[1]);
-                helper.ChangePoints(receiver, Integer.parseInt(result[1]));
-                System.out.println("passed where2");
-            }
-            else {
-                UpdateOtherUserScreen(result[1], result[0]);
-                System.out.println("passed where1");
+            if(result.length > 1){
+                if(isNumber(result[1])){
+                    UserData.points += Integer.parseInt(result[1]);
+                    helper.ChangePoints(receiver, Integer.parseInt(result[1]));
+                    System.out.println("passed where2");
+                }
+                else {
+                    UpdateOtherUserScreen(result[1], result[0]);
+                    System.out.println("passed where1");
+                }
             }
         }
     }
