@@ -389,13 +389,8 @@ public class NavigationDrawer extends AppCompatActivity
         //Update UserData class with information from server
         UserData.name = (String) profileData.get("name");
         UserData.age = Integer.valueOf((String)profileData.get("age"));
-/*<<<<<<< HEAD
-        UserData.points = Integer.valueOf((String) profileData.get("points"));
-        UserData.totalDistance = Double.valueOf((String)profileData.get("distance"));
-=======
         UserData.points = helper.PointsFromUser(UserData.username);
         UserData.totalDistance = Double.valueOf((String) profileData.get("distance"));
->>>>>>> origin/master*/
         UserData.history = (ArrayList<Object>) profileData.get("history");
         UserData.listOfFriends = (ArrayList<String>) profileData.get("friendsList");
 
