@@ -46,6 +46,7 @@ public class Chat extends Activity{
     ExchangeMessages exchangeMessages = new ExchangeMessages();
     String user = "";
     String receiver = "";
+    String receiverFromMessages = "";
     String IP = "";
     int port = 10001;
 
@@ -70,7 +71,11 @@ public class Chat extends Activity{
         Bundle extras = getIntent().getExtras();
         if(extras !=null) {
             user = extras.getString("USER");
+            receiverFromMessages = extras.getString("RECEIVER");
         }
+
+        TextView ReceiverName = (TextView)findViewById(R.id.bookBikeText);
+        ReceiverName.setText(receiverFromMessages);
 
         mTextInput = (TextView)findViewById(R.id.textEntryChat);
         pointInput = (TextView)findViewById(R.id.entrypoints);
@@ -203,49 +208,72 @@ public class Chat extends Activity{
 
         if(cursor1.moveToFirst()){
             do{
-                LinearLayout linearLayoutVertical = (LinearLayout) findViewById(R.id.idChatLinearVertical);
-                LinearLayout chatHorizontalLayout = new LinearLayout(this);
-
                 sender = cursor1.getString(0);
                 receiver = cursor1.getString(1);
                 message = cursor1.getString(2);
 
-                TextView ReceiverName = (TextView)findViewById(R.id.bookBikeText);
-                ReceiverName.setText(sender);
+                if(sender.equals(receiverFromMessages)){
+                    LinearLayout linearLayoutVertical = (LinearLayout) findViewById(R.id.idChatLinearVertical);
+                    LinearLayout chatHorizontalLayout = new LinearLayout(this);
 
-                TextView chatText = new TextView(this);
-                chatText.setText(message);
-                chatText.setTextSize(22);
-                chatText.setTextColor(Color.BLACK);
+                    TextView chatText = new TextView(this);
+                    chatText.setText(message);
+                    chatText.setTextSize(22);
+                    chatText.setTextColor(Color.BLACK);
 
-                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
 
-                String isSender = SenderOrReceiver(sender);
-                if(isSender.equals("sender")){
-                    chatHorizontalLayout.setGravity(Gravity.RIGHT);
-                }else {
+//                    String isSender = SenderOrReceiver(sender);
+//                    if(isSender.equals("sender")){
+//                        chatHorizontalLayout.setGravity(Gravity.RIGHT);
+//                    }else {
+//                        chatHorizontalLayout.setGravity(Gravity.LEFT);
+//                    }
                     chatHorizontalLayout.setGravity(Gravity.LEFT);
+                    chatHorizontalLayout.addView(chatText, params);
+                    linearLayoutVertical.addView(chatHorizontalLayout);
                 }
-                chatHorizontalLayout.addView(chatText, params);
-                linearLayoutVertical.addView(chatHorizontalLayout);
+                else if(receiver.equals(user)){
+                    LinearLayout linearLayoutVertical = (LinearLayout) findViewById(R.id.idChatLinearVertical);
+                    LinearLayout chatHorizontalLayout = new LinearLayout(this);
+
+                    TextView chatText = new TextView(this);
+                    chatText.setText(message);
+                    chatText.setTextSize(22);
+                    chatText.setTextColor(Color.BLACK);
+
+                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+
+//                    String isSender = SenderOrReceiver(sender);
+//                    if(isSender.equals("sender")){
+//                        chatHorizontalLayout.setGravity(Gravity.RIGHT);
+//                    }else {
+//                        chatHorizontalLayout.setGravity(Gravity.LEFT);
+//                    }
+                    chatHorizontalLayout.setGravity(Gravity.RIGHT);
+                    chatHorizontalLayout.addView(chatText, params);
+                    linearLayoutVertical.addView(chatHorizontalLayout);
+                }
             }
             while (cursor1.moveToNext() && cursor1.getString(0) != "");
         }
     }
 
     //see if the message was he or the other user that was sended
-    public String SenderOrReceiver(String sender) {
-        String WhoIs;
-        if (user.equals(sender)) {
-            WhoIs = "sender";
-        }
-        else{
-            WhoIs ="";
-        }
-        return WhoIs;
-    }
+//    public String SenderOrReceiver(String sender) {
+//        String WhoIs;
+//        if (user.equals(sender)) {
+//            WhoIs = "sender";
+//        }
+//        else{
+//            WhoIs ="";
+//        }
+//        return WhoIs;
+//    }
 
     @Override
     public void onPause() {
@@ -346,6 +374,7 @@ public class Chat extends Activity{
                 else {
                     UpdateOtherUserScreen(result[1], result[0]);
                     System.out.println("passed where1");
+                    Toast.makeText(Chat.this, "update screen", Toast.LENGTH_SHORT).show();
                 }
             }
         }
