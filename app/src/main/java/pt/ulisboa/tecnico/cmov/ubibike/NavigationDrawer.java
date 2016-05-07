@@ -201,7 +201,7 @@ public class NavigationDrawer extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
             return true;
         }
-    
+
     public void addFriend(View view) {
         principalLayout= (LinearLayout) findViewById(R.id.idFriendsVertical);
         secondaryLayout= new LinearLayout(this);

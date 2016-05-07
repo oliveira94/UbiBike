@@ -46,6 +46,7 @@ public class Chat extends Activity{
     ExchangeMessages exchangeMessages = new ExchangeMessages();
     String user = "";
     String receiver = "";
+    String receiverFromMessages = "";
     String IP = "";
     int port = 10001;
     String receiverFromMessages = "";
@@ -206,16 +207,20 @@ public class Chat extends Activity{
         cursor1 = db.rawQuery(query1, null);
         String sender, message;
 
+
         if (cursor1.moveToFirst()) {
             do {
+
 
                 sender = cursor1.getString(0);
                 receiver = cursor1.getString(1);
                 message = cursor1.getString(2);
 
+
                 if (sender.equals(receiverFromMessages)) {
                     LinearLayout linearLayoutVertical = (LinearLayout) findViewById(R.id.idChatLinearVertical);
                     LinearLayout chatHorizontalLayout = new LinearLayout(this);
+
                     TextView chatText = new TextView(this);
                     chatText.setText(message);
                     chatText.setTextSize(22);
@@ -224,6 +229,7 @@ public class Chat extends Activity{
                     RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+
                     //                    String isSender = SenderOrReceiver(sender);
                     //                    if(isSender.equals("sender")){
                     //                        chatHorizontalLayout.setGravity(Gravity.RIGHT);
@@ -234,6 +240,7 @@ public class Chat extends Activity{
                     chatHorizontalLayout.addView(chatText, params);
                     linearLayoutVertical.addView(chatHorizontalLayout);
                 } else if (receiver.equals(user)) {
+
                     LinearLayout linearLayoutVertical = (LinearLayout) findViewById(R.id.idChatLinearVertical);
                     LinearLayout chatHorizontalLayout = new LinearLayout(this);
 
@@ -246,12 +253,14 @@ public class Chat extends Activity{
                             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
 
+
                     //                    String isSender = SenderOrReceiver(sender);
                     //                    if(isSender.equals("sender")){
                     //                        chatHorizontalLayout.setGravity(Gravity.RIGHT);
                     //                    }else {
                     //                        chatHorizontalLayout.setGravity(Gravity.LEFT);
                     //                    }
+
                     chatHorizontalLayout.setGravity(Gravity.RIGHT);
                     chatHorizontalLayout.addView(chatText, params);
                     linearLayoutVertical.addView(chatHorizontalLayout);
@@ -262,16 +271,16 @@ public class Chat extends Activity{
     }
 
     //see if the message was he or the other user that was sended
-    public String SenderOrReceiver(String sender) {
-        String WhoIs;
-        if (user.equals(sender)) {
-            WhoIs = "sender";
-        }
-        else{
-            WhoIs ="";
-        }
-        return WhoIs;
-    }
+//    public String SenderOrReceiver(String sender) {
+//        String WhoIs;
+//        if (user.equals(sender)) {
+//            WhoIs = "sender";
+//        }
+//        else{
+//            WhoIs ="";
+//        }
+//        return WhoIs;
+//    }
 
     @Override
     public void onPause() {
@@ -372,6 +381,7 @@ public class Chat extends Activity{
                 else {
                     UpdateOtherUserScreen(result[1], result[0]);
                     System.out.println("passed where1");
+                    Toast.makeText(Chat.this, "update screen", Toast.LENGTH_SHORT).show();
                 }
             }
         }
