@@ -62,7 +62,6 @@ import pt.ulisboa.tecnico.cmov.ubibike.Fragments.Friends;
 import pt.ulisboa.tecnico.cmov.ubibike.Fragments.Historic;
 import pt.ulisboa.tecnico.cmov.ubibike.Fragments.InicialPage;
 import pt.ulisboa.tecnico.cmov.ubibike.Fragments.Messages;
-import pt.ulisboa.tecnico.cmov.ubibike.Fragments.Points;
 import pt.ulisboa.tecnico.cmov.ubibike.WifiDirect.SimWifiP2pBroadcastReceiver;
 
 public class NavigationDrawer extends AppCompatActivity
@@ -129,7 +128,7 @@ public class NavigationDrawer extends AppCompatActivity
         mReceiver = new SimWifiP2pBroadcastReceiver(this);
         registerReceiver(mReceiver, filter);
 
-//        // spawn the chat server background task
+        // spawn the chat server background task
         new ListeningMsgCommTask().executeOnExecutor(
                 AsyncTask.THREAD_POOL_EXECUTOR);
     }
@@ -423,8 +422,6 @@ public class NavigationDrawer extends AppCompatActivity
 
         DrawerLayout drawer1 = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer1.closeDrawer(GravityCompat.START);
-
-
     }
 
     public DataBaseHelper getDB(){
@@ -582,6 +579,11 @@ public class NavigationDrawer extends AppCompatActivity
                     helper.sendNewMessage(exchangeMessages);
                 }
             }
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            onResume();
         }
     }
 
