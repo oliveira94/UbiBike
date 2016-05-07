@@ -2,7 +2,7 @@ package pt.ulisboa.tecnico.cmov.ubibike;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.IntentFilter;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -10,6 +10,7 @@ import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,9 +19,14 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -71,8 +77,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         LocationManager manager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        if (UserData.route==true)
+        if (UserData.route == true)
         {
+            mMap= ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
+            Intent intent = this.getIntent();
+            Bundle bundle = intent.getExtras();
+            parseCoordinates(bundle.getSerializable("rota").toString());
+            int focus= Integer.valueOf(markerPoints.size()/2);
+            mMap.addPolyline(plot());
+            mMap.addMarker(new MarkerOptions().position(markerPoints.get(0)).title("Start").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+            mMap.addMarker(new MarkerOptions().position(markerPoints.get(markerPoints.size()-1)).title("End").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(markerPoints.get(focus-1)));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(markerPoints.get(focus - 1).latitude, markerPoints.get(focus-1).longitude), 12.0f));
+
 
         }else {
             LocationListener listener = new LocationListener() {
@@ -112,7 +129,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             };
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             }
-            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 20, (float) 70.00, listener);
+            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 20, (float) 20.00, listener);
+        }
+    }
+    public void parseCoordinates(String coordinates)
+    {
+        String [] spliter=coordinates.split("lat/lng:");
+        spliter[spliter.length-1]+=" ";
+        for (int i =1; i < spliter.length;i++)
+        {
+            spliter[i]=spliter[i].substring(2,spliter[i].length()-3);
+            Log.i("Rota: ", spliter[i]);
+            String [] spliter2= spliter[i].split(",");
+            LatLng position = new LatLng(Double.valueOf(spliter2[0]),Double.valueOf(spliter2[1]));
+            markerPoints.add(position);
         }
     }
     //metodo para desenhar a rota no mapa
@@ -135,32 +165,39 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setMyLocationEnabled(true);
     }
     @Override
-    public void onPause ()
-    {
+    public void onPause () {
         super.onPause();
 
-        //linhas para ver a data para de seguida
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-        String date = dateFormat.format(calendar.getTime());
+        if (UserData.route == false) {
+            //linhas para ver a data para de seguida
+            Calendar calendar = Calendar.getInstance();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+            String date = dateFormat.format(calendar.getTime());
 
-        coordinates.put(markerPoints, date);
-        //actualizar o percurso na variavel na classe global
-        UserData.history.add(coordinates);
-        //calcular os pontos  obtidos na viagem
-        calculatePoints();
-        //actualizar os pontos na classe global
-        UserData.points += points;
-        //actializar a variavel da distancia da classe global
-        UserData.totalDistance += distance;
-        //variavel para saber se o mapa foi inicializadp atravez do histório
-        UserData.route=false;
-        //adiccionar a distancia percorrida à base de dados
-        helper.AddNewDistance(UserData.username,distance);
-        //TODO PARA ENVIAR PARA O SERVER
+            coordinates.put(markerPoints, date);
+            //actualizar o percurso na variavel na classe global
+            UserData.history.add(coordinates);
+            //calcular os pontos  obtidos na viagem
+            calculatePoints();
+            //actualizar os pontos na classe global
+            UserData.points += points;
+            //actializar a variavel da distancia da classe global
+            UserData.totalDistance += distance;
+            //variavel para saber se o mapa foi inicializadp atravez do histório
+
+            //adiccionar a distancia percorrida à base de dados
+            helper.AddNewDistance(UserData.username, distance);
+            mMap.clear();
+            //TODO PARA ENVIAR PARA O SERVER
+        } else {
+            mMap.clear();
+            UserData.route = false;
+        }
 
 
     }
+
+
     //metodo para calcular os pontos dados a um utilizador consoante os kilometros feitos
     public void calculatePoints()
     {

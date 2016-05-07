@@ -35,10 +35,6 @@ public class Historic extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         final View view= inflater.inflate(R.layout.fragment_historic, container, false);
-
-
-
-
         for (int i =0; i<UserData.history.size();i++)
         {
 
@@ -50,6 +46,7 @@ public class Historic extends Fragment {
             String text=UserData.history.get(i).toString();
             final String [] spliter= text.split("=");
             spliter[1]=spliter[1].substring(0,spliter[1].length()-1);
+            spliter[0]=spliter[0].substring(1);
 
 
             routes.setText("Route done on " + spliter[1]);
@@ -57,23 +54,16 @@ public class Historic extends Fragment {
             routes.setTextColor(Color.BLACK);
             routes.setBackgroundColor(Color.TRANSPARENT);
             routes.setId(i);
-
             final int id= routes.getId();
-
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
-
             //Setting the parameters to the intended
             historyHorizontalLayout.setGravity(Gravity.LEFT);
-
             //Adding the textView to the HorizontalLayout
             historyHorizontalLayout.addView(routes, params);
-
             //Adding the whole HorizontalLayout to the VerticalLayout
             linearLayoutVertical.addView(historyHorizontalLayout);
-
-
             Button btn1=(Button) view.findViewById(id);
             btn1.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -82,6 +72,7 @@ public class Historic extends Fragment {
                     //passar os dados da rota para os mapas
                     Bundle dados=new Bundle();
                     dados.putSerializable("rota",spliter[0]);
+                    dados.putSerializable("data",spliter[1]);
                     Intent intent= new Intent(getContext(), MapsActivity.class);
                     intent.putExtras(dados);
                     startActivity(intent);
