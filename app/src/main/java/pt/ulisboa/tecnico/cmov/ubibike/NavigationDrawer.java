@@ -81,7 +81,7 @@ public class NavigationDrawer extends AppCompatActivity
 
     public static final String TAG = "receivinggmsg";
     private SimWifiP2pSocketServer mSrvSocket = null;
-    int port = 10001;
+    int port = 9990;
 
     DataBaseHelper helper = new DataBaseHelper(this);
     public boolean mBound = false;
@@ -389,8 +389,13 @@ public class NavigationDrawer extends AppCompatActivity
         //Update UserData class with information from server
         UserData.name = (String) profileData.get("name");
         UserData.age = Integer.valueOf((String)profileData.get("age"));
+/*<<<<<<< HEAD
         UserData.points = Integer.valueOf((String) profileData.get("points"));
         UserData.totalDistance = Double.valueOf((String)profileData.get("distance"));
+=======
+        UserData.points = helper.PointsFromUser(UserData.username);
+        UserData.totalDistance = Double.valueOf((String) profileData.get("distance"));
+>>>>>>> origin/master*/
         UserData.history = (ArrayList<Object>) profileData.get("history");
         UserData.listOfFriends = (ArrayList<String>) profileData.get("friendsList");
 
@@ -424,9 +429,6 @@ public class NavigationDrawer extends AppCompatActivity
         TextView UpdateHeaderPoints = (TextView)findViewById(R.id.headerpoints);
         String points = "Points: " + UserData.points;
         UpdateHeaderPoints.setText(points);
-
-
-
 
         fragmenttransaction.replace(R.id.container, inicialpage);
         fragmenttransaction.commit();
@@ -581,6 +583,8 @@ public class NavigationDrawer extends AppCompatActivity
 
             //put the message in the database
             helper.sendNewMessage(exchangeMessages);
+
+
         }
     }
 }

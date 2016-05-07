@@ -3,11 +3,11 @@ package pt.ulisboa.tecnico.cmov.ubibike;
 import android.app.Application;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.model.LatLng;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.crypto.SecretKey;
 
 public class UserData extends Application{
 
@@ -20,8 +20,10 @@ public class UserData extends Application{
     public static ArrayList<String> listOfFriends = new ArrayList();
     public static ArrayList<Object> history = new ArrayList<>();
     public static boolean searchClicked = false;
+    public static SecretKey secretKey;
     public static boolean beaconAround = false;
     public static boolean route = false;
+
 
     //add a IP to a list of the IP in the network
     public void AddDeviceIPToList(String IP) {

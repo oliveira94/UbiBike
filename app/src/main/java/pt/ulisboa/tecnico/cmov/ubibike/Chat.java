@@ -49,13 +49,16 @@ public class Chat extends Activity{
     String IP = "";
     int port = 10001;
 
+    //false if is message, true if is points
+    boolean MessageOrPoints = false;
+
     boolean DontWriteAnything = true;
     public static final String TAG = "msgsender";
     private SimWifiP2pSocketServer mSrvSocket = null;
     private SimWifiP2pSocket mCliSocket = null;
     private TextView mTextInput;
     private TextView pointInput;
-    private TextView mTextOutput ;
+    //private TextView mTextOutput ;
     private SimWifiP2pBroadcastReceiver mReceiver;
 
     @Override
@@ -71,8 +74,8 @@ public class Chat extends Activity{
 
         mTextInput = (TextView)findViewById(R.id.textEntryChat);
         pointInput = (TextView)findViewById(R.id.entrypoints);
-        mTextOutput = (TextView) findViewById(R.id.output);
-        mTextOutput.setText("");
+        //mTextOutput = (TextView) findViewById(R.id.output);
+        //mTextOutput.setText("");
 
     }
 
@@ -99,7 +102,8 @@ public class Chat extends Activity{
 
     public void sendClickedChat(View view) {
 
-        DontWriteAnything = false;
+//        DontWriteAnything = false;
+        MessageOrPoints = false;
 
         // spawn the chat server background task
         new OutgoingCommTask().executeOnExecutor(
@@ -260,6 +264,10 @@ public class Chat extends Activity{
     }
 
     public void sendPointsClicked(View view) {
+
+
+        MessageOrPoints = true;
+
         // spawn the chat server background task
         new OutgoingCommTask().executeOnExecutor(
                 AsyncTask.THREAD_POOL_EXECUTOR,
@@ -269,38 +277,16 @@ public class Chat extends Activity{
                 AsyncTask.THREAD_POOL_EXECUTOR,
                 pointInput.getText().toString());
 
-        LinearLayout linearLayoutVertical = (LinearLayout) findViewById(R.id.idChatLinearVertical);
-        LinearLayout chatHorizontalLayout = new LinearLayout(this);
-
         //Moving the text to the new text box
         TextView chatText = new TextView(this);
         EditText entryText = (EditText) findViewById(R.id.entrypoints);
-        String text = entryText.getText().toString();
+        String pointstext = entryText.getText().toString();
+        int points = Integer.parseInt(pointstext);
+        UserData.points -= points;
+        helper.ChangePoints(user, -points);
+        System.out.println(UserData.points);
 
-        //update the exchangeMessages
-        exchangeMessages.setSender(user);
-        exchangeMessages.setMessage(text);
-        exchangeMessages.setReceiver(receiver);
 
-        //put the message in the database
-        helper.sendNewMessage(exchangeMessages);
-
-        chatText.setText(text);
-        chatText.setTextSize(22);
-        chatText.setTextColor(Color.BLACK);
-
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
-
-        //Setting the parameters to the intended
-        chatHorizontalLayout.setGravity(Gravity.RIGHT);
-
-        //Adding the textView to the HorizontalLayout
-        chatHorizontalLayout.addView(chatText, params);
-
-        //Adding the whole HorizontalLayout to the VerticalLayout
-        linearLayoutVertical.addView(chatHorizontalLayout);
     }
 
     public class IncommingCommTask extends AsyncTask<Void, String, Void> {
@@ -345,27 +331,65 @@ public class Chat extends Activity{
 
         @Override
         protected void onProgressUpdate(String... values) {
-            mTextOutput.append(values[0] + "\n");
+//            if(!MessageOrPoints){
+//                String[] result = values[0].split(":");
+//                UpdateOtherUserScreen(result[1], result[0]);
+//                System.out.println("passed where1");
+//
+//            }
+//            else
+//            {
+//                String[] result = values[0].split(":");
+//                UserData.points += Integer.parseInt(result[1]);
+//                helper.ChangePoints(receiver, Integer.parseInt(result[1]));
+//                System.out.println("passed where2");
+//            }
+
             String[] result = values[0].split(":");
-            //where i have the message that will be sent to the other user
-            UpdateOtherUserScreen(result[1], result[0]);
-            Toast toast = Toast.makeText(Chat.this, "passed on progress update" , Toast.LENGTH_SHORT);
-            toast.show();
+            if(isNumber(result[1])){
+                UserData.points += Integer.parseInt(result[1]);
+                helper.ChangePoints(receiver, Integer.parseInt(result[1]));
+                System.out.println("passed where2");
+            }
+            else {
+                UpdateOtherUserScreen(result[1], result[0]);
+                System.out.println("passed where1");
+            }
         }
+    }
+
+    public static boolean isNumber(String string) {
+        if (string == null || string.isEmpty()) {
+            return false;
+        }
+        int i = 0;
+        if (string.charAt(0) == '-') {
+            if (string.length() > 1) {
+                i++;
+            } else {
+                return false;
+            }
+        }
+        for (; i < string.length(); i++) {
+            if (!Character.isDigit(string.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public class OutgoingCommTask extends AsyncTask<String, Void, String> {
         //
         @Override
         protected void onPreExecute() {
-            mTextOutput.setText("Connecting...");
+            //mTextOutput.setText("Connecting...");
         }
 
         @Override
         protected String doInBackground(String... params) {
 
-                if(!DontWriteAnything)
-                {
+//                if(!DontWriteAnything)
+//                {
                     try {
                         mCliSocket = new SimWifiP2pSocket(params[0],
                                 port);
@@ -374,14 +398,14 @@ public class Chat extends Activity{
                     } catch (IOException e) {
                         return "IO error:" + e.getMessage();
                     }
-                }
-
+//                }
+//
             return null;
         }
         @Override
         protected void onPostExecute(String result) {
             if (result != null) {
-                mTextOutput.setText(result);
+               // mTextOutput.setText(result);
             }
         }
     }
@@ -391,8 +415,8 @@ public class Chat extends Activity{
         @Override
         protected Void doInBackground(String... msg) {
 
-                if(!DontWriteAnything)
-                {
+//                if(!DontWriteAnything)
+//                {
                     try {
                         mCliSocket = new SimWifiP2pSocket(IP, 10001);
                         mCliSocket.getOutputStream().write((user + ":" + msg[0] + "\n").getBytes());
@@ -403,7 +427,7 @@ public class Chat extends Activity{
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                }
+              //  }
             mCliSocket = null;
             return null;
         }
@@ -411,9 +435,7 @@ public class Chat extends Activity{
         @Override
         protected void onPostExecute(Void result) {
             mTextInput.setText("");
-            if (result != null) {
-                mTextOutput.setText("sfsdfsdfsdfsdfdsfs");//get message
-            }
+
         }
     }
 }
