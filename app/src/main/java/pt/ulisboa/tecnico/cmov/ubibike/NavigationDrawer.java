@@ -202,13 +202,6 @@ public class NavigationDrawer extends AppCompatActivity
             return true;
         }
 
-    public void FrameClicked(View view) {
-        //send user name to chat
-        Intent i = new Intent(this, Chat.class);
-        i.putExtra("USER", user);
-        startActivity(i);
-    }
-
     public void addFriend(View view) {
         principalLayout= (LinearLayout) findViewById(R.id.idFriendsVertical);
         secondaryLayout= new LinearLayout(this);
@@ -395,7 +388,7 @@ public class NavigationDrawer extends AppCompatActivity
         UserData.listOfFriends = (ArrayList<String>) profileData.get("friendsList");
 
         helper.insertUserData(UserData.name, UserData.age, UserData.username);
-        helper.insertFriendsAndHistory(UserData.username, "noFriends", "noTrips");
+        helper.insertFriendsAndHistory(UserData.username, "noFriends", "noTrips", "noDevices");
 
         for (String friend : UserData.listOfFriends)
             helper.addFriend(UserData.username, friend);
@@ -438,6 +431,7 @@ public class NavigationDrawer extends AppCompatActivity
         return helper;
     }
 
+    //TODO funçao para retornar a lista dos devices
 
     public void ActClicked(View view){
         if (mBound) {
@@ -488,6 +482,7 @@ public class NavigationDrawer extends AppCompatActivity
             ((UserData) this.getApplication()).AddDeviceIPToList(device.getVirtIp());
             ((UserData) this.getApplication()).GetDeviceIP(deviceName);
             ((UserData) this.getApplication()).GetName(UserData.IP);
+            helper.addDevice(UserData.username,deviceName);
 
         }
 

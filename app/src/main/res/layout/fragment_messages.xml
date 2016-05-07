@@ -68,31 +68,6 @@
                 android:layout_alignParentTop="true"
                 android:id="@+id/linearverticalmessages">
 
-                <FrameLayout
-                    android:orientation="horizontal"
-                    android:layout_width="fill_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginTop="20dp"
-                    android:onClick="FrameClicked">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="1 new message"
-                        android:id="@+id/textView4"
-                        android:layout_gravity="center" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:text="João"
-                        android:id="@+id/textView21"
-                        android:layout_gravity="left|center_vertical" />
-                </FrameLayout>
-
 
             </LinearLayout>
 

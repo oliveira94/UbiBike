@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class DataBaseHelper extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "dase11.db";
+    private static final String DATABASE_NAME = "dase13.db";
     private static final String TABLE_NAME_DATA = "mydata";
     private static final String TABLE_NAME_CHAT = "mychat";
     private static final String TABLE_NAME_FRIENDS = "myfriends";
@@ -23,6 +23,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_NAME = "name";
     private static final String COLUMN_AGE = "age";
     private static final String COLUMN_TOTALDISTANCE = "totaldistance";
+    private static final String COLUMN_DEVICES = "devices";
     private static final String COLUMN_HISTORIC = "historic";
     private static final String COLUMN_FRIENDS = "friends";
     private static final String COLUMN_POINTS = "points";
@@ -40,7 +41,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             "sender text not null , receiver text not null , message text not null);";
 
     private static final String TABLE_CREATE_FRIENDS = "create table myfriends (id integer primary key not null , " +
-            "username text not null , friends text , historic text);";
+            "username text not null , friends text , historic text , devices text);";
 
     public DataBaseHelper(Context context){
         super(context, DATABASE_NAME,null, DATABASE_VERSION);
@@ -78,13 +79,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public void insertFriendsAndHistory(String user, String friends, String history){
+    public void insertFriendsAndHistory(String user, String friends, String history, String devices){
         db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         if(friends.equals("noFriends"))
         {
-
             String query = "select * from myfriends";
             Cursor cursor = db.rawQuery(query, null);
             db.delete(TABLE_NAME_FRIENDS, COLUMN_USERNAME + "='" + user + "'", null);
@@ -95,6 +95,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             values.put(COLUMN_USERNAME, user);
             values.put(COLUMN_FRIENDS,friends);
             values.put(COLUMN_HISTORIC, history);
+            values.put(COLUMN_DEVICES,devices);
 
             db.insert(TABLE_NAME_FRIENDS, null, values);
             db.close();
@@ -131,23 +132,24 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void addTrip(String user, String newTrip){
+    public void addDevice(String user, String newDevice)
+    {
         Gson gson = new Gson();
         Type type = new TypeToken<ArrayList<String>>() {}.getType();
-        ArrayList<String> tripList;
-        String listOfTrips = getListOfTrips(user);
+        ArrayList<String> deviceList;
+        String listOfDevices = getListOfDevices(user);
 
-        if(listOfTrips.equals("noTrips"))
-            tripList = new ArrayList<>();
+        if(listOfDevices.equals("noDevices"))
+            deviceList = new ArrayList<>();
         else
-            tripList = gson.fromJson(listOfTrips, type);
+            deviceList = gson.fromJson(listOfDevices, type);
 
-        tripList.add(newTrip);
-        String newTripsList= gson.toJson(tripList);
+        deviceList.add(newDevice);
+        String newDeviceList= gson.toJson(deviceList);
 
         db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(COLUMN_HISTORIC, newTripsList);
+        values.put(COLUMN_DEVICES, newDeviceList);
         db.update(TABLE_NAME_FRIENDS, values, COLUMN_USERNAME + "='" + user + "'", null);
         db.close();
     }
@@ -175,6 +177,50 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return friendsList;
     }
 
+    public String getListOfDevices(String user){
+        db = this.getReadableDatabase();
+        String devicesList = "noDevices";
+
+        String query1 = "select username, devices from "+ TABLE_NAME_FRIENDS;
+        Cursor cursor1;
+        cursor1 = db.rawQuery(query1, null);
+        String x;
+
+        if(cursor1.moveToFirst()){
+            do{
+                x = cursor1.getString(0);
+                if(x.equals(user)){
+                    devicesList = cursor1.getString(1);
+                    break;
+                }
+            }
+            while (cursor1.moveToNext());
+        }
+
+        return devicesList;
+    }
+
+    public void addTrip(String user, String newTrip){
+        Gson gson = new Gson();
+        Type type = new TypeToken<ArrayList<String>>() {}.getType();
+        ArrayList<String> tripList;
+        String listOfTrips = getListOfTrips(user);
+
+        if(listOfTrips.equals("noTrips"))
+            tripList = new ArrayList<>();
+        else
+            tripList = gson.fromJson(listOfTrips, type);
+
+        tripList.add(newTrip);
+        String newTripsList= gson.toJson(tripList);
+
+        db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_HISTORIC, newTripsList);
+        db.update(TABLE_NAME_FRIENDS, values, COLUMN_USERNAME + "='" + user + "'", null);
+        db.close();
+    }
+
     public String getListOfTrips(String user){
         db = this.getReadableDatabase();
         String tripsList = "noTrips";
@@ -198,7 +244,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return tripsList;
     }
 
-
     //method to store a message between a sender and a receiver in the database
     public void sendNewMessage(ExchangeMessages exchangeMessages){
         db = this.getWritableDatabase();
@@ -218,7 +263,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.insert(TABLE_NAME_CHAT, null, values);
         db.close();
     }
-
 
     //get points from a username
     public int PointsFromUser(String username){
@@ -274,7 +318,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.update(TABLE_NAME_DATA, values, COLUMN_USERNAME + "='" + username + "'", null);
         db.close();
     }
-
 
     public void AddNewDistance(String username, double distance){
         db = this.getReadableDatabase();
