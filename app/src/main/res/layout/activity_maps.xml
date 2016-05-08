@@ -39,7 +39,8 @@
             android:text="00:00:00"
             android:id="@+id/time"
             android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true" />
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -48,9 +49,8 @@
             android:text="Points:"
             android:id="@+id/points"
             android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
             android:visibility="invisible"
-            android:layout_alignParentEnd="true" />
+            android:layout_centerHorizontal="true" />
 
     </RelativeLayout>
 
