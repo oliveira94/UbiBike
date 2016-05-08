@@ -4,13 +4,24 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.Point;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.preference.TwoStatePreference;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +46,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
 import pt.ulisboa.tecnico.cmov.ubibike.WifiDirect.SimWifiP2pBroadcastReceiver;
@@ -52,30 +65,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     TextView tx;
     private Map<ArrayList<LatLng>,String> coordinates = new HashMap<>();
     DataBaseHelper helper = new DataBaseHelper(this);
-
+    private int seconds, minutes,hours = 0;
+    String seconds1,minutes1,hours1 ="";
     public MapsActivity() {
 
     }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-
-/*
-        //TODO ter em todas as actividades
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_STATE_CHANGED_ACTION);
-        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_PEERS_CHANGED_ACTION);
-        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_NETWORK_MEMBERSHIP_CHANGED_ACTION);
-        filter.addAction(SimWifiP2pBroadcast.WIFI_P2P_GROUP_OWNERSHIP_CHANGED_ACTION);
-        receiver = new SimWifiP2pBroadcastReceiver(this);
-        registerReceiver(receiver, filter);*/
-        //textview para mostrar os km efectuados pelo dispositivo
-        tx=(TextView) findViewById(R.id.KM);
-
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        setLayout();
         LocationManager manager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         if (UserData.route == true)
         {
@@ -92,6 +91,53 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
         }else {
+           final  TextView time = (TextView) findViewById(R.id.time);
+            Timer t = new Timer();
+            t.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                   runOnUiThread(new Runnable() {
+                       @Override
+                       public void run() {
+                           seconds++;
+                           if (seconds == 60) {
+                               seconds = 0;
+                               minutes++;
+                           }
+                           if (minutes == 60) {
+                               minutes = 0;
+                               hours++;
+                           }
+                           if(seconds < 10)
+                           {
+                               seconds1 = ":0" + seconds;
+                           }else
+                           {
+                               seconds1=":"+seconds;
+                           }
+                           if (minutes < 10)
+                           {
+                               minutes1=":0"+minutes;
+                           }else
+                           {
+                               minutes1=":"+minutes;
+                           }
+                           if (hours < 10)
+                           {
+                               hours1="0"+hours;
+                           }else
+                           {
+                               hours1=":"+hours;
+                           }
+                           time.setText(hours1+minutes1+seconds1);
+
+                       }
+                   });
+
+                }
+            }, 0, 1000);
+
+
             LocationListener listener = new LocationListener() {
                 @Override
                 public void onLocationChanged(Location location) {
@@ -99,8 +145,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     currentLocation = location;
                     LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
                     if (markerPoints.size() != 0) {
-
-                        tx.setText(String.valueOf(distance() + "Km"));
+                        distance();
+                        tx.setText(String.valueOf(""+formarter(distance) + "Km"));
 
                     }
                     //adicionar a localização do dispositivo
@@ -217,9 +263,43 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         AuxDistance = lastLocation.distanceTo(currentLocation);
         AuxDistance = AuxDistance/1000;
         //formatar a distancia
-        DecimalFormat decimalFormat = new DecimalFormat("#.0");
-        String auxFormat = decimalFormat.format(AuxDistance);
-        AuxDistance = Double.valueOf(auxFormat);
+//        NumberFormat decimalFormat = new DecimalFormat("#.00");
+//        String auxFormat = decimalFormat.format(AuxDistance);
+//        AuxDistance = Double.valueOf(auxFormat);
         return distance += AuxDistance;
+    }
+    public double formarter(double number)
+    {
+        NumberFormat decimalFormat = new DecimalFormat("#.0");
+        String auxFormat = decimalFormat.format(number);
+        double retorno = Double.valueOf(auxFormat);
+        return retorno;
+    }
+    public void setLayout()
+    {
+        //textview para mostrar os km efectuados pelo dispositivo
+        tx=(TextView) findViewById(R.id.KM);
+        tx.setGravity(Gravity.CENTER_HORIZONTAL);
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        ViewGroup.LayoutParams params = mapFragment.getView().getLayoutParams();
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        params.height= (int) (metrics.heightPixels * 0.90);
+        mapFragment.getView().setLayoutParams(params);
+        mapFragment.getMapAsync(this);
+
+        RelativeLayout bottom = (RelativeLayout) findViewById(R.id.bottomVertival);
+        bottom.setBackgroundColor(Color.rgb(255,255,255));
+        bottom.setGravity((int) (metrics.heightPixels * 0.90));
+        ViewGroup.LayoutParams params1= bottom.getLayoutParams();
+        params1.height=(int)((metrics.heightPixels)*0.10);
+        bottom.setLayoutParams(params1);
+        //bottom.addView(tx);
+        if (UserData.route == true)
+        {
+            TextView tx2 = (TextView) findViewById(R.id.points);
+            tx2.setVisibility(View.VISIBLE);
+        }
     }
 }

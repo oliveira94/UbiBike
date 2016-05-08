@@ -46,7 +46,7 @@ public class Chat extends Activity{
     ExchangeMessages exchangeMessages = new ExchangeMessages();
     String user = "";
     String receiver = "";
-    String receiverFromMessages = "";
+    //String receiverFromMessages = "";
     String IP = "";
     int port = 10001;
     String receiverFromMessages = "";
