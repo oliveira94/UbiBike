@@ -108,7 +108,6 @@ public class Chat extends Activity{
 
     public void sendClickedChat(View view) {
 
-//        DontWriteAnything = false;
         MessageOrPoints = false;
 
         // spawn the chat server background task
@@ -287,13 +286,13 @@ public class Chat extends Activity{
         super.onPause();
         //if(DontWriteAnything){
             // spawn the chat server background task
-            new OutgoingCommTask().executeOnExecutor(
-                    AsyncTask.THREAD_POOL_EXECUTOR,
-                    mTextInput.getText().toString());
-
-            new SendCommTask().executeOnExecutor(
-                    AsyncTask.THREAD_POOL_EXECUTOR,
-                    mTextInput.getText().toString());
+//            new OutgoingCommTask().executeOnExecutor(
+//                    AsyncTask.THREAD_POOL_EXECUTOR,
+//                    mTextInput.getText().toString());
+//
+//            new SendCommTask().executeOnExecutor(
+//                    AsyncTask.THREAD_POOL_EXECUTOR,
+//                    mTextInput.getText().toString());
        // }
         unregisterReceiver(mReceiver);
     }
@@ -328,14 +327,17 @@ public class Chat extends Activity{
         }
     }
 
+
     public class IncommingCommTask extends AsyncTask<Void, String, Void> {
 
         @Override
         protected Void doInBackground(Void... params) {
             Log.d(TAG, "IncommingCommTask started (" + this.hashCode() + ").");
-            try {
-                mSrvSocket = new SimWifiP2pSocketServer(
-                        port);
+            try
+            {
+                port--;
+                mSrvSocket = new SimWifiP2pSocketServer(port);
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -385,6 +387,12 @@ public class Chat extends Activity{
                 }
             }
         }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            // spawn the chat server background task
+            onResume();
+        }
     }
 
     public static boolean isNumber(String string) {
@@ -408,34 +416,24 @@ public class Chat extends Activity{
     }
 
     public class OutgoingCommTask extends AsyncTask<String, Void, String> {
-        //
-        @Override
-        protected void onPreExecute() {
-            //mTextOutput.setText("Connecting...");
-        }
 
         @Override
         protected String doInBackground(String... params) {
 
-//                if(!DontWriteAnything)
-//                {
-                    try {
-                        mCliSocket = new SimWifiP2pSocket(params[0],
-                                port);
-                    } catch (UnknownHostException e) {
+                    try
+                    {
+                        port--;
+                        mCliSocket = new SimWifiP2pSocket(params[0], port);
+                    }
+                    catch (UnknownHostException e)
+                    {
                         return "Unknown Host:" + e.getMessage();
-                    } catch (IOException e) {
+                    }
+                    catch (IOException e)
+                    {
                         return "IO error:" + e.getMessage();
                     }
-//                }
-//
             return null;
-        }
-        @Override
-        protected void onPostExecute(String result) {
-            if (result != null) {
-               // mTextOutput.setText(result);
-            }
         }
     }
 
@@ -444,19 +442,18 @@ public class Chat extends Activity{
         @Override
         protected Void doInBackground(String... msg) {
 
-//                if(!DontWriteAnything)
-//                {
-                    try {
+                    try
+                    {
                         mCliSocket = new SimWifiP2pSocket(IP, 10001);
                         mCliSocket.getOutputStream().write((user + ":" + msg[0] + "\n").getBytes());
-                        BufferedReader sockIn = new BufferedReader(
-                                new InputStreamReader(mCliSocket.getInputStream()));
+                        BufferedReader sockIn = new BufferedReader(new InputStreamReader(mCliSocket.getInputStream()));
                         sockIn.readLine();
                         mCliSocket.close();
-                    } catch (IOException e) {
+                    }
+                    catch (IOException e)
+                    {
                         e.printStackTrace();
                     }
-              //  }
             mCliSocket = null;
             return null;
         }
@@ -464,7 +461,6 @@ public class Chat extends Activity{
         @Override
         protected void onPostExecute(Void result) {
             mTextInput.setText("");
-
         }
     }
 }
