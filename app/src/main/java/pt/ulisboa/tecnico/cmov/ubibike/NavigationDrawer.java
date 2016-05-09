@@ -119,6 +119,10 @@ public class NavigationDrawer extends AppCompatActivity
         mReceiver = new SimWifiP2pBroadcastReceiver(this);
         registerReceiver(mReceiver, filter);
 
+        TextView UpdateHeaderPoints = (TextView)findViewById(R.id.headerpoints);
+        String points = "Points: " + UserData.points;
+        UpdateHeaderPoints.setText(points);
+
         // spawn the chat server background task
         new ListeningMsgCommTask().executeOnExecutor(
                 AsyncTask.THREAD_POOL_EXECUTOR);
@@ -482,7 +486,6 @@ public class NavigationDrawer extends AppCompatActivity
 
             detectBeacon(devices);
         }
-
     }
 
     public void detectBeacon(SimWifiP2pDeviceList devices)
@@ -559,6 +562,9 @@ public class NavigationDrawer extends AppCompatActivity
                     helper.ChangePoints(UserData.username, Integer.parseInt(result[1]));
                     Toast toast = Toast.makeText(NavigationDrawer.this, result[0] + " sent you points.", Toast.LENGTH_SHORT);
                     toast.show();
+                    TextView UpdateHeaderPoints = (TextView)findViewById(R.id.headerpoints);
+                    String points = "Points: " + UserData.points;
+                    UpdateHeaderPoints.setText(points);
                 }
                 else {
                     exchangeMessages.setSender(result[0]);
@@ -583,6 +589,7 @@ public class NavigationDrawer extends AppCompatActivity
     }
 
     public static boolean isNumber(String string) {
+
         if (string == null || string.isEmpty()) {
             return false;
         }

@@ -286,6 +286,7 @@ public class Chat extends Activity{
             Toast toast = Toast.makeText(Chat.this, "Invalid Input", Toast.LENGTH_SHORT);
             toast.show();
         }
+        pointInput.setText("");
     }
 
     public class IncommingCommTask extends AsyncTask<Void, String, Void> {
