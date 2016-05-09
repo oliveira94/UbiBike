@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cmov.ubibike;
+package pt.ulisboa.tecnico.cmov.ubibike.DataBase;
 
 import android.app.Application;
 import android.widget.Toast;
@@ -61,5 +61,5 @@ public class UserData extends Application{
     {
         return listOfFriends;
     }
-    
+
 }

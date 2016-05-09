@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import pt.ulisboa.tecnico.cmov.ubibike.R;
-import pt.ulisboa.tecnico.cmov.ubibike.UserData;
+import pt.ulisboa.tecnico.cmov.ubibike.DataBase.UserData;
 
 public class InicialPage extends Fragment {
 

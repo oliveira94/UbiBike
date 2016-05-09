@@ -1,14 +1,13 @@
-package pt.ulisboa.tecnico.cmov.ubibike;
+package pt.ulisboa.tecnico.cmov.ubibike.Activities;
 
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Messenger;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
-import pt.inesc.termite.wifidirect.SimWifiP2pManager;
 import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketManager;
+import pt.ulisboa.tecnico.cmov.ubibike.R;
 import pt.ulisboa.tecnico.cmov.ubibike.WifiDirect.SimWifiP2pBroadcastReceiver;
 
 public class MainActivity extends AppCompatActivity{

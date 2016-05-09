@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cmov.ubibike;
+package pt.ulisboa.tecnico.cmov.ubibike.Activities;
 
 import android.Manifest;
 import android.content.Context;
@@ -49,6 +49,9 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import pt.ulisboa.tecnico.cmov.ubibike.DataBase.DataBaseHelper;
+import pt.ulisboa.tecnico.cmov.ubibike.R;
+import pt.ulisboa.tecnico.cmov.ubibike.DataBase.UserData;
 import pt.ulisboa.tecnico.cmov.ubibike.WifiDirect.SimWifiP2pBroadcastReceiver;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {

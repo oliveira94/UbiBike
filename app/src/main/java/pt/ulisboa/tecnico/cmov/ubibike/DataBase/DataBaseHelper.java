@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cmov.ubibike;
+package pt.ulisboa.tecnico.cmov.ubibike.DataBase;
 
 import android.content.ContentValues;
 import android.content.Context;

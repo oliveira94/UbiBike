@@ -1,5 +1,4 @@
-package pt.ulisboa.tecnico.cmov.ubibike;
-
+package pt.ulisboa.tecnico.cmov.ubibike.DataBase;
 
 public class ExchangeMessages {
     String message, sender, receiver;

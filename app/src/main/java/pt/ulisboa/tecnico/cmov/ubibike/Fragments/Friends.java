@@ -7,7 +7,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -18,10 +17,10 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
-import pt.ulisboa.tecnico.cmov.ubibike.DataBaseHelper;
-import pt.ulisboa.tecnico.cmov.ubibike.NavigationDrawer;
+import pt.ulisboa.tecnico.cmov.ubibike.DataBase.DataBaseHelper;
+import pt.ulisboa.tecnico.cmov.ubibike.Activities.NavigationDrawer;
 import pt.ulisboa.tecnico.cmov.ubibike.R;
-import pt.ulisboa.tecnico.cmov.ubibike.UserData;
+import pt.ulisboa.tecnico.cmov.ubibike.DataBase.UserData;
 
 public class Friends extends Fragment {
 

@@ -16,11 +16,11 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import pt.ulisboa.tecnico.cmov.ubibike.Chat;
-import pt.ulisboa.tecnico.cmov.ubibike.DataBaseHelper;
-import pt.ulisboa.tecnico.cmov.ubibike.NavigationDrawer;
+import pt.ulisboa.tecnico.cmov.ubibike.Activities.Chat;
+import pt.ulisboa.tecnico.cmov.ubibike.DataBase.DataBaseHelper;
+import pt.ulisboa.tecnico.cmov.ubibike.Activities.NavigationDrawer;
 import pt.ulisboa.tecnico.cmov.ubibike.R;
-import pt.ulisboa.tecnico.cmov.ubibike.UserData;
+import pt.ulisboa.tecnico.cmov.ubibike.DataBase.UserData;
 
 public class Messages extends Fragment {
 

@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cmov.ubibike;
+package pt.ulisboa.tecnico.cmov.ubibike.Activities;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -48,11 +48,15 @@ import pt.inesc.termite.wifidirect.SimWifiP2pManager;
 import pt.inesc.termite.wifidirect.service.SimWifiP2pService;
 import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocket;
 import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketServer;
+import pt.ulisboa.tecnico.cmov.ubibike.DataBase.DataBaseHelper;
+import pt.ulisboa.tecnico.cmov.ubibike.DataBase.ExchangeMessages;
 import pt.ulisboa.tecnico.cmov.ubibike.Fragments.BookBike;
 import pt.ulisboa.tecnico.cmov.ubibike.Fragments.Friends;
 import pt.ulisboa.tecnico.cmov.ubibike.Fragments.Historic;
 import pt.ulisboa.tecnico.cmov.ubibike.Fragments.InicialPage;
 import pt.ulisboa.tecnico.cmov.ubibike.Fragments.Messages;
+import pt.ulisboa.tecnico.cmov.ubibike.R;
+import pt.ulisboa.tecnico.cmov.ubibike.DataBase.UserData;
 import pt.ulisboa.tecnico.cmov.ubibike.WifiDirect.SimWifiP2pBroadcastReceiver;
 
 public class NavigationDrawer extends AppCompatActivity

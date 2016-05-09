@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.cmov.ubibike;
+package pt.ulisboa.tecnico.cmov.ubibike.Activities;
 
 import android.app.Activity;
 import android.content.IntentFilter;
@@ -23,6 +23,10 @@ import java.net.UnknownHostException;
 import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
 import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocket;
 import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketServer;
+import pt.ulisboa.tecnico.cmov.ubibike.DataBase.DataBaseHelper;
+import pt.ulisboa.tecnico.cmov.ubibike.DataBase.ExchangeMessages;
+import pt.ulisboa.tecnico.cmov.ubibike.R;
+import pt.ulisboa.tecnico.cmov.ubibike.DataBase.UserData;
 import pt.ulisboa.tecnico.cmov.ubibike.WifiDirect.SimWifiP2pBroadcastReceiver;
 
 public class Chat extends Activity{
