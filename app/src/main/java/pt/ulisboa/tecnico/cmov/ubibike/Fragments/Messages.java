@@ -12,13 +12,10 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-
 import pt.ulisboa.tecnico.cmov.ubibike.Chat;
 import pt.ulisboa.tecnico.cmov.ubibike.DataBaseHelper;
 import pt.ulisboa.tecnico.cmov.ubibike.NavigationDrawer;
@@ -39,7 +36,6 @@ public class Messages extends Fragment {
 
         if(UserData.searchClicked){
             FragmentTransaction ft = getFragmentManager().beginTransaction();
-
             ft.detach(this).remove(this).attach(this).commit();
             UserData.searchClicked = false;
         }
@@ -50,27 +46,31 @@ public class Messages extends Fragment {
         DataBaseHelper helper = ((NavigationDrawer) getActivity()).getDB();
         String user = UserData.username;
 
+        //go get the string with all of his devices
         String devices = helper.getListOfDevices(user);
+        //go get the string with all of his friends
         String friends = helper.getListOfFriends(user);
 
         if(!devices.equals("noDevices") && !friends.equals("noFriends"))
         {
-            //TODO ler da base de dados os friends e imprimir os TextViews
+            //arraylist where each position is a device
             ArrayList<String> Devices = gson.fromJson(devices, type);
-            System.out.println("final outpu1t= " + Devices);
-
+            //arraylist where each position is a friend
             ArrayList<String> Friends = gson.fromJson(friends, type);
-            System.out.println("final output2= " + Friends);
 
+            //travel the arraylist of devices
             for (int i = 0; i < Devices.size(); i++){
+                //travel the arraylist of friends
                 for(int j = 0; j < Friends.size(); j++)
                 {
+                    //if a device is a friend too, create a chat for comunicate with that friends
                     if(Devices.get(i).equals(Friends.get(j)))
                         SeeIfIsFriends = true;
                 }
                 if(SeeIfIsFriends){
+
                     SeeIfIsFriends = false;
-                    //Moving the text to the new text box
+
                     TextView chatText = new TextView(getActivity());
                     final String text = Devices.get(i);
 

@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.cmov.ubibike.Fragments;
 
-
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -24,16 +23,9 @@ import pt.ulisboa.tecnico.cmov.ubibike.NavigationDrawer;
 import pt.ulisboa.tecnico.cmov.ubibike.R;
 import pt.ulisboa.tecnico.cmov.ubibike.UserData;
 
-
-/**
- * A simple {@link Fragment} subclass.
- */
 public class Friends extends Fragment {
 
-
-    public Friends() {
-        // Required empty public constructor
-    }
+    public Friends() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,20 +39,21 @@ public class Friends extends Fragment {
         DataBaseHelper helper = ((NavigationDrawer) getActivity()).getDB();
         String user = UserData.username;
 
+        //go get the string with all of his friends
         String friends = helper.getListOfFriends(user);
 
         if(!friends.equals("noFriends"))
         {
-            ArrayList<String> finalOutputString = gson.fromJson(friends, type);
-            System.out.println("final output= " + finalOutputString);
+            //each element of the arraylist is a friend
+            ArrayList<String> FriendsList = gson.fromJson(friends, type);
 
-            for (int i = 0; i < finalOutputString.size(); i++){
+            for (int i = 0; i < FriendsList.size(); i++){
+
                 LinearLayout linearLayoutVertical = (LinearLayout) view.findViewById(R.id.idFriendsVertical);
                 LinearLayout chatHorizontalLayout = new LinearLayout(getActivity());
 
-                //Moving the text to the new text box
                 TextView chatText = new TextView(getActivity());
-                String text = finalOutputString.get(i);
+                String text = FriendsList.get(i);
 
                 chatText.setText(text);
                 chatText.setTextSize(22);
@@ -80,7 +73,7 @@ public class Friends extends Fragment {
                 linearLayoutVertical.addView(chatHorizontalLayout);
             }
             }
-        // Inflate the layout for this fragment
+
         return view;
     }
 }

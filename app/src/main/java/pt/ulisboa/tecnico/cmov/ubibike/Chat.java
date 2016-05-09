@@ -1,18 +1,12 @@
 package pt.ulisboa.tecnico.cmov.ubibike;
 
 import android.app.Activity;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.IBinder;
-import android.os.Messenger;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -22,20 +16,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
-
 import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
-import pt.inesc.termite.wifidirect.SimWifiP2pDevice;
-import pt.inesc.termite.wifidirect.SimWifiP2pDeviceList;
-import pt.inesc.termite.wifidirect.SimWifiP2pInfo;
-import pt.inesc.termite.wifidirect.SimWifiP2pManager;
-import pt.inesc.termite.wifidirect.service.SimWifiP2pService;
 import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocket;
 import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketServer;
 import pt.ulisboa.tecnico.cmov.ubibike.WifiDirect.SimWifiP2pBroadcastReceiver;
@@ -78,9 +63,6 @@ public class Chat extends Activity{
 
         mTextInput = (TextView)findViewById(R.id.textEntryChat);
         pointInput = (TextView)findViewById(R.id.entrypoints);
-        //mTextOutput = (TextView) findViewById(R.id.output);
-        //mTextOutput.setText("");
-
     }
 
     @Override
@@ -108,7 +90,6 @@ public class Chat extends Activity{
 
         MessageOrPoints = false;
 
-        // spawn the chat server background task
         new OutgoingCommTask().executeOnExecutor(
                 AsyncTask.THREAD_POOL_EXECUTOR,
                 mTextInput.getText().toString());
@@ -165,13 +146,6 @@ public class Chat extends Activity{
         exchangeMessages.setMessage(message);
         exchangeMessages.setReceiver(user);
 
-        Toast toast = Toast.makeText(Chat.this, "sender: " + username, Toast.LENGTH_SHORT);
-        toast.show();
-        Toast toast1 = Toast.makeText(Chat.this,"message: " +  message, Toast.LENGTH_SHORT);
-        toast1.show();
-        Toast toast2 = Toast.makeText(Chat.this, "receiver: " +  user, Toast.LENGTH_SHORT);
-        toast2.show();
-
         //put the message in the database
         helper.sendNewMessage(exchangeMessages);
 
@@ -201,9 +175,10 @@ public class Chat extends Activity{
         cursor1 = db.rawQuery(query1, null);
         String sender, message;
 
-
+        //travel all rows in the DB
         if (cursor1.moveToFirst()) {
             do {
+                //get the sender, the receiver and the message of each row
                 sender = cursor1.getString(0);
                 receiver = cursor1.getString(1);
                 message = cursor1.getString(2);
@@ -224,7 +199,10 @@ public class Chat extends Activity{
                     chatHorizontalLayout.setGravity(Gravity.LEFT);
                     chatHorizontalLayout.addView(chatText, params);
                     linearLayoutVertical.addView(chatHorizontalLayout);
-                } else if (receiver.equals(user)) {
+
+                }
+                else if (receiver.equals(user))
+                {
 
                     LinearLayout linearLayoutVertical = (LinearLayout) findViewById(R.id.idChatLinearVertical);
                     LinearLayout chatHorizontalLayout = new LinearLayout(this);
@@ -256,8 +234,7 @@ public class Chat extends Activity{
     public void sendPointsClicked(View view) {
 
         MessageOrPoints = true;
-        //Moving the text to the new text box
-        TextView chatText = new TextView(this);
+
         EditText entryText = (EditText) findViewById(R.id.entrypoints);
         String pointstext = entryText.getText().toString();
 
@@ -266,14 +243,12 @@ public class Chat extends Activity{
             points = Integer.parseInt(pointstext);
         }
 
-
-
+        //check if the number of points sent is lower than the number of the points that i have
         if(UserData.points >= points && isNumber(pointstext)){
             UserData.points -= points;
             helper.ChangePoints(user, -points);
             System.out.println(UserData.points);
 
-            // spawn the chat server background task
             new OutgoingCommTask().executeOnExecutor(
                     AsyncTask.THREAD_POOL_EXECUTOR,
                     pointInput.getText().toString());
@@ -282,7 +257,8 @@ public class Chat extends Activity{
                     AsyncTask.THREAD_POOL_EXECUTOR,
                     pointInput.getText().toString());
         }
-        else{
+        else
+        {
             Toast toast = Toast.makeText(Chat.this, "Invalid Input", Toast.LENGTH_SHORT);
             toast.show();
         }
@@ -302,28 +278,33 @@ public class Chat extends Activity{
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            while (!Thread.currentThread().isInterrupted()) {
-                try {
-                    //if the socket is null, associate to a new port
+            while (!Thread.currentThread().isInterrupted())
+            {
+                try
+                {
                     if(mSrvSocket == null){
                         port--;
                         mSrvSocket = new SimWifiP2pSocketServer(
                                 port);
                     }
                     SimWifiP2pSocket sock = mSrvSocket.accept();
-                    try {
+                    try
+                    {
                         BufferedReader sockIn = new BufferedReader(
                                 new InputStreamReader(sock.getInputStream()));
                         String st = sockIn.readLine();
                         publishProgress(st);
                         sock.getOutputStream().write(("\n").getBytes());
-                    } catch (IOException e) {
+                    }
+                    catch (IOException e) {
                         Log.d("Error reading socket:", e.getMessage());
-                    } finally {
+                    }
+                    finally {
                         sock.close();
                         mSrvSocket.close();
                     }
-                } catch (IOException e) {
+                    } catch (IOException e)
+                {
                     Log.d("Error socket:", e.getMessage());
                     break;
                 }
@@ -336,11 +317,11 @@ public class Chat extends Activity{
 
             String[] result = values[0].split(":");
             if(result.length > 1){
+                //see if the input is a message or points and check if the input is valid
                 if(isNumber(result[1]) && MessageOrPoints)
                 {
                     UserData.points += Integer.parseInt(result[1]);
                     helper.ChangePoints(receiver, Integer.parseInt(result[1]));
-                    System.out.println("passed where2");
                 }
                 else if(isNumber(result[1]) && !MessageOrPoints)
                 {
@@ -349,8 +330,6 @@ public class Chat extends Activity{
                 else if(!isNumber(result[1]) && !MessageOrPoints)
                 {
                     UpdateOtherUserScreen(result[1], result[0]);
-                    System.out.println("passed where1");
-                    Toast.makeText(Chat.this, "update screen", Toast.LENGTH_SHORT).show();
                 }
                 else if(!isNumber(result[1]) && MessageOrPoints)
                 {
@@ -367,6 +346,7 @@ public class Chat extends Activity{
         }
     }
 
+    //method to see if a string is a number
     public static boolean isNumber(String string) {
         if (string == null || string.isEmpty()) {
             return false;

@@ -2,15 +2,11 @@ package pt.ulisboa.tecnico.cmov.ubibike;
 
 import android.app.Application;
 import android.widget.Toast;
-
-
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.crypto.SecretKey;
 
 public class UserData extends Application{
-
 
     public static int age, points;
     public static String name, username, IP, receiver;
@@ -61,12 +57,9 @@ public class UserData extends Application{
         }
     }
 
-
-
     public List getListOfFriends()
     {
         return listOfFriends;
     }
-
-
+    
 }

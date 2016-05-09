@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,17 +16,14 @@ import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-
 import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
 import pt.ulisboa.tecnico.cmov.ubibike.WifiDirect.SimWifiP2pBroadcastReceiver;
 
 public class LogIn extends AppCompatActivity {
 
-    DataBaseHelper helper = new DataBaseHelper(this);
     private SimWifiP2pBroadcastReceiver mReceiver;
     String Iusername;
     String Ipass;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +68,6 @@ public class LogIn extends AppCompatActivity {
 
     private void serverResponse(String response) {
 
-
         //response comes in name:password:points:age or noUsername in case it doesn't exist
         if (response.equals("FailedConnection"))
         {
@@ -99,7 +94,6 @@ public class LogIn extends AppCompatActivity {
 
     private class serverRequestLogIn extends AsyncTask<String, Void, String> {
 
-
         @Override
         protected String doInBackground(String... params) {
 
@@ -119,11 +113,15 @@ public class LogIn extends AppCompatActivity {
                 String line;
                 while ((line = rd.readLine()) != null) result.append(line);
 
-            }catch (SocketTimeoutException e) {
+            }
+            catch (SocketTimeoutException e)
+            {
                 return "FailedConnection";
-            } catch(ConnectException e) {
+            } catch(ConnectException e)
+            {
                 return "FailedConnection";
-            } catch (IOException e) {
+            } catch (IOException e)
+            {
                 e.printStackTrace();
             }
             return result.toString();

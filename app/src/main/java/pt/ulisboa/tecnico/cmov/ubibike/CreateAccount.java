@@ -8,22 +8,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-
 import javax.crypto.spec.SecretKeySpec;
-
 import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
 import pt.ulisboa.tecnico.cmov.ubibike.WifiDirect.SimWifiP2pBroadcastReceiver;
-
 
 public class CreateAccount extends AppCompatActivity {
 
@@ -34,7 +29,6 @@ public class CreateAccount extends AppCompatActivity {
     String Iusername;
     String Ipass1;
     String Ipass2;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +97,6 @@ public class CreateAccount extends AppCompatActivity {
             return;
         }
 
-
         //crete a object with info for later put it in the database
         UserData.name = Iname;
         UserData.age = Integer.parseInt(Iage);
@@ -118,7 +111,6 @@ public class CreateAccount extends AppCompatActivity {
 
         Intent i = new Intent(this, NavigationDrawer.class);
         startActivity(i);
-
     }
 
     private class serverRequestCreate extends AsyncTask<String, Void, String> {

@@ -19,35 +19,26 @@ import pt.ulisboa.tecnico.cmov.ubibike.MapsActivity;
 import pt.ulisboa.tecnico.cmov.ubibike.R;
 import pt.ulisboa.tecnico.cmov.ubibike.UserData;
 
-
-/**
- * A simple {@link Fragment} subclass.
- */
 public class Historic extends Fragment {
 
-
-    public Historic() {
-        // Required empty public constructor
-    }
-
+    public Historic() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         final View view= inflater.inflate(R.layout.fragment_historic, container, false);
+
         for (int i =0; i<UserData.history.size();i++)
         {
-
-
             LinearLayout linearLayoutVertical = (LinearLayout) view.findViewById(R.id.Historico);
             LinearLayout historyHorizontalLayout = new LinearLayout(getActivity());
 
             Button routes= new Button(getActivity());
             String text=UserData.history.get(i).toString();
+
             final String [] spliter= text.split("=");
             spliter[1]=spliter[1].substring(0,spliter[1].length()-1);
             spliter[0]=spliter[0].substring(1);
-
 
             routes.setText("Route done on " + spliter[1]);
             routes.setTextSize(12);
@@ -78,9 +69,7 @@ public class Historic extends Fragment {
                     startActivity(intent);
                 }
             });
-
         }
-
         return view;
     }
 

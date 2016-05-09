@@ -49,7 +49,6 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
 import pt.ulisboa.tecnico.cmov.ubibike.WifiDirect.SimWifiP2pBroadcastReceiver;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {

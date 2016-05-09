@@ -58,24 +58,23 @@ import pt.ulisboa.tecnico.cmov.ubibike.WifiDirect.SimWifiP2pBroadcastReceiver;
 public class NavigationDrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, SimWifiP2pManager.GroupInfoListener, SimWifiP2pManager.PeerListListener {
 
-    String user = "";
-    InicialPage inicialpage = new InicialPage();
+    DataBaseHelper helper = new DataBaseHelper(this);
     ExchangeMessages exchangeMessages = new ExchangeMessages();
-    private SimWifiP2pBroadcastReceiver mReceiver;
+    InicialPage inicialpage = new InicialPage();
+
+    String user = "";
+    Toolbar toolbar;
     TextView tx;
+    int port = 10001;
+
+    public boolean mBound = false;
+    private SimWifiP2pBroadcastReceiver mReceiver;
     private String newFriend;
     private String searchfriend;
     private LinearLayout principalLayout, secondaryLayout;
     private Gson gson = new Gson();
-    Toolbar toolbar;
-
     public static final String TAG = "receivinggmsg";
     private SimWifiP2pSocketServer mSrvSocket = null;
-    int port = 10001;
-
-    DataBaseHelper helper = new DataBaseHelper(this);
-    public boolean mBound = false;
-
     private SimWifiP2pManager mManager = null;
     private SimWifiP2pManager.Channel mChannel = null;
     private Messenger mService = null;
@@ -119,11 +118,11 @@ public class NavigationDrawer extends AppCompatActivity
         mReceiver = new SimWifiP2pBroadcastReceiver(this);
         registerReceiver(mReceiver, filter);
 
+        //update the points in the toolbar of the naviagation drawer
         TextView UpdateHeaderPoints = (TextView)findViewById(R.id.headerpoints);
         String points = "Points: " + UserData.points;
         UpdateHeaderPoints.setText(points);
 
-        // spawn the chat server background task
         new ListeningMsgCommTask().executeOnExecutor(
                 AsyncTask.THREAD_POOL_EXECUTOR);
     }
@@ -137,28 +136,24 @@ public class NavigationDrawer extends AppCompatActivity
 
         @Override
         public boolean onOptionsItemSelected (MenuItem item){
-            // Handle action bar item clicks here. The action bar will
-            // automatically handle clicks on the Home/Up button, so long
-            // as you specify a parent activity in AndroidManifest.xml.
+
             int id = item.getItemId();
 
-            //noinspection SimplifiableIfStatement
             if (id == R.id.action_settings) {
                 return true;
             }
-
             return super.onOptionsItemSelected(item);
         }
 
         @SuppressWarnings("StatementWithEmptyBody")
         @Override
         public boolean onNavigationItemSelected (MenuItem item){
-            // Handle navigation view item clicks here.
 
             int id = item.getItemId();
             android.support.v4.app.FragmentTransaction fragmenttransaction =
                     getSupportFragmentManager().beginTransaction();
 
+            //select a fragment from the toolbar
             if (id == R.id.InicialPage) {
 
                 fragmenttransaction.replace(R.id.container, inicialpage);
@@ -193,9 +188,11 @@ public class NavigationDrawer extends AppCompatActivity
             }
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             drawer.closeDrawer(GravityCompat.START);
+
             return true;
         }
 
+    //add a friend in the fragment of friends
     public void addFriend(View view) {
         principalLayout= (LinearLayout) findViewById(R.id.idFriendsVertical);
         secondaryLayout= new LinearLayout(this);
@@ -204,9 +201,11 @@ public class NavigationDrawer extends AppCompatActivity
 
         newFriend = String.valueOf(friendName.getText().toString());
 
-        if (newFriend.equals("")) {
+        if (newFriend.equals(""))
+        {
             Toast.makeText(NavigationDrawer.this, "Please enter a username!", Toast.LENGTH_SHORT).show();
-        }else
+        }
+        else
         {
             new serverRequestAddFriend().execute(UserData.username, newFriend);
         }
@@ -260,9 +259,7 @@ public class NavigationDrawer extends AppCompatActivity
         }
     }
 
-
     private class serverRequestAddFriend extends AsyncTask<String, Void, String> {
-
 
         @Override
         protected String doInBackground(String... params) {
@@ -407,7 +404,6 @@ public class NavigationDrawer extends AppCompatActivity
         android.support.v4.app.FragmentTransaction fragmenttransaction =
                 getSupportFragmentManager().beginTransaction();
 
-
         TextView UpdateHeaderName = (TextView)findViewById(R.id.headername);
         UpdateHeaderName.setText(user);
 
@@ -484,16 +480,13 @@ public class NavigationDrawer extends AppCompatActivity
 
         if (groupInfo.getDevicesInNetwork().toString() != "")
         {
-
             detectBeacon(groupInfo);
         }
     }
 
     public void detectBeacon(SimWifiP2pInfo devices)
     {
-
         String device= devices.getDevicesInNetwork().toString();
-        //Log.i("Devices2:",device);
          if (device.contains("Beacon"))
          {
              UserData.beaconAround = true;
@@ -501,7 +494,6 @@ public class NavigationDrawer extends AppCompatActivity
          {
              UserData.beaconAround = false;
          }
-
     }
 
     @Override
@@ -520,33 +512,43 @@ public class NavigationDrawer extends AppCompatActivity
         @Override
         protected Void doInBackground(Void... params) {
             Log.d(TAG, "IncommingCommTask started (" + this.hashCode() + ").");
-            try {
-                mSrvSocket = new SimWifiP2pSocketServer(
-                        port);
-            } catch (IOException e) {
+            try
+            {
+                mSrvSocket = new SimWifiP2pSocketServer(port);
+            }
+            catch (IOException e)
+            {
                 e.printStackTrace();
             }
-            while (!Thread.currentThread().isInterrupted()) {
-                try {
-                    if(mSrvSocket == null){
+            while (!Thread.currentThread().isInterrupted())
+            {
+                try
+                {
+                    if(mSrvSocket == null)
+                    {
                         port--;
                         mSrvSocket = new SimWifiP2pSocketServer(
                                 port);
                     }
                     SimWifiP2pSocket sock = mSrvSocket.accept();
-                    try {
+                    try
+                    {
                         BufferedReader sockIn = new BufferedReader(
                                 new InputStreamReader(sock.getInputStream()));
                         String st = sockIn.readLine();
                         publishProgress(st);
                         sock.getOutputStream().write(("\n").getBytes());
-                    } catch (IOException e) {
+                    }
+                    catch (IOException e) {
                         Log.d("Error reading socket:", e.getMessage());
-                    } finally {
+                    }
+                    finally
+                    {
                         sock.close();
                         mSrvSocket.close();
                     }
-                } catch (IOException e) {
+                }
+                catch (IOException e) {
                     Log.d("Error socket:", e.getMessage());
                     break;
                 }
@@ -559,6 +561,7 @@ public class NavigationDrawer extends AppCompatActivity
 
             String[] result = values[0].split(":");
             if(result.length > 1){
+                //see if the input is the points or a message
                 if(isNumber(result[1])){
                     UserData.points += Integer.parseInt(result[1]);
                     helper.ChangePoints(UserData.username, Integer.parseInt(result[1]));
@@ -590,6 +593,7 @@ public class NavigationDrawer extends AppCompatActivity
         }
     }
 
+    //see if a string is a number
     public static boolean isNumber(String string) {
 
         if (string == null || string.isEmpty()) {

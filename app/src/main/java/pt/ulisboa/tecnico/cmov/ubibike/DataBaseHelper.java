@@ -5,10 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
@@ -76,9 +74,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
         db.insert(TABLE_NAME_DATA, null, values);
         db.close();
-
     }
 
+    //method that is called when created a profile
     public void insertFriendsAndHistory(String user, String friends, String history, String devices){
         db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -110,6 +108,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    //method to add a friend to the DB
     public void addFriend(String user, String newFriend)
     {
         Gson gson = new Gson();
@@ -132,6 +131,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    //method to add a device to the DB
     public void addDevice(String user, String newDevice)
     {
         Gson gson = new Gson();
@@ -154,6 +154,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    //have the list of the friends in a concatenated string
     public String getListOfFriends(String user){
         db = this.getReadableDatabase();
         String friendsList = "noFriends";
@@ -173,10 +174,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             }
             while (cursor1.moveToNext());
         }
-
         return friendsList;
     }
 
+    //have the list of the devices in a concatenated string
     public String getListOfDevices(String user){
         db = this.getReadableDatabase();
         String devicesList = "noDevices";
@@ -196,7 +197,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             }
             while (cursor1.moveToNext());
         }
-
         return devicesList;
     }
 
@@ -346,74 +346,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_TOTALDISTANCE, TotalDistance);
         db.update(TABLE_NAME_DATA, values, COLUMN_USERNAME + "='" + username + "'", null);
         db.close();
-    }
-
-    public double getTotalDistance(String username){
-        db = this.getReadableDatabase();
-        double TotalDistance = 0.0;
-
-        String query1 = "select username, totaldistance from "+ TABLE_NAME_DATA;
-        Cursor cursor1;
-        cursor1 = db.rawQuery(query1, null);
-        String x;
-
-        if(cursor1.moveToFirst()){
-            do{
-                x = cursor1.getString(0);
-                if(x.equals(username)){
-                    TotalDistance = cursor1.getDouble(1);
-                    break;
-                }
-            }
-            while (cursor1.moveToNext());
-        }
-        return TotalDistance;
-    }
-
-    //get points from a username
-    public int AgeFromUser(String username){
-        db = this.getReadableDatabase();
-        String query1 = "select username, age from "+ TABLE_NAME_DATA;
-        Cursor cursor1;
-        cursor1 = db.rawQuery(query1, null);
-        String x;
-        int y = 0;
-
-        if(cursor1.moveToFirst()){
-
-            do{
-                x = cursor1.getString(0);
-                if(x.equals(username)){
-                    y = cursor1.getInt(1);
-                    break;
-                }
-            }
-            while (cursor1.moveToNext());
-        }
-        return y;
-    }
-
-    //verify if a username already exists when creating account
-    public boolean checkUsername(String username){
-        boolean existsOrNot = false;
-        db = this.getReadableDatabase();
-        String query1 = "select username from "+ TABLE_NAME_DATA;
-        Cursor cursor1;
-        cursor1 = db.rawQuery(query1, null);
-        String x;
-
-        if(cursor1.moveToFirst()){
-
-            do{
-                x = cursor1.getString(0);
-                if(x.equals(username)){
-                    existsOrNot = true;
-                    break;
-                }
-            }
-            while (cursor1.moveToNext());
-        }
-        return existsOrNot;
     }
 
     @Override
