@@ -525,6 +525,7 @@ public class NavigationDrawer extends AppCompatActivity
         protected Void doInBackground(Void... params) {
             Log.d(TAG, "IncommingCommTask started (" + this.hashCode() + ").");
             try {
+               // port--;
                 mSrvSocket = new SimWifiP2pSocketServer(
                         port);
             } catch (IOException e) {
@@ -586,7 +587,9 @@ public class NavigationDrawer extends AppCompatActivity
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            onResume();
+            // spawn the chat server background task
+            new ListeningMsgCommTask().executeOnExecutor(
+                    AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 

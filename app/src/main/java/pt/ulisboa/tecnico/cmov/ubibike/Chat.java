@@ -391,7 +391,8 @@ public class Chat extends Activity{
         @Override
         protected void onPostExecute(Void aVoid) {
             // spawn the chat server background task
-            onResume();
+            new IncommingCommTask().executeOnExecutor(
+                    AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 
