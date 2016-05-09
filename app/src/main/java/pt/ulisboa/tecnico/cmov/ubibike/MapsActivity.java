@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -65,6 +66,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     DataBaseHelper helper = new DataBaseHelper(this);
     private int seconds, minutes,hours = 0;
     String seconds1,minutes1,hours1 ="";
+    private boolean buttonClick = false;
     public MapsActivity() {
     }
     @Override
@@ -72,7 +74,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         setLayout();
-        LocationManager manager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
         if (UserData.route == true)
         {
             mMap= ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
@@ -97,92 +99,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.moveCamera(CameraUpdateFactory.newLatLng(markerPoints.get(focus-1)));
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(markerPoints.get(focus - 1).latitude, markerPoints.get(focus-1).longitude), 12.0f));
 
-        }else {
-
-           final  TextView time = (TextView) findViewById(R.id.time);
-            Timer t = new Timer();
-            t.scheduleAtFixedRate(new TimerTask() {
-                @Override
-                public void run() {
-                   runOnUiThread(new Runnable() {
-                       @Override
-                       public void run() {
-                           seconds++;
-                           if (seconds == 60) {
-                               seconds = 0;
-                               minutes++;
-                           }
-                           if (minutes == 60) {
-                               minutes = 0;
-                               hours++;
-                           }
-                           if(seconds < 10)
-                           {
-                               seconds1 = ":0" + seconds;
-                           }else
-                           {
-                               seconds1=":"+seconds;
-                           }
-                           if (minutes < 10)
-                           {
-                               minutes1=":0"+minutes;
-                           }else
-                           {
-                               minutes1=":"+minutes;
-                           }
-                           if (hours < 10)
-                           {
-                               hours1="0"+hours;
-                           }else
-                           {
-                               hours1=":"+hours;
-                           }
-                           time.setText(hours1+minutes1+seconds1);
-
-                       }
-                   });
-
-                }
-            }, 0, 1000);
-            LocationListener listener = new LocationListener() {
-                @Override
-                public void onLocationChanged(Location location) {
-                    //variavel onde está a posição actual do dispositivo
-                    currentLocation = location;
-                    LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
-                    if (markerPoints.size() != 0) {
-                        distance();
-                        tx.setText(String.valueOf(""+formarter(distance) + "Km"));
-
-                    }
-                    //adicionar a localização do dispositivo
-                    markerPoints.add(loc);
-                    //centrar o mappa na posição actual do dispositivo
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(loc));
-                    //desenhar no mapa a rota percorrida pelo dispositivo
-                    mMap.addPolyline(plot());
-
-                }
-
-                @Override
-                public void onStatusChanged(String provider, int status, Bundle extras) {
-
-                }
-
-                @Override
-                public void onProviderEnabled(String provider) {
-
-                }
-
-                @Override
-                public void onProviderDisabled(String provider) {
-
-                }
-            };
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            }
-            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 20, (float) 20.00, listener);
         }
+
     }
     public void parseCoordinates(String coordinates)
     {
@@ -220,7 +138,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onPause () {
         super.onPause();
 
-        if (UserData.route == false) {
+        if (UserData.route == false ) {
             //linhas para ver a data para de seguida
             Calendar calendar = Calendar.getInstance();
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
@@ -247,6 +165,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             new serverRequestAddDistance().execute(UserData.username, String.valueOf(distance));
             new serverRequestAddHistory().execute(UserData.username, coordinatesString);
             Log.i("coordinates: ", coordinatesString);
+            Button bt = (Button) findViewById(R.id.startRoute);
+            bt.setEnabled(false);
 
         } else {
             mMap.clear();
@@ -284,7 +204,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //textview para mostrar os km efectuados pelo dispositivo
         tx = (TextView) findViewById(R.id.KM);
         tx.setGravity(Gravity.CENTER_HORIZONTAL);
-
+        Button bt = (Button) findViewById(R.id.startRoute);
+        bt.setEnabled(true);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         ViewGroup.LayoutParams params = mapFragment.getView().getLayoutParams();
         DisplayMetrics metrics = new DisplayMetrics();
@@ -292,7 +213,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         params.height = (int) (metrics.heightPixels * 0.90);
         mapFragment.getView().setLayoutParams(params);
         mapFragment.getMapAsync(this);
-
         RelativeLayout bottom = (RelativeLayout) findViewById(R.id.bottomVertival);
         bottom.setBackgroundColor(Color.rgb(255, 255, 255));
         bottom.setGravity((int) (metrics.heightPixels * 0.90));
@@ -301,8 +221,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         bottom.setLayoutParams(params1);
         //bottom.addView(tx);
         if (UserData.route == true) {
+            bt.setVisibility(View.INVISIBLE);
             TextView tx2 = (TextView) findViewById(R.id.points);
             tx2.setVisibility(View.VISIBLE);
+        }
+
+        if (UserData.beaconAround == false)
+        {
+            bt.setEnabled(false);
         }
     }
     public void travelDistance()
@@ -319,6 +245,92 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             dist += secondLocation.distanceTo(firstLocation);
         }
         distance = dist/1000;
+    }
+
+    public void startRoute(View view) {
+
+        if (UserData.route == false && buttonClick == false) {
+            buttonClick = true;
+            LocationManager manager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+            final TextView time = (TextView) findViewById(R.id.time);
+            Timer t = new Timer();
+            t.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            seconds++;
+                            if (seconds == 60) {
+                                seconds = 0;
+                                minutes++;
+                            }
+                            if (minutes == 60) {
+                                minutes = 0;
+                                hours++;
+                            }
+                            if (seconds < 10) {
+                                seconds1 = ":0" + seconds;
+                            } else {
+                                seconds1 = ":" + seconds;
+                            }
+                            if (minutes < 10) {
+                                minutes1 = ":0" + minutes;
+                            } else {
+                                minutes1 = ":" + minutes;
+                            }
+                            if (hours < 10) {
+                                hours1 = "0" + hours;
+                            } else {
+                                hours1 = ":" + hours;
+                            }
+                            time.setText(hours1 + minutes1 + seconds1);
+
+                        }
+                    });
+
+                }
+            }, 0, 1000);
+            LocationListener listener = new LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+                    //variavel onde está a posição actual do dispositivo
+                    currentLocation = location;
+                    LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
+                    if (markerPoints.size() != 0) {
+                        distance();
+                        tx.setText(String.valueOf("" + formarter(distance) + "Km"));
+
+                    }
+                    //adicionar a localização do dispositivo
+                    markerPoints.add(loc);
+                    //centrar o mappa na posição actual do dispositivo
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(loc));
+                    //desenhar no mapa a rota percorrida pelo dispositivo
+                    mMap.addPolyline(plot());
+
+                }
+
+                @Override
+                public void onStatusChanged(String provider, int status, Bundle extras) {
+
+                }
+
+                @Override
+                public void onProviderEnabled(String provider) {
+
+                }
+
+                @Override
+                public void onProviderDisabled(String provider) {
+
+                }
+            };
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            }
+            manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 20, (float) 20.00, listener);
+        }
+
     }
 
     private class serverRequestAddDistance extends AsyncTask<String, Void, String> {

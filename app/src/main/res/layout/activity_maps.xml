@@ -52,6 +52,15 @@
             android:visibility="invisible"
             android:layout_centerHorizontal="true" />
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start Route"
+            android:id="@+id/startRoute"
+            android:onClick="startRoute"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
     </RelativeLayout>
 
 </RelativeLayout>

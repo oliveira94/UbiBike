@@ -480,18 +480,20 @@ public class NavigationDrawer extends AppCompatActivity
             helper.addDevice(UserData.username,deviceName);
 
         }
+        Log.i("Device1",groupInfo.getDevicesInNetwork().toString());
 
-        if (devices.getDeviceList().size()!=0)
+        if (groupInfo.getDevicesInNetwork().toString() != "")
         {
 
-            detectBeacon(devices);
+            detectBeacon(groupInfo);
         }
     }
 
-    public void detectBeacon(SimWifiP2pDeviceList devices)
+    public void detectBeacon(SimWifiP2pInfo devices)
     {
 
-        String device= devices.getDeviceList().toString();
+        String device= devices.getDevicesInNetwork().toString();
+        //Log.i("Devices2:",device);
          if (device.contains("Beacon"))
          {
              UserData.beaconAround = true;
