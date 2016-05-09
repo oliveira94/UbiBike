@@ -41,12 +41,12 @@ import pt.inesc.termite.wifidirect.sockets.SimWifiP2pSocketServer;
 import pt.ulisboa.tecnico.cmov.ubibike.WifiDirect.SimWifiP2pBroadcastReceiver;
 
 public class Chat extends Activity{
+
     SQLiteDatabase db;
     DataBaseHelper helper = new DataBaseHelper(this);
     ExchangeMessages exchangeMessages = new ExchangeMessages();
     String user = "";
     String receiver = "";
-    //String receiverFromMessages = "";
     String IP = "";
     int port = 10001;
     String receiverFromMessages = "";
@@ -54,13 +54,11 @@ public class Chat extends Activity{
     //false if is message, true if is points
     boolean MessageOrPoints = false;
 
-    boolean DontWriteAnything = true;
     public static final String TAG = "msgsender";
     private SimWifiP2pSocketServer mSrvSocket = null;
     private SimWifiP2pSocket mCliSocket = null;
     private TextView mTextInput;
     private TextView pointInput;
-    //private TextView mTextOutput ;
     private SimWifiP2pBroadcastReceiver mReceiver;
 
     @Override
@@ -197,9 +195,6 @@ public class Chat extends Activity{
 
     public void updateMessages() {
 
-        EditText entryText = (EditText) findViewById(R.id.textEntryChat);
-        String text = entryText.getText().toString();
-
         db = helper.getReadableDatabase();
         String query1 = "select sender, receiver, message from mychat";
         Cursor cursor1;
@@ -209,12 +204,9 @@ public class Chat extends Activity{
 
         if (cursor1.moveToFirst()) {
             do {
-
-
                 sender = cursor1.getString(0);
                 receiver = cursor1.getString(1);
                 message = cursor1.getString(2);
-
 
                 if (sender.equals(receiverFromMessages)) {
                     LinearLayout linearLayoutVertical = (LinearLayout) findViewById(R.id.idChatLinearVertical);
@@ -229,12 +221,6 @@ public class Chat extends Activity{
                             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
 
-                    //                    String isSender = SenderOrReceiver(sender);
-                    //                    if(isSender.equals("sender")){
-                    //                        chatHorizontalLayout.setGravity(Gravity.RIGHT);
-                    //                    }else {
-                    //                        chatHorizontalLayout.setGravity(Gravity.LEFT);
-                    //                    }
                     chatHorizontalLayout.setGravity(Gravity.LEFT);
                     chatHorizontalLayout.addView(chatText, params);
                     linearLayoutVertical.addView(chatHorizontalLayout);
@@ -252,14 +238,6 @@ public class Chat extends Activity{
                             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
 
-
-                    //                    String isSender = SenderOrReceiver(sender);
-                    //                    if(isSender.equals("sender")){
-                    //                        chatHorizontalLayout.setGravity(Gravity.RIGHT);
-                    //                    }else {
-                    //                        chatHorizontalLayout.setGravity(Gravity.LEFT);
-                    //                    }
-
                     chatHorizontalLayout.setGravity(Gravity.RIGHT);
                     chatHorizontalLayout.addView(chatText, params);
                     linearLayoutVertical.addView(chatHorizontalLayout);
@@ -269,31 +247,9 @@ public class Chat extends Activity{
         }
     }
 
-    //see if the message was he or the other user that was sended
-//    public String SenderOrReceiver(String sender) {
-//        String WhoIs;
-//        if (user.equals(sender)) {
-//            WhoIs = "sender";
-//        }
-//        else{
-//            WhoIs ="";
-//        }
-//        return WhoIs;
-//    }
-
     @Override
     public void onPause() {
         super.onPause();
-        //if(DontWriteAnything){
-            // spawn the chat server background task
-//            new OutgoingCommTask().executeOnExecutor(
-//                    AsyncTask.THREAD_POOL_EXECUTOR,
-//                    mTextInput.getText().toString());
-//
-//            new SendCommTask().executeOnExecutor(
-//                    AsyncTask.THREAD_POOL_EXECUTOR,
-//                    mTextInput.getText().toString());
-       // }
         unregisterReceiver(mReceiver);
     }
 
@@ -326,7 +282,6 @@ public class Chat extends Activity{
             toast.show();
         }
     }
-
 
     public class IncommingCommTask extends AsyncTask<Void, String, Void> {
 

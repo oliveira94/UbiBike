@@ -1,7 +1,5 @@
 package pt.ulisboa.tecnico.cmov.ubibike;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -13,7 +11,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Messenger;
 import android.support.design.widget.NavigationView;
-import android.support.v4.media.session.MediaSessionCompatApi14;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -30,15 +27,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
@@ -46,9 +40,6 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-
-
 import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
 import pt.inesc.termite.wifidirect.SimWifiP2pDevice;
 import pt.inesc.termite.wifidirect.SimWifiP2pDeviceList;
@@ -525,7 +516,6 @@ public class NavigationDrawer extends AppCompatActivity
         protected Void doInBackground(Void... params) {
             Log.d(TAG, "IncommingCommTask started (" + this.hashCode() + ").");
             try {
-               // port--;
                 mSrvSocket = new SimWifiP2pSocketServer(
                         port);
             } catch (IOException e) {
@@ -533,7 +523,6 @@ public class NavigationDrawer extends AppCompatActivity
             }
             while (!Thread.currentThread().isInterrupted()) {
                 try {
-                    //if the socket is null, associate to a new port
                     if(mSrvSocket == null){
                         port--;
                         mSrvSocket = new SimWifiP2pSocketServer(

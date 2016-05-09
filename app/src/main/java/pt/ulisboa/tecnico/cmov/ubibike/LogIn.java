@@ -88,10 +88,6 @@ public class LogIn extends AppCompatActivity {
 
         if (Ipass.equals(result[1]))    //If password is correct
         {
-            //example of set a global variable
-//            UserData.name = result[0];
-//            UserData.points = helper.PointsFromUser(Iusername);
-//            UserData.age = Integer.parseInt(result[3]);
             UserData.username = Iusername;
 
             Intent i = new Intent(this, NavigationDrawer.class);
