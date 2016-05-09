@@ -64,6 +64,7 @@ public class Chat extends Activity{
 
         TextView ReceiverName = (TextView)findViewById(R.id.bookBikeText);
         ReceiverName.setText(receiverFromMessages);
+        ReceiverName.setTextSize(32);
 
         mTextInput = (TextView)findViewById(R.id.textEntryChat);
         pointInput = (TextView)findViewById(R.id.entrypoints);

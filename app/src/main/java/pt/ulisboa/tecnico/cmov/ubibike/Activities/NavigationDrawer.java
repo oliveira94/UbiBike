@@ -216,53 +216,6 @@ public class NavigationDrawer extends AppCompatActivity
         friendName.setText("");
     }
 
-    //method to search a friend after an input
-    public void searchFriendButton(View view) {
-        UserData.searchClicked = true;
-        EditText friend = (EditText)findViewById(R.id.searchfriend);
-        searchfriend = String.valueOf(friend.getText().toString());
-
-        Gson gson = new Gson();
-        Type type = new TypeToken<ArrayList<String>>() {}.getType();
-        String user = UserData.username;
-        String friends = helper.getListOfFriends(user);
-
-        if(!friends.equals("noFriends"))
-        {
-            ArrayList<String> finalOutputString = gson.fromJson(friends, type);
-            System.out.println("final output= " + finalOutputString);
-
-            for (int i = 0; i < finalOutputString.size(); i++){
-                String text = finalOutputString.get(i);
-                if(text.equals(searchfriend)){
-
-                    //Moving the text to the new text box
-                    TextView chatText = new TextView(this);
-
-                    LinearLayout linearLayoutVertical = (LinearLayout) findViewById(R.id.linearverticalmessages);
-                    LinearLayout chatHorizontalLayout = new LinearLayout(this);
-
-                    chatText.setText(text);
-                    chatText.setTextSize(22);
-                    chatText.setTextColor(Color.BLACK);
-
-                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-                            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
-
-                    //Setting the parameters to the intended
-                    chatHorizontalLayout.setGravity(Gravity.CENTER);
-
-                    //Adding the textView to the HorizontalLayout
-                    chatHorizontalLayout.addView(chatText, params);
-
-                    //Adding the whole HorizontalLayout to the VerticalLayout
-                    linearLayoutVertical.addView(chatHorizontalLayout);
-                }
-            }
-        }
-    }
-
     private class serverRequestAddFriend extends AsyncTask<String, Void, String> {
 
         @Override

@@ -14,7 +14,8 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -23,36 +24,6 @@
                 android:text="Messages"
                 android:id="@+id/bookBikeText"
                 android:layout_gravity="center_horizontal|top" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:weightSum="1"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:text="Friend"
-                    android:id="@+id/textView20"
-                android:layout_gravity="left|center" />
-
-            <EditText
-                    android:layout_width="220dp"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/searchfriend"
-                android:layout_gravity="center" />
-
-            <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Search"
-                    android:id="@+id/button13"
-                android:layout_gravity="right"
-                android:onClick="searchFriendButton" />
-
         </LinearLayout>
 
         <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"

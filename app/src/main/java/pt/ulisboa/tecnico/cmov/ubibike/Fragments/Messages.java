@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +13,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import java.awt.font.TextAttribute;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import pt.ulisboa.tecnico.cmov.ubibike.Activities.Chat;
@@ -34,11 +35,8 @@ public class Messages extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_messages, container, false);
 
-        if(UserData.searchClicked){
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
-            ft.detach(this).remove(this).attach(this).commit();
-            UserData.searchClicked = false;
-        }
+        TextView messageTitle = (TextView)view.findViewById(R.id.bookBikeText);
+        messageTitle.setTextSize(32);
 
         Gson gson = new Gson();
         Type type = new TypeToken<ArrayList<String>>() {}.getType();
@@ -88,7 +86,7 @@ public class Messages extends Fragment {
                     });
 
                     chatText.setText(text);
-                    chatText.setTextSize(22);
+                    chatText.setTextSize(28);
                     chatText.setTextColor(Color.BLACK);
 
                     chatHorizontalLayout.setOnClickListener(new View.OnClickListener() {
