@@ -140,10 +140,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onPause () {
         super.onPause();
 
-        if (UserData.route == false ) {
+        if (UserData.route == false && hours1 != null && minutes1 != null && seconds1 != null )  {
             //linhas para ver a data para de seguida
             Calendar calendar = Calendar.getInstance();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
             String date = dateFormat.format(calendar.getTime());
             date+=" Duration "+hours1+minutes1+seconds1;
 

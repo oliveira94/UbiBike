@@ -13,6 +13,10 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 import pt.ulisboa.tecnico.cmov.ubibike.Activities.MapsActivity;
 import pt.ulisboa.tecnico.cmov.ubibike.R;
 import pt.ulisboa.tecnico.cmov.ubibike.DataBase.UserData;
@@ -70,5 +74,4 @@ public class Historic extends Fragment {
         }
         return view;
     }
-
 }
