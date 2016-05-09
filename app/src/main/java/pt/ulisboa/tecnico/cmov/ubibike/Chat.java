@@ -256,14 +256,19 @@ public class Chat extends Activity{
     public void sendPointsClicked(View view) {
 
         MessageOrPoints = true;
-
         //Moving the text to the new text box
         TextView chatText = new TextView(this);
         EditText entryText = (EditText) findViewById(R.id.entrypoints);
         String pointstext = entryText.getText().toString();
-        int points = Integer.parseInt(pointstext);
 
-        if(UserData.points >= points){
+        int points = 0;
+        if(isNumber(pointstext)){
+            points = Integer.parseInt(pointstext);
+        }
+
+
+
+        if(UserData.points >= points && isNumber(pointstext)){
             UserData.points -= points;
             helper.ChangePoints(user, -points);
             System.out.println(UserData.points);
@@ -278,7 +283,7 @@ public class Chat extends Activity{
                     pointInput.getText().toString());
         }
         else{
-            Toast toast = Toast.makeText(Chat.this, "You can't sent so many points", Toast.LENGTH_SHORT);
+            Toast toast = Toast.makeText(Chat.this, "Invalid Input", Toast.LENGTH_SHORT);
             toast.show();
         }
     }
@@ -330,15 +335,25 @@ public class Chat extends Activity{
 
             String[] result = values[0].split(":");
             if(result.length > 1){
-                if(isNumber(result[1])){
+                if(isNumber(result[1]) && MessageOrPoints)
+                {
                     UserData.points += Integer.parseInt(result[1]);
                     helper.ChangePoints(receiver, Integer.parseInt(result[1]));
                     System.out.println("passed where2");
                 }
-                else {
+                else if(isNumber(result[1]) && !MessageOrPoints)
+                {
+                    Toast.makeText(Chat.this, "Invalid Input!", Toast.LENGTH_SHORT).show();
+                }
+                else if(!isNumber(result[1]) && !MessageOrPoints)
+                {
                     UpdateOtherUserScreen(result[1], result[0]);
                     System.out.println("passed where1");
                     Toast.makeText(Chat.this, "update screen", Toast.LENGTH_SHORT).show();
+                }
+                else if(!isNumber(result[1]) && MessageOrPoints)
+                {
+                    Toast.makeText(Chat.this, "Invalid Input!", Toast.LENGTH_SHORT).show();
                 }
             }
         }

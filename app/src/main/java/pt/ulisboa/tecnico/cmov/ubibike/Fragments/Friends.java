@@ -47,7 +47,6 @@ public class Friends extends Fragment {
         DataBaseHelper helper = ((NavigationDrawer) getActivity()).getDB();
         String user = UserData.username;
 
-
         String friends = helper.getListOfFriends(user);
 
         if(!friends.equals("noFriends"))
