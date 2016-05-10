@@ -63,23 +63,24 @@
                 android:inputType="textPassword"/>
         </LinearLayout>
 
-        <LinearLayout
+        <FrameLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <Button
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Confirm"
                 android:id="@+id/button"
                 android:layout_below="@+id/textView2"
                 android:layout_centerHorizontal="true"
                 android:textSize="30dp"
-                android:layout_gravity="top|center"
                 android:layout_marginTop="40dp"
-                android:onClick="LogToNavigation" />
-        </LinearLayout>
+                android:onClick="LogToNavigation"
+                style="@android:style/DeviceDefault.Light.SegmentedButton"
+                android:layout_gravity="center_horizontal|top" />
+        </FrameLayout>
     </LinearLayout>
 
 </ScrollView>

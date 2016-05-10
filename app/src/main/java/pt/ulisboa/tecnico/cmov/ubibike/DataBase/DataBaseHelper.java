@@ -45,7 +45,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME,null, DATABASE_VERSION);
     }
 
-
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(TABLE_CREATE_DATA);
@@ -240,7 +239,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             }
             while (cursor1.moveToNext());
         }
-
         return tripsList;
     }
 
@@ -346,6 +344,27 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_TOTALDISTANCE, TotalDistance);
         db.update(TABLE_NAME_DATA, values, COLUMN_USERNAME + "='" + username + "'", null);
         db.close();
+    }
+
+    public double getListOfTotalDistance(String user){
+        db = this.getReadableDatabase();
+        String query1 = "select username, totaldistance from "+ TABLE_NAME_DATA;
+        Cursor cursor1;
+        cursor1 = db.rawQuery(query1, null);
+        String username;
+        double totalDistance = 0;
+
+        if(cursor1.moveToFirst()){
+            do{
+                username = cursor1.getString(0);
+                if(username.equals(user)){
+                    totalDistance = cursor1.getDouble(1);
+                    break;
+                }
+            }
+            while (cursor1.moveToNext());
+        }
+        return totalDistance;
     }
 
     @Override

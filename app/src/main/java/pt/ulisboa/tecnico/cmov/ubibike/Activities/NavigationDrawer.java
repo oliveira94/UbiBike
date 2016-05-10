@@ -40,6 +40,9 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import javax.crypto.spec.SecretKeySpec;
+
 import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
 import pt.inesc.termite.wifidirect.SimWifiP2pDevice;
 import pt.inesc.termite.wifidirect.SimWifiP2pDeviceList;
@@ -74,7 +77,6 @@ public class NavigationDrawer extends AppCompatActivity
     public boolean mBound = false;
     private SimWifiP2pBroadcastReceiver mReceiver;
     private String newFriend;
-    private String searchfriend;
     private LinearLayout principalLayout, secondaryLayout;
     private Gson gson = new Gson();
     public static final String TAG = "receivinggmsg";
@@ -334,7 +336,6 @@ public class NavigationDrawer extends AppCompatActivity
         UserData.totalDistance = Double.valueOf((String) profileData.get("distance"));
         UserData.history = (ArrayList<Object>) profileData.get("history");
         UserData.listOfFriends = (ArrayList<String>) profileData.get("friendsList");
-        //TODO receber do servidor os devices
 
         helper.insertUserData(UserData.name, UserData.age, UserData.username);
         helper.insertFriendsAndHistory(UserData.username, "noFriends", "noTrips", "noDevices");
@@ -343,8 +344,6 @@ public class NavigationDrawer extends AppCompatActivity
             helper.addFriend(UserData.username, friend);
 
         //TODO helper.addHistory
-
-        //TODO helper.addDevices
 
         Intent intent = new Intent(this, SimWifiP2pService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
@@ -393,7 +392,62 @@ public class NavigationDrawer extends AppCompatActivity
                     Toast.LENGTH_SHORT).show();
         }
 
-        //TODO actualizar informações para o servidor, actProfile, para adicionar devices, friends, pontos, distancia, etc
+        new serverRequestUpdate().execute(UserData.username,String.valueOf(helper.PointsFromUser(UserData.username)),
+                String.valueOf(helper.getListOfTotalDistance(UserData.username)));
+    }
+
+    private class serverRequestUpdate extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+
+            String urlServer = UserData.serverAddress + "/updateProfile?username=";
+            urlServer += params[0] + "&points=" + params[1] + "&totaldistance=" + params[2];
+
+            StringBuffer result = new StringBuffer("");
+            try{
+                URL url = new URL(urlServer);
+                HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+                connection.setDoInput(true);
+                connection.setConnectTimeout(3000);
+                connection.setReadTimeout(3000);
+                connection.connect();
+                InputStream inputStream = connection.getInputStream();
+                BufferedReader rd = new BufferedReader(new InputStreamReader(inputStream));
+                String line;
+                while ((line = rd.readLine()) != null) result.append(line);
+
+            }catch (SocketTimeoutException e) {
+                return "FailedConnection";
+            }catch(ConnectException e)
+            {
+                return "FailedConnection";
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+                return "FailedConnection";
+            }
+            return result.toString();
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            serverResponse(result);
+        }
+    }
+
+    public void serverResponse(String result) {
+
+        if (result.equals("FailedConnection"))
+        {
+            Toast.makeText(NavigationDrawer.this, "Problem connecting to the server!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (result.equals("success"))
+        {
+            Toast.makeText(NavigationDrawer.this, "Updated information to the server!", Toast.LENGTH_SHORT).show();
+            return;
+        }
     }
 
     private ServiceConnection mConnection = new ServiceConnection() {

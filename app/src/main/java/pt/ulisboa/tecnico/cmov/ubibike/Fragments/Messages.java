@@ -74,7 +74,7 @@ public class Messages extends Fragment {
 
                     LinearLayout linearLayoutVertical = (LinearLayout) view.findViewById(R.id.linearverticalmessages);
                     LinearLayout chatHorizontalLayout = new LinearLayout(getActivity());
-                    chatHorizontalLayout.setId(i); //
+                    chatHorizontalLayout.setId(i);
 
                     chatHorizontalLayout.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {

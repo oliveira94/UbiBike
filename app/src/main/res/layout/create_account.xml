@@ -151,7 +151,7 @@
             android:layout_height="match_parent">
 
             <Button
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Confirm"
                 android:id="@+id/button3"
@@ -160,9 +160,10 @@
                 android:layout_alignParentBottom="true"
                 android:layout_toRightOf="@+id/textView3"
                 android:layout_toEndOf="@+id/textView3"
-                android:layout_gravity="bottom|center"
+                android:layout_gravity="center"
                 android:layout_marginTop="40dp"
-                android:onClick="SignUpToDraw" />
+                android:onClick="SignUpToDraw"
+                style="@android:style/DeviceDefault.Light.SegmentedButton" />
         </FrameLayout>
 
 

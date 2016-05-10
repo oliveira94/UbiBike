@@ -15,7 +15,6 @@ public class UserData extends Application{
     public static List listOfIPs = new ArrayList();
     public static ArrayList<String> listOfFriends = new ArrayList();
     public static ArrayList<Object> history = new ArrayList<>();
-    public static boolean searchClicked = false;
     public static SecretKey secretKey;
     public static boolean beaconAround = false;
     public static boolean route = false;

@@ -165,7 +165,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             String coordinatesString = gson.toJson(coordinates);
 
             new serverRequestAddDistance().execute(UserData.username, String.valueOf(distance));
-            new serverRequestAddHistory().execute(UserData.username, coordinatesString);
+
+            helper.addTrip(UserData.username,coordinatesString );
+
             Log.i("coordinates: ", coordinatesString);
             Button bt = (Button) findViewById(R.id.startRoute);
             bt.setEnabled(false);
