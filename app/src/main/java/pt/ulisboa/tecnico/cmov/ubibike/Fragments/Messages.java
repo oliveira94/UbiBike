@@ -27,7 +27,7 @@ public class Messages extends Fragment {
 
     boolean SeeIfIsFriends = false;
 
-    public Messages() {}
+    public Messages(){}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

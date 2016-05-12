@@ -74,6 +74,7 @@ public class NavigationDrawer extends AppCompatActivity
     TextView tx;
     int port = 10001;
 
+    private boolean UpdateInfo = false;
     public boolean mBound = false;
     private SimWifiP2pBroadcastReceiver mReceiver;
     private String newFriend;
@@ -97,8 +98,9 @@ public class NavigationDrawer extends AppCompatActivity
         new serverRequestGetProfile().execute(UserData.username);
 
     }
-        @Override
-        public void onBackPressed () {
+
+    @Override
+    public void onBackPressed () {
             DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
             if (drawer.isDrawerOpen(GravityCompat.START)) {
                 drawer.closeDrawer(GravityCompat.START);
@@ -134,14 +136,14 @@ public class NavigationDrawer extends AppCompatActivity
     }
 
     @Override
-        public boolean onCreateOptionsMenu (Menu menu){
+    public boolean onCreateOptionsMenu (Menu menu){
             // Inflate the menu; this adds items to the action bar if it is present.
             getMenuInflater().inflate(R.menu.naviagation_drawer, menu);
             return true;
         }
 
-        @Override
-        public boolean onOptionsItemSelected (MenuItem item){
+    @Override
+    public boolean onOptionsItemSelected (MenuItem item){
 
             int id = item.getItemId();
 
@@ -151,9 +153,9 @@ public class NavigationDrawer extends AppCompatActivity
             return super.onOptionsItemSelected(item);
         }
 
-        @SuppressWarnings("StatementWithEmptyBody")
-        @Override
-        public boolean onNavigationItemSelected (MenuItem item){
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected (MenuItem item){
 
             int id = item.getItemId();
             android.support.v4.app.FragmentTransaction fragmenttransaction =
@@ -343,8 +345,6 @@ public class NavigationDrawer extends AppCompatActivity
         for (String friend : UserData.listOfFriends)
             helper.addFriend(UserData.username, friend);
 
-        //TODO helper.addHistory
-
         Intent intent = new Intent(this, SimWifiP2pService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
@@ -379,20 +379,13 @@ public class NavigationDrawer extends AppCompatActivity
     }
 
     public void ActClicked(View view){
-        if (mBound) {
+        if (mBound)
             mManager.requestGroupInfo(mChannel, NavigationDrawer.this);
-        } else {
-            Toast.makeText(view.getContext(), "Service not bound",
-                    Toast.LENGTH_SHORT).show();
-        }
-        if (mBound) {
-            mManager.requestPeers(mChannel, NavigationDrawer.this);
-        } else {
-            Toast.makeText(view.getContext(), "Service not bound",
-                    Toast.LENGTH_SHORT).show();
-        }
 
-        new serverRequestUpdate().execute(UserData.username,String.valueOf(helper.PointsFromUser(UserData.username)),
+        if (mBound)
+            mManager.requestPeers(mChannel, NavigationDrawer.this);
+
+        new serverRequestUpdate().execute(UserData.username, String.valueOf(helper.PointsFromUser(UserData.username)),
                 String.valueOf(helper.getListOfTotalDistance(UserData.username)));
     }
 
@@ -451,7 +444,6 @@ public class NavigationDrawer extends AppCompatActivity
     }
 
     private ServiceConnection mConnection = new ServiceConnection() {
-        // callbacks for service binding, passed to bindService()
 
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
@@ -484,7 +476,13 @@ public class NavigationDrawer extends AppCompatActivity
             ((UserData) this.getApplication()).AddDeviceIPToList(device.getVirtIp());
             ((UserData) this.getApplication()).GetDeviceIP(deviceName);
             ((UserData) this.getApplication()).GetName(UserData.IP);
-            helper.addDevice(UserData.username,deviceName);
+            //TODO problema está aqui
+
+            if(!UpdateInfo){
+                helper.addDevice(UserData.username,deviceName);
+                UpdateInfo = true;
+            }
+
 
         }
         Log.i("Device1",groupInfo.getDevicesInNetwork().toString());
