@@ -74,7 +74,6 @@ public class NavigationDrawer extends AppCompatActivity
     TextView tx;
     int port = 10001;
 
-    private boolean UpdateInfo = false;
     public boolean mBound = false;
     private SimWifiP2pBroadcastReceiver mReceiver;
     private String newFriend;
@@ -147,9 +146,9 @@ public class NavigationDrawer extends AppCompatActivity
 
             int id = item.getItemId();
 
-            if (id == R.id.action_settings) {
+            if (id == R.id.action_settings)
                 return true;
-            }
+
             return super.onOptionsItemSelected(item);
         }
 
@@ -476,16 +475,13 @@ public class NavigationDrawer extends AppCompatActivity
             ((UserData) this.getApplication()).AddDeviceIPToList(device.getVirtIp());
             ((UserData) this.getApplication()).GetDeviceIP(deviceName);
             ((UserData) this.getApplication()).GetName(UserData.IP);
-            //TODO problema está aqui
 
-            if(!UpdateInfo){
+            if(!helper.getListOfDevices(UserData.username).contains(deviceName)){
                 helper.addDevice(UserData.username,deviceName);
-                UpdateInfo = true;
             }
 
-
         }
-        Log.i("Device1",groupInfo.getDevicesInNetwork().toString());
+//        Log.i("Device1",groupInfo.getDevicesInNetwork().toString());
 
         if (groupInfo.getDevicesInNetwork().toString() != "")
         {
@@ -623,4 +619,5 @@ public class NavigationDrawer extends AppCompatActivity
         }
         return true;
     }
+
 }
