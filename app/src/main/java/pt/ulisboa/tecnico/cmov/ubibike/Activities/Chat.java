@@ -86,11 +86,9 @@ public class Chat extends Activity{
         updateMessages();
 
         IP = UserData.IP;
-        UserData.NavigationOrChat = true;
-
+        //UserData.NavigationOrChat = true;
 
         incommingCommTask = new IncommingCommTask();
-
         incommingCommTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         //incommingCommTask.cancel(false);
 
@@ -284,48 +282,52 @@ public class Chat extends Activity{
         @Override
         protected Void doInBackground(Void... params) {
 
-            System.out.println("passes on doinbackground");
-            Log.d(TAG, "IncommingCommTask started (" + this.hashCode() + ").");
-            try
-            {
-                //port--;
-                mSrvSocket = new SimWifiP2pSocketServer(port);
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
-            while (!Thread.currentThread().isInterrupted())
-            {
+            UserData.NavigationOrChat = true;
+            System.out.println("passes on doinbackgroundchat " +UserData.NavigationOrChat );
+            if(UserData.NavigationOrChat){
+                Log.d(TAG, "IncommingCommTask started (" + this.hashCode() + ").");
                 try
                 {
-                    if(mSrvSocket == null){
-                        System.out.println("enter in the msrvsocket");
-                        port--;
-                        mSrvSocket = new SimWifiP2pSocketServer(
-                                port);
-                    }
-                    SimWifiP2pSocket sock = mSrvSocket.accept();
+                    //port--;
+                    mSrvSocket = new SimWifiP2pSocketServer(port);
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
+                while (!Thread.currentThread().isInterrupted())
+                {
                     try
                     {
-                        BufferedReader sockIn = new BufferedReader(
-                                new InputStreamReader(sock.getInputStream()));
-                        String st = sockIn.readLine();
-                        publishProgress(st);
-                        sock.getOutputStream().write(("\n").getBytes());
-                    }
-                    catch (IOException e) {
-                        Log.d("Error reading socket:", e.getMessage());
-                    }
-                    finally {
-                        sock.close();
-                        mSrvSocket.close();
-                    }
+                        if(mSrvSocket == null){
+                            System.out.println("enter in the msrvsocket");
+                            port--;
+                            mSrvSocket = new SimWifiP2pSocketServer(
+                                    port);
+                        }
+                        SimWifiP2pSocket sock = mSrvSocket.accept();
+                        try
+                        {
+                            BufferedReader sockIn = new BufferedReader(
+                                    new InputStreamReader(sock.getInputStream()));
+                            String st = sockIn.readLine();
+                            publishProgress(st);
+                            sock.getOutputStream().write(("\n").getBytes());
+                        }
+                        catch (IOException e) {
+                            Log.d("Error reading socket:", e.getMessage());
+                        }
+                        finally {
+                            sock.close();
+                            mSrvSocket.close();
+                        }
                     } catch (IOException e)
-                {
-                    Log.d("Error socket:", e.getMessage());
-                    break;
+                    {
+                        Log.d("Error socket:", e.getMessage());
+                        break;
+                    }
                 }
             }
+
             return null;
         }
 
@@ -359,6 +361,7 @@ public class Chat extends Activity{
 
         @Override
         protected void onProgressUpdate(String... values) {
+
             super.onProgressUpdate(values);
             Toast toast = Toast.makeText(Chat.this, "passes in the eeee", Toast.LENGTH_SHORT);
             toast.show();
@@ -387,6 +390,8 @@ public class Chat extends Activity{
 
         @Override
         protected void onPostExecute(Void aVoid) {
+            //UserData.NavigationOrChat = true;
+            System.out.println("passes on doinbackgroundchat " +UserData.NavigationOrChat );
             System.out.println("enter in onprogress");
             Toast toast = Toast.makeText(Chat.this, "passes in the iiii", Toast.LENGTH_SHORT);
             toast.show();
@@ -458,11 +463,7 @@ public class Chat extends Activity{
                     try
                     {
                         System.out.println("doINBackgrounf11");
-                        if(UserData.NavigationOrChat)
-                            mCliSocket = new SimWifiP2pSocket(IP, 10001);
-                        else
-                            mCliSocket = new SimWifiP2pSocket(IP, 10000);
-
+                        mCliSocket = new SimWifiP2pSocket(IP, 10001);
                         mCliSocket.getOutputStream().write((user + ":" + msg[0] + "\n").getBytes());
                         BufferedReader sockIn = new BufferedReader(new InputStreamReader(mCliSocket.getInputStream()));
                         sockIn.readLine();

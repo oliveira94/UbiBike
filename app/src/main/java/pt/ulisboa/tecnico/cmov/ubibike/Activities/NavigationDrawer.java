@@ -68,7 +68,7 @@ public class NavigationDrawer extends AppCompatActivity
     String user = "";
     Toolbar toolbar;
     TextView tx;
-    int port = 10000;
+    int port = 10001;
 
     public boolean mBound = false;
     private SimWifiP2pBroadcastReceiver mReceiver;
@@ -131,6 +131,8 @@ public class NavigationDrawer extends AppCompatActivity
         TextView UpdateHeaderPoints = (TextView)findViewById(R.id.headerpoints);
         String points = "Points: " + UserData.points;
         UpdateHeaderPoints.setText(points);
+
+        //UserData.NavigationOrChat = false;
 
         listeningMsgCommTask = new ListeningMsgCommTask();
         listeningMsgCommTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -516,51 +518,65 @@ public class NavigationDrawer extends AppCompatActivity
 
     public class ListeningMsgCommTask extends AsyncTask<Void, String, Void> {
 
+
+
         @Override
         protected Void doInBackground(Void... params) {
-            if(!isCancelled()) {
-                try {
-                    mSrvSocket = new SimWifiP2pSocketServer(port);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                while (!Thread.currentThread().isInterrupted()) {
-                    if (isCancelled()) {
-                        System.out.println("enter whereee");
-                        return null;
-                    }
 
+            if(!UserData.NavigationOrChat){
+                UserData.NavigationOrChat = false;
+                System.out.println("passes on doinbackgroundnavigation " +UserData.NavigationOrChat );
+                System.out.println("naviagation do in backk " + port);
+                if(!isCancelled()) {
                     try {
-                        if (mSrvSocket == null) {
-                            port--;
-                            mSrvSocket = new SimWifiP2pSocketServer(
-                                    port);
-                        }
-                        SimWifiP2pSocket sock = mSrvSocket.accept();
-                        try {
-                            BufferedReader sockIn = new BufferedReader(
-                                    new InputStreamReader(sock.getInputStream()));
-                            String st = sockIn.readLine();
-                            publishProgress(st);
-                            sock.getOutputStream().write(("\n").getBytes());
-                        } catch (IOException e) {
-                            Log.d("Error reading socket:", e.getMessage());
-                        } finally {
-                            sock.close();
-                            mSrvSocket.close();
-                        }
+                        mSrvSocket = new SimWifiP2pSocketServer(port);
                     } catch (IOException e) {
-                        Log.d("Error socket:", e.getMessage());
-                        break;
+                        e.printStackTrace();
+                    }
+                    while (!Thread.currentThread().isInterrupted()) {
+                        if (isCancelled()) {
+                            System.out.println("enter whereee");
+                            return null;
+                        }
+
+                        try {
+                            if (mSrvSocket == null) {
+                                port--;
+                                mSrvSocket = new SimWifiP2pSocketServer(
+                                        port);
+                            }
+                            SimWifiP2pSocket sock = mSrvSocket.accept();
+                            try {
+                                BufferedReader sockIn = new BufferedReader(
+                                        new InputStreamReader(sock.getInputStream()));
+                                String st = sockIn.readLine();
+                                publishProgress(st);
+                                sock.getOutputStream().write(("\n").getBytes());
+                            } catch (IOException e) {
+                                Log.d("Error reading socket:", e.getMessage());
+                            } finally {
+                                sock.close();
+                                mSrvSocket.close();
+                            }
+                        } catch (IOException e) {
+                            Log.d("Error socket:", e.getMessage());
+                            break;
+                        }
+
                     }
                 }
             }
+
+
+            System.out.println("naviagation do in backk1 " + port);
             return null;
+
         }
 
         @Override
         protected void onProgressUpdate(String... values) {
 
+            System.out.print("navigationonprogress");
             String[] result = values[0].split(":");
             if(result.length > 1){
                 //see if the input is the points or a message
@@ -590,8 +606,8 @@ public class NavigationDrawer extends AppCompatActivity
         @Override
         protected void onPostExecute(Void aVoid) {
             // spawn the chat server background task
-            new ListeningMsgCommTask().executeOnExecutor(
-                    AsyncTask.THREAD_POOL_EXECUTOR);
+//            new ListeningMsgCommTask().executeOnExecutor(
+//                    AsyncTask.THREAD_POOL_EXECUTOR);
         }
 
         @Override
