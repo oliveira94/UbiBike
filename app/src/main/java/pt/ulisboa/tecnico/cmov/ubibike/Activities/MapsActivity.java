@@ -58,26 +58,23 @@ import pt.ulisboa.tecnico.cmov.ubibike.R;
 import pt.ulisboa.tecnico.cmov.ubibike.DataBase.UserData;
 import pt.ulisboa.tecnico.cmov.ubibike.WifiDirect.SimWifiP2pBroadcastReceiver;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, SimWifiP2pManager.GroupInfoListener, SimWifiP2pManager.PeerListListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback{
 
     private GoogleMap mMap;
     private ArrayList<LatLng>  markerPoints= new ArrayList<LatLng>();
     private Map<ArrayList<LatLng>,String> coordinates = new HashMap<>();
-    private Location currentLocation = new Location ("current locaction");
+    private Location currentLocation = new Location ("current location");
     DataBaseHelper helper = new DataBaseHelper(this);
-    private SimWifiP2pManager mManager = null;
-    private SimWifiP2pManager.Channel mChannel = null;
-    public boolean mBound = false;
 
     private int seconds, minutes,hours = 0;
     String seconds1,minutes1,hours1 ="";
     private boolean buttonClick = false;
 
-    //distancia percorrida enquanto o mapa esta ligado
+    //distance done when the map in online
     private double distance = 0.0;
 
-    //pontos obtidos nesta rota
-    private int points=0;
+    //points obtined from this route
+    private int points = 0;
     TextView tx;
 
     public MapsActivity(){}
@@ -99,10 +96,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             tx=(TextView)findViewById(R.id.time);
             tx.setText(timer);
             parseCoordinates(bundle.getSerializable("rota").toString());
-            int focus= Integer.valueOf(markerPoints.size()/2);
+            int focus = Integer.valueOf(markerPoints.size()/2);
             travelDistance();
             tx=(TextView) findViewById(R.id.KM);
-            tx.setText(formarter(distance)+"KM");
+            tx.setText(ConvertDecimalToDouble(distance)+"KM");
             tx = (TextView) findViewById(R.id.points);
             calculatePoints();
             tx.setText( points+" Points");
@@ -112,7 +109,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.moveCamera(CameraUpdateFactory.newLatLng(markerPoints.get(focus-1)));
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(markerPoints.get(focus - 1).latitude, markerPoints.get(focus-1).longitude), 12.0f));
         }
-
     }
 
     public void parseCoordinates(String coordinates)
@@ -129,15 +125,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    //metodo para desenhar a rota no mapa
+    //method to draw the route in the map
     public PolylineOptions plot()
     {
-        PolylineOptions p = new PolylineOptions().width(6).color(0xFFEE8888);
+        PolylineOptions polylineOptions = new PolylineOptions().width(6).color(0xFFEE8888);
         for (int i = 0; i < markerPoints.size(); i++) {
             LatLng is = markerPoints.get(i);
-            p.add(new LatLng(is.latitude,is.longitude));
+            polylineOptions.add(new LatLng(is.latitude, is.longitude));
         }
-        return p;
+        return polylineOptions;
     }
 
     @Override
@@ -154,26 +150,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onPause();
 
         if (!UserData.route && hours1 != null && minutes1 != null && seconds1 != null )  {
-            //linhas para ver a data para de seguida
+
             Calendar calendar = Calendar.getInstance();
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
             String date = dateFormat.format(calendar.getTime());
-            date+=" Duration "+hours1+minutes1+seconds1;
+            date += " Duration " + hours1 + minutes1 + seconds1;
 
             coordinates.put(markerPoints, date);
-            //actualizar o percurso na variavel na classe global
-            UserData.history.add(coordinates);
-            //calcular os pontos  obtidos na viagem
-            calculatePoints();
-            //actualizar os pontos na classe global
-            UserData.points += points;
-            //actializar a variavel da distancia da classe global
-            UserData.totalDistance += distance;
-            //variavel para saber se o mapa foi inicializadp atravez do histório
 
-            //adiccionar a distancia percorrida à base de dados
+            //update the route in the global class
+            UserData.history.add(coordinates);
+
+            calculatePoints();
+
+            //update the points in the global class
+            UserData.points += points;
+
+            //update the total distance in the global class
+            UserData.totalDistance += distance;
+
+            //add the distance into the database
             helper.AddNewDistance(UserData.username, distance);
             mMap.clear();
+
             Gson gson = new Gson();
             String coordinatesString = gson.toJson(coordinates);
 
@@ -182,8 +181,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             helper.addTrip(UserData.username,coordinatesString );
 
             Log.i("coordinates: ", coordinatesString);
-            Button bt = (Button) findViewById(R.id.startRoute);
-            bt.setEnabled(false);
+            Button button = (Button) findViewById(R.id.startRoute);
+            button.setEnabled(false);
 
         } else {
             mMap.clear();
@@ -191,65 +190,73 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    //metodo para calcular os pontos dados a um utilizador consoante os kilometros feitos
+    //method to calculate the total points and retrieve them to the user
     public void calculatePoints()
     {
         points = (int)(distance*10);
     }
 
-    //metodo para calcular a distancia com base nas coordenadas (currentLocantion - lastLocation)
+    //method to calculate the distance based in the coordinates
     public double distance()
     {
-        double AuxDistance = 0.0;
-        //obter a ultima coordenada inserida no array
+        double DistanceAsDouble = 0.0;
+
+        //obtain the last coordinate inserted in the array
         int lastLocationPosition = markerPoints.size()-1;
-        //retirar do array a ultima distancia inserida
+
+        //get the last distance done from the array
         Location lastLocation = new Location ("lastLocation");
         lastLocation.setLongitude(markerPoints.get(lastLocationPosition).longitude);
         lastLocation.setLatitude(markerPoints.get(lastLocationPosition).latitude);
-        //variavel AuxDistance é uma variavel auxiliar para calcular a distancia
-        AuxDistance = lastLocation.distanceTo(currentLocation);
-        AuxDistance = AuxDistance/1000;
-        return distance += AuxDistance;
+
+        DistanceAsDouble = lastLocation.distanceTo(currentLocation);
+        DistanceAsDouble = DistanceAsDouble/1000;
+        return distance += DistanceAsDouble;
     }
 
-    public double formarter(double number)
+    public double ConvertDecimalToDouble(double number)
     {
         NumberFormat decimalFormat = new DecimalFormat("#.0");
-        String auxFormat = decimalFormat.format(number);
-        double retorno = Double.valueOf(auxFormat);
-        return retorno;
+        String decimalToString = decimalFormat.format(number);
+        double returnDouble = Double.valueOf(decimalToString);
+        return returnDouble;
     }
 
     public void setLayout() {
-        //textview para mostrar os km efectuados pelo dispositivo
+        
         tx = (TextView) findViewById(R.id.KM);
         tx.setGravity(Gravity.CENTER_HORIZONTAL);
-        Button bt = (Button) findViewById(R.id.startRoute);
-        bt.setEnabled(true);
+
+        Button button = (Button) findViewById(R.id.startRoute);
+        button.setEnabled(true);
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         ViewGroup.LayoutParams params = mapFragment.getView().getLayoutParams();
+
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         params.height = (int) (metrics.heightPixels * 0.90);
         mapFragment.getView().setLayoutParams(params);
+
         mapFragment.getMapAsync(this);
+
         RelativeLayout bottom = (RelativeLayout) findViewById(R.id.bottomVertival);
         bottom.setBackgroundColor(Color.rgb(255, 255, 255));
         bottom.setGravity((int) (metrics.heightPixels * 0.90));
+
         ViewGroup.LayoutParams params1 = bottom.getLayoutParams();
         params1.height = (int) ((metrics.heightPixels) * 0.10);
         bottom.setLayoutParams(params1);
-        //bottom.addView(tx);
+
         if (UserData.route) {
-            bt.setVisibility(View.INVISIBLE);
+            button.setVisibility(View.INVISIBLE);
             TextView tx2 = (TextView) findViewById(R.id.points);
             tx2.setVisibility(View.VISIBLE);
         }
 
         if (!UserData.beaconAround)
         {
-            bt.setEnabled(false);
+            button.setEnabled(false);
         }
     }
 
@@ -316,93 +323,42 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             LocationListener listener = new LocationListener() {
                 @Override
                 public void onLocationChanged(Location location) {
-                    //variavel onde está a posição actual do dispositivo
+
                     currentLocation = location;
+
                     LatLng loc = new LatLng(location.getLatitude(), location.getLongitude());
                     if (markerPoints.size() != 0) {
                         distance();
-                        tx.setText(String.valueOf("" + formarter(distance) + "Km"));
+                        tx.setText(String.valueOf("" + ConvertDecimalToDouble(distance) + "Km"));
                     }
-                    //adicionar a localização do dispositivo
+
+                    //add location of the device
                     markerPoints.add(loc);
-                    //centrar o mappa na posição actual do dispositivo
+
+                    //center the map in the atual position of the device
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(loc));
-                    //desenhar no mapa a rota percorrida pelo dispositivo
+
+                    //draw in the map the route done by the device
                     mMap.addPolyline(plot());
                 }
 
                 @Override
-                public void onStatusChanged(String provider, int status, Bundle extras) {
-
-                }
+                public void onStatusChanged(String provider, int status, Bundle extras) {}
 
                 @Override
-                public void onProviderEnabled(String provider) {
-
-                }
+                public void onProviderEnabled(String provider) {}
 
                 @Override
                 public void onProviderDisabled(String provider) {
 
                 }
             };
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                    && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             }
             manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 20, (float) 20.00, listener);
         }
     }
-
-    @Override
-    public void onGroupInfoAvailable(SimWifiP2pDeviceList devices, SimWifiP2pInfo groupInfo) {
-        StringBuilder peersStr = new StringBuilder();
-        for (String deviceName : groupInfo.getDevicesInNetwork()) {
-
-            SimWifiP2pDevice device = devices.getByName(deviceName);
-            String devstr = "" + deviceName + " (" +
-                    ((device == null) ? "??" : device.getVirtIp()) + ")\n";
-            peersStr.append(devstr);
-
-            ((UserData) this.getApplication()).AddDevicesNameToList(deviceName);
-            ((UserData) this.getApplication()).AddDeviceIPToList(device.getVirtIp());
-            ((UserData) this.getApplication()).GetDeviceIP(deviceName);
-            ((UserData) this.getApplication()).GetName(UserData.IP);
-
-            if(!helper.getListOfDevices(UserData.username).contains(deviceName)){
-                helper.addDevice(UserData.username,deviceName);
-            }
-
-        }
-        Log.i("Device1", groupInfo.getDevicesInNetwork().toString());
-
-        if (groupInfo.getDevicesInNetwork().toString() != "")
-        {
-            detectBeacon(groupInfo);
-        }
-    }
-
-    public void detectBeacon(SimWifiP2pInfo devices)
-    {
-        String device= devices.getDevicesInNetwork().toString();
-        if (device.contains("Beacon"))
-        {
-            UserData.beaconAround = true;
-        }else
-        {
-            UserData.beaconAround = false;
-        }
-    }
-
-    @Override
-    public void onPeersAvailable(SimWifiP2pDeviceList peers) {
-        StringBuilder peersStr = new StringBuilder();
-
-        // compile list of devices in range
-        for (SimWifiP2pDevice device : peers.getDeviceList()) {
-            String devstr = "" + device.deviceName + " (" + device.getVirtIp() + ")\n";
-            peersStr.append(devstr);
-        }
-    }
-
     private class serverRequestAddDistance extends AsyncTask<String, Void, String> {
 
         @Override
@@ -440,7 +396,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Toast.makeText(MapsActivity.this, "Can't connect to the server!", Toast.LENGTH_SHORT).show();
             else
                 Toast.makeText(MapsActivity.this, "Distance added to the server successfully!", Toast.LENGTH_SHORT).show();
-
         }
     }
 
@@ -474,6 +429,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
             return result.toString();
         }
+
         @Override
         protected void onPostExecute(String result) {
             if (result.equals("FailedConnection"))
@@ -482,6 +438,4 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Toast.makeText(MapsActivity.this, "Distance added to the server successfully!", Toast.LENGTH_SHORT).show();
         }
     }
-
-
 }
