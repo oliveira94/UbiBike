@@ -17,7 +17,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,9 +39,6 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import javax.crypto.spec.SecretKeySpec;
-
 import pt.inesc.termite.wifidirect.SimWifiP2pBroadcast;
 import pt.inesc.termite.wifidirect.SimWifiP2pDevice;
 import pt.inesc.termite.wifidirect.SimWifiP2pDeviceList;
@@ -72,7 +68,7 @@ public class NavigationDrawer extends AppCompatActivity
     String user = "";
     Toolbar toolbar;
     TextView tx;
-    int port = 10001;
+    int port = 10000;
 
     public boolean mBound = false;
     private SimWifiP2pBroadcastReceiver mReceiver;
@@ -84,6 +80,7 @@ public class NavigationDrawer extends AppCompatActivity
     private SimWifiP2pManager mManager = null;
     private SimWifiP2pManager.Channel mChannel = null;
     private Messenger mService = null;
+    public static ListeningMsgCommTask listeningMsgCommTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +108,11 @@ public class NavigationDrawer extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
+//        if (listeningMsgCommTask != null && listeningMsgCommTask.getStatus() == AsyncTask.Status.RUNNING) {
+//            Toast toast = Toast.makeText(NavigationDrawer.this, "you paused the navigation", Toast.LENGTH_SHORT);
+//            toast.show();
+//            listeningMsgCommTask.cancel(true);
+//        }
         unregisterReceiver(mReceiver);
     }
 
@@ -130,8 +132,9 @@ public class NavigationDrawer extends AppCompatActivity
         String points = "Points: " + UserData.points;
         UpdateHeaderPoints.setText(points);
 
-        new ListeningMsgCommTask().executeOnExecutor(
-                AsyncTask.THREAD_POOL_EXECUTOR);
+        listeningMsgCommTask = new ListeningMsgCommTask();
+        listeningMsgCommTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
     }
 
     @Override
@@ -481,7 +484,6 @@ public class NavigationDrawer extends AppCompatActivity
             }
 
         }
-//        Log.i("Device1",groupInfo.getDevicesInNetwork().toString());
 
         if (groupInfo.getDevicesInNetwork().toString() != "")
         {
@@ -516,46 +518,41 @@ public class NavigationDrawer extends AppCompatActivity
 
         @Override
         protected Void doInBackground(Void... params) {
-            Log.d(TAG, "IncommingCommTask started (" + this.hashCode() + ").");
-            try
-            {
-                mSrvSocket = new SimWifiP2pSocketServer(port);
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-            while (!Thread.currentThread().isInterrupted())
-            {
-                try
-                {
-                    if(mSrvSocket == null)
-                    {
-                        port--;
-                        mSrvSocket = new SimWifiP2pSocketServer(
-                                port);
-                    }
-                    SimWifiP2pSocket sock = mSrvSocket.accept();
-                    try
-                    {
-                        BufferedReader sockIn = new BufferedReader(
-                                new InputStreamReader(sock.getInputStream()));
-                        String st = sockIn.readLine();
-                        publishProgress(st);
-                        sock.getOutputStream().write(("\n").getBytes());
-                    }
-                    catch (IOException e) {
-                        Log.d("Error reading socket:", e.getMessage());
-                    }
-                    finally
-                    {
-                        sock.close();
-                        mSrvSocket.close();
-                    }
+            if(!isCancelled()) {
+                try {
+                    mSrvSocket = new SimWifiP2pSocketServer(port);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                catch (IOException e) {
-                    Log.d("Error socket:", e.getMessage());
-                    break;
+                while (!Thread.currentThread().isInterrupted()) {
+                    if (isCancelled()) {
+                        System.out.println("enter whereee");
+                        return null;
+                    }
+
+                    try {
+                        if (mSrvSocket == null) {
+                            port--;
+                            mSrvSocket = new SimWifiP2pSocketServer(
+                                    port);
+                        }
+                        SimWifiP2pSocket sock = mSrvSocket.accept();
+                        try {
+                            BufferedReader sockIn = new BufferedReader(
+                                    new InputStreamReader(sock.getInputStream()));
+                            String st = sockIn.readLine();
+                            publishProgress(st);
+                            sock.getOutputStream().write(("\n").getBytes());
+                        } catch (IOException e) {
+                            Log.d("Error reading socket:", e.getMessage());
+                        } finally {
+                            sock.close();
+                            mSrvSocket.close();
+                        }
+                    } catch (IOException e) {
+                        Log.d("Error socket:", e.getMessage());
+                        break;
+                    }
                 }
             }
             return null;
@@ -595,6 +592,13 @@ public class NavigationDrawer extends AppCompatActivity
             // spawn the chat server background task
             new ListeningMsgCommTask().executeOnExecutor(
                     AsyncTask.THREAD_POOL_EXECUTOR);
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            Toast toast = Toast.makeText(NavigationDrawer.this, "passes in the cancel", Toast.LENGTH_SHORT);
+            toast.show();
         }
     }
 

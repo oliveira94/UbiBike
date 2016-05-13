@@ -19,6 +19,7 @@ public class UserData extends Application{
     public static boolean beaconAround = false;
     public static boolean route = false;
     public static String serverAddress = "http://10.0.3.2:8080";
+    public static boolean NavigationOrChat = false; //for if its navigation
 
     //add a IP to a list of the IP in the network
     public void AddDeviceIPToList(String IP) {
