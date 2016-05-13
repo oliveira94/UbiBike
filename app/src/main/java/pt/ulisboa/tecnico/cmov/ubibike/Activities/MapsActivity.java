@@ -255,7 +255,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void travelDistance()
     {
-        Location firstLocation = new Location("firstLocstion");
+        Location firstLocation = new Location("firstLocation");
         Location secondLocation = new Location ("secondLocation");
         double dist = 0.0;
         for (int i = 1; i < markerPoints.size();i++)
@@ -271,7 +271,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void startRoute(View view) {
 
-        if (UserData.route == false && buttonClick == false) {
+        if (!UserData.route && !buttonClick) {
             buttonClick = true;
             LocationManager manager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
             final TextView time = (TextView) findViewById(R.id.time);

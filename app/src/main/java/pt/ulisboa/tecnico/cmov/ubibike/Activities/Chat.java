@@ -278,7 +278,6 @@ public class Chat extends Activity{
 
             UserData.NavigationOrChat = true;
             if(UserData.NavigationOrChat){
-                Log.d(TAG, "IncommingCommTask started (" + this.hashCode() + ").");
                 try
                 {
                     mSrvSocket = new SimWifiP2pSocketServer(port);
@@ -291,7 +290,6 @@ public class Chat extends Activity{
                     try
                     {
                         if(mSrvSocket == null){
-                            System.out.println("enter in the msrvsocket");
                             port--;
                             mSrvSocket = new SimWifiP2pSocketServer(
                                     port);
@@ -384,18 +382,18 @@ public class Chat extends Activity{
         @Override
         protected String doInBackground(String... params) {
 
-                    try
-                    {
-                        mCliSocket = new SimWifiP2pSocket(params[0], port);
-                    }
-                    catch (UnknownHostException e)
-                    {
-                        return "Unknown Host:" + e.getMessage();
-                    }
-                    catch (IOException e)
-                    {
-                        return "IO error:" + e.getMessage();
-                    }
+                        try
+                        {
+                            mCliSocket = new SimWifiP2pSocket(params[0], port);
+                        }
+                        catch (UnknownHostException e)
+                        {
+                            return "Unknown Host:" + e.getMessage();
+                        }
+                        catch (IOException e)
+                        {
+                            return "IO error:" + e.getMessage();
+                        }
             return null;
         }
     }
@@ -405,18 +403,18 @@ public class Chat extends Activity{
         @Override
         protected Void doInBackground(String... msg) {
 
-                    try
-                    {
-                        mCliSocket = new SimWifiP2pSocket(IP, 10001);
-                        mCliSocket.getOutputStream().write((user + ":" + msg[0] + "\n").getBytes());
-                        BufferedReader sockIn = new BufferedReader(new InputStreamReader(mCliSocket.getInputStream()));
-                        sockIn.readLine();
-                        mCliSocket.close();
-                    }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
-                    }
+            try
+            {
+                mCliSocket = new SimWifiP2pSocket(IP, 10001);
+                mCliSocket.getOutputStream().write((user + ":" + msg[0] + "\n").getBytes());
+                BufferedReader sockIn = new BufferedReader(new InputStreamReader(mCliSocket.getInputStream()));
+                sockIn.readLine();
+                mCliSocket.close();
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
             mCliSocket = null;
             return null;
         }

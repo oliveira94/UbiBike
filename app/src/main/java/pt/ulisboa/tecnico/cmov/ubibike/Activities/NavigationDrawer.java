@@ -477,7 +477,6 @@ public class NavigationDrawer extends AppCompatActivity
             if(!helper.getListOfDevices(UserData.username).contains(deviceName)){
                 helper.addDevice(UserData.username,deviceName);
             }
-
         }
 
         if (groupInfo.getDevicesInNetwork().toString() != "")
