@@ -30,8 +30,8 @@ public class UserData extends Application{
         }
     }
 
+    //add the device name in the arraylist of devices
     public void AddDevicesNameToList(String device) {
-
         if (!listOfDevices.contains(device)) {
             listOfDevices.add(device);
             Toast.makeText(this, listOfDevices.toString(),
@@ -50,16 +50,4 @@ public class UserData extends Application{
         int positonInList = listOfIPs.indexOf(ip);
         receiver = String.valueOf(listOfDevices.get(positonInList));
     }
-
-    public void AddFriend(String friend) {
-        if (!listOfFriends.contains(friend)) {
-            listOfFriends.add(friend);
-        }
-    }
-
-    public List getListOfFriends()
-    {
-        return listOfFriends;
-    }
-
 }

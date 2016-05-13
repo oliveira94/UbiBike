@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.cmov.ubibike.Fragments;
 
-
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -47,22 +46,29 @@ public class Historic extends Fragment {
             routes.setTextColor(Color.BLACK);
             routes.setBackgroundColor(Color.TRANSPARENT);
             routes.setId(i);
+
             final int id= routes.getId();
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
             params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+
             //Setting the parameters to the intended
             historyHorizontalLayout.setGravity(Gravity.LEFT);
+
             //Adding the textView to the HorizontalLayout
             historyHorizontalLayout.addView(routes, params);
+
             //Adding the whole HorizontalLayout to the VerticalLayout
             linearLayoutVertical.addView(historyHorizontalLayout);
-            Button btn1=(Button) view.findViewById(id);
-            btn1.setOnClickListener(new View.OnClickListener() {
+            Button button=(Button) view.findViewById(id);
+
+            button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     UserData.route=true;
-                    //passar os dados da rota para os mapas
+
+                    //get the data of the route and send to the maps
                     Bundle dados=new Bundle();
                     dados.putSerializable("rota",spliter[0]);
                     dados.putSerializable("data",spliter[1]);

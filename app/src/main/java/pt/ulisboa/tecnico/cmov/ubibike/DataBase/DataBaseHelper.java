@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class DataBaseHelper extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "dase15.db";
+    private static final String DATABASE_NAME = "dase16.db";
     private static final String TABLE_NAME_DATA = "mydata";
     private static final String TABLE_NAME_CHAT = "mychat";
     private static final String TABLE_NAME_FRIENDS = "myfriends";
@@ -199,6 +199,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return devicesList;
     }
 
+    //add a new route to the database
     public void addTrip(String user, String newTrip){
         Gson gson = new Gson();
         Type type = new TypeToken<ArrayList<String>>() {}.getType();
@@ -220,6 +221,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    //get a string with all routes done by the user
     public String getListOfTrips(String user){
         db = this.getReadableDatabase();
         String tripsList = "noTrips";
@@ -317,6 +319,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    //add a new distance from a route to totaldistance
     public void AddNewDistance(String username, double distance){
         db = this.getReadableDatabase();
         double TotalDistance = 0.0;
@@ -346,6 +349,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    //get the total distance of the user
     public double getListOfTotalDistance(String user){
         db = this.getReadableDatabase();
         String query1 = "select username, totaldistance from "+ TABLE_NAME_DATA;

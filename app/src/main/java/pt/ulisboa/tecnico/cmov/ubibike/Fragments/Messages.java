@@ -13,8 +13,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
-import java.awt.font.TextAttribute;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import pt.ulisboa.tecnico.cmov.ubibike.Activities.Chat;
@@ -61,7 +59,7 @@ public class Messages extends Fragment {
                 //travel the arraylist of friends
                 for(int j = 0; j < Friends.size(); j++)
                 {
-                    //if a device is a friend too, create a chat for comunicate with that friends
+                    //if a device is a friend too, create a chat for send messages to that friends
                     if(Devices.get(i).equals(Friends.get(j)))
                         SeeIfIsFriends = true;
                 }

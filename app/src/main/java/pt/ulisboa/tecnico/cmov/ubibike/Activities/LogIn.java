@@ -83,7 +83,7 @@ public class LogIn extends AppCompatActivity {
 
         String[] result = response.split(":");
 
-        if (Ipass.equals(result[1]))    //If password is correct
+        if (Ipass.equals(result[1]))    //check if password is correct
         {
             UserData.username = Iusername;
 

@@ -98,6 +98,7 @@ public class Chat extends Activity{
         unregisterReceiver(mReceiver);
     }
 
+    //if you click in the button to send a message
     public void sendClickedChat(View view) {
 
         MessageOrPoints = false;
@@ -144,14 +145,13 @@ public class Chat extends Activity{
         linearLayoutVertical.addView(chatHorizontalLayout);
     }
 
+    //show up the message in the screen of the friend
     public void UpdateOtherUserScreen(String message, String username){
         LinearLayout linearLayoutVertical = (LinearLayout) findViewById(R.id.idChatLinearVertical);
         LinearLayout chatHorizontalLayout = new LinearLayout(this);
 
         //Moving the text to the new text box
         TextView chatText = new TextView(this);
-        EditText entryText = (EditText) findViewById(R.id.textEntryChat);
-        String text = entryText.getText().toString();
 
         //update the exchangeMessages
         exchangeMessages.setSender(username);
@@ -179,6 +179,7 @@ public class Chat extends Activity{
         linearLayoutVertical.addView(chatHorizontalLayout);
     }
 
+    //after entry in the chat, print all messages in the screen
     public void updateMessages() {
 
         db = helper.getReadableDatabase();
@@ -211,11 +212,9 @@ public class Chat extends Activity{
                     chatHorizontalLayout.setGravity(Gravity.LEFT);
                     chatHorizontalLayout.addView(chatText, params);
                     linearLayoutVertical.addView(chatHorizontalLayout);
-
                 }
                 else if (receiver.equals(user))
                 {
-
                     LinearLayout linearLayoutVertical = (LinearLayout) findViewById(R.id.idChatLinearVertical);
                     LinearLayout chatHorizontalLayout = new LinearLayout(this);
 
@@ -237,6 +236,7 @@ public class Chat extends Activity{
         }
     }
 
+    //if you click in the button to send points
     public void sendPointsClicked(View view) {
 
         MessageOrPoints = true;
@@ -326,6 +326,7 @@ public class Chat extends Activity{
             super.onProgressUpdate(values);
             String[] result = values[0].split(":");
             if(result.length > 1){
+
                 //see if the input is a message or points and check if the input is valid
                 if(isNumber(result[1]) && MessageOrPoints)
                 {
@@ -355,7 +356,6 @@ public class Chat extends Activity{
         }
     }
 
-
     //method to see if a string is a number
     public static boolean isNumber(String string) {
         if (string == null || string.isEmpty()) {
@@ -382,18 +382,18 @@ public class Chat extends Activity{
         @Override
         protected String doInBackground(String... params) {
 
-                        try
-                        {
-                            mCliSocket = new SimWifiP2pSocket(params[0], port);
-                        }
-                        catch (UnknownHostException e)
-                        {
-                            return "Unknown Host:" + e.getMessage();
-                        }
-                        catch (IOException e)
-                        {
-                            return "IO error:" + e.getMessage();
-                        }
+            try
+            {
+                mCliSocket = new SimWifiP2pSocket(params[0], port);
+            }
+            catch (UnknownHostException e)
+            {
+                return "Unknown Host:" + e.getMessage();
+            }
+            catch (IOException e)
+            {
+                return "IO error:" + e.getMessage();
+            }
             return null;
         }
     }

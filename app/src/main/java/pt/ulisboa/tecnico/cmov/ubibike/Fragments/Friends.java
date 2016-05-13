@@ -41,6 +41,7 @@ public class Friends extends Fragment {
         //go get the string with all of his friends
         String friends = helper.getListOfFriends(user);
 
+        //check if he was friends
         if(!friends.equals("noFriends"))
         {
             //each element of the arraylist is a friend
@@ -72,7 +73,6 @@ public class Friends extends Fragment {
                 linearLayoutVertical.addView(chatHorizontalLayout);
             }
             }
-
         return view;
     }
 }
