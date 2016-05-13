@@ -86,15 +86,9 @@ public class Chat extends Activity{
         updateMessages();
 
         IP = UserData.IP;
-        //UserData.NavigationOrChat = true;
 
         incommingCommTask = new IncommingCommTask();
         incommingCommTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        //incommingCommTask.cancel(false);
-
-        // spawn the chat server background task
-//        new IncommingCommTask().executeOnExecutor(
-//                AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
 
@@ -283,12 +277,10 @@ public class Chat extends Activity{
         protected Void doInBackground(Void... params) {
 
             UserData.NavigationOrChat = true;
-            System.out.println("passes on doinbackgroundchat " +UserData.NavigationOrChat );
             if(UserData.NavigationOrChat){
                 Log.d(TAG, "IncommingCommTask started (" + this.hashCode() + ").");
                 try
                 {
-                    //port--;
                     mSrvSocket = new SimWifiP2pSocketServer(port);
                 }
                 catch (IOException e) {
@@ -327,44 +319,13 @@ public class Chat extends Activity{
                     }
                 }
             }
-
             return null;
         }
-
-//        @Override
-//        protected void onProgressUpdate(String... values) {
-//
-//            System.out.println("enter in onprogress");
-//            String[] result = values[0].split(":");
-//            if(result.length > 1){
-//                //see if the input is a message or points and check if the input is valid
-//                if(isNumber(result[1]) && MessageOrPoints)
-//                {
-//                    UserData.points += Integer.parseInt(result[1]);
-//                    helper.ChangePoints(receiver, Integer.parseInt(result[1]));
-//                }
-//                else if(isNumber(result[1]) && !MessageOrPoints)
-//                {
-//                    Toast.makeText(Chat.this, "Invalid Input!", Toast.LENGTH_SHORT).show();
-//                }
-//                else if(!isNumber(result[1]) && !MessageOrPoints)
-//                {
-//                    UpdateOtherUserScreen(result[1], result[0]);
-//                }
-//                else if(!isNumber(result[1]) && MessageOrPoints)
-//                {
-//                    Toast.makeText(Chat.this, "Invalid Input!", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        }
-
 
         @Override
         protected void onProgressUpdate(String... values) {
 
             super.onProgressUpdate(values);
-            Toast toast = Toast.makeText(Chat.this, "passes in the eeee", Toast.LENGTH_SHORT);
-            toast.show();
             String[] result = values[0].split(":");
             if(result.length > 1){
                 //see if the input is a message or points and check if the input is valid
@@ -390,23 +351,9 @@ public class Chat extends Activity{
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            //UserData.NavigationOrChat = true;
-            System.out.println("passes on doinbackgroundchat " +UserData.NavigationOrChat );
-            System.out.println("enter in onprogress");
-            Toast toast = Toast.makeText(Chat.this, "passes in the iiii", Toast.LENGTH_SHORT);
-            toast.show();
-            // spawn the chat server background task
             mTextInput.setText("");
             new IncommingCommTask().executeOnExecutor(
                     AsyncTask.THREAD_POOL_EXECUTOR);
-        }
-
-        @Override
-        protected void onCancelled() {
-            mTextInput.setText("");
-            super.onCancelled();
-            Toast toast = Toast.makeText(Chat.this, "passes in the gggg", Toast.LENGTH_SHORT);
-            toast.show();
         }
     }
 
@@ -439,8 +386,6 @@ public class Chat extends Activity{
 
                     try
                     {
-                        System.out.println("doINBackgrounf");
-                        //port--;
                         mCliSocket = new SimWifiP2pSocket(params[0], port);
                     }
                     catch (UnknownHostException e)
@@ -462,7 +407,6 @@ public class Chat extends Activity{
 
                     try
                     {
-                        System.out.println("doINBackgrounf11");
                         mCliSocket = new SimWifiP2pSocket(IP, 10001);
                         mCliSocket.getOutputStream().write((user + ":" + msg[0] + "\n").getBytes());
                         BufferedReader sockIn = new BufferedReader(new InputStreamReader(mCliSocket.getInputStream()));

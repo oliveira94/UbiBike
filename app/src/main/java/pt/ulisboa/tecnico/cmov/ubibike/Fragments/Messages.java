@@ -78,7 +78,6 @@ public class Messages extends Fragment {
 
                     chatHorizontalLayout.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View v) {
-                            //NavigationDrawer.listeningMsgCommTask.cancel(true);
                             Intent i = new Intent(getActivity(), Chat.class);
                             i.putExtra("USER", UserData.username);
                             i.putExtra("RECEIVER" , text);
@@ -89,15 +88,6 @@ public class Messages extends Fragment {
                     chatText.setText(text);
                     chatText.setTextSize(28);
                     chatText.setTextColor(Color.BLACK);
-
-//                    chatHorizontalLayout.setOnClickListener(new View.OnClickListener() {
-//                        public void onClick(View v) {
-//                            Intent i = new Intent(getActivity(), Chat.class);
-//                            i.putExtra("USER", UserData.username);
-//                            i.putExtra("RECEIVER" , text);
-//                            startActivity(i);
-//                        }
-//                    });
 
                     RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
                             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);

@@ -88,7 +88,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_maps);
         setLayout();
 
-        if (UserData.route == true)
+        if (UserData.route)
         {
             mMap= ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
             Intent intent = this.getIntent();
@@ -153,7 +153,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onPause () {
         super.onPause();
 
-        if (UserData.route == false && hours1 != null && minutes1 != null && seconds1 != null )  {
+        if (!UserData.route && hours1 != null && minutes1 != null && seconds1 != null )  {
             //linhas para ver a data para de seguida
             Calendar calendar = Calendar.getInstance();
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
@@ -241,13 +241,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         params1.height = (int) ((metrics.heightPixels) * 0.10);
         bottom.setLayoutParams(params1);
         //bottom.addView(tx);
-        if (UserData.route == true) {
+        if (UserData.route) {
             bt.setVisibility(View.INVISIBLE);
             TextView tx2 = (TextView) findViewById(R.id.points);
             tx2.setVisibility(View.VISIBLE);
         }
 
-        if (UserData.beaconAround == false)
+        if (!UserData.beaconAround)
         {
             bt.setEnabled(false);
         }
@@ -350,15 +350,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
             manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 20, (float) 20.00, listener);
         }
-    }
-
-    public void refreshButtonClicked(View view) {
-        Toast.makeText(MapsActivity.this, "maps button clicked", Toast.LENGTH_SHORT).show();
-        if (mBound)
-            mManager.requestGroupInfo(mChannel,  MapsActivity.this);
-
-        if (mBound)
-            mManager.requestPeers(mChannel,  MapsActivity.this);
     }
 
     @Override

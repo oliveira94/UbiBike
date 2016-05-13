@@ -108,11 +108,6 @@ public class NavigationDrawer extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
-//        if (listeningMsgCommTask != null && listeningMsgCommTask.getStatus() == AsyncTask.Status.RUNNING) {
-//            Toast toast = Toast.makeText(NavigationDrawer.this, "you paused the navigation", Toast.LENGTH_SHORT);
-//            toast.show();
-//            listeningMsgCommTask.cancel(true);
-//        }
         unregisterReceiver(mReceiver);
     }
 
@@ -131,8 +126,6 @@ public class NavigationDrawer extends AppCompatActivity
         TextView UpdateHeaderPoints = (TextView)findViewById(R.id.headerpoints);
         String points = "Points: " + UserData.points;
         UpdateHeaderPoints.setText(points);
-
-        //UserData.NavigationOrChat = false;
 
         listeningMsgCommTask = new ListeningMsgCommTask();
         listeningMsgCommTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -525,8 +518,6 @@ public class NavigationDrawer extends AppCompatActivity
 
             if(!UserData.NavigationOrChat){
                 UserData.NavigationOrChat = false;
-                System.out.println("passes on doinbackgroundnavigation " +UserData.NavigationOrChat );
-                System.out.println("naviagation do in backk " + port);
                 if(!isCancelled()) {
                     try {
                         mSrvSocket = new SimWifiP2pSocketServer(port);
@@ -534,11 +525,6 @@ public class NavigationDrawer extends AppCompatActivity
                         e.printStackTrace();
                     }
                     while (!Thread.currentThread().isInterrupted()) {
-                        if (isCancelled()) {
-                            System.out.println("enter whereee");
-                            return null;
-                        }
-
                         try {
                             if (mSrvSocket == null) {
                                 port--;
@@ -566,17 +552,12 @@ public class NavigationDrawer extends AppCompatActivity
                     }
                 }
             }
-
-
-            System.out.println("naviagation do in backk1 " + port);
             return null;
 
         }
 
         @Override
         protected void onProgressUpdate(String... values) {
-
-            System.out.print("navigationonprogress");
             String[] result = values[0].split(":");
             if(result.length > 1){
                 //see if the input is the points or a message
@@ -608,13 +589,6 @@ public class NavigationDrawer extends AppCompatActivity
             // spawn the chat server background task
 //            new ListeningMsgCommTask().executeOnExecutor(
 //                    AsyncTask.THREAD_POOL_EXECUTOR);
-        }
-
-        @Override
-        protected void onCancelled() {
-            super.onCancelled();
-            Toast toast = Toast.makeText(NavigationDrawer.this, "passes in the cancel", Toast.LENGTH_SHORT);
-            toast.show();
         }
     }
 

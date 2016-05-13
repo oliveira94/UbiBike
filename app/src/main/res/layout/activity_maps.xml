@@ -58,16 +58,6 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true" />
 
-        <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:id="@+id/refreshInMaps"
-            android:background="@drawable/refresh"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="7dp"
-            android:onClick="refreshButtonClicked" />
-
     </RelativeLayout>
 
 </RelativeLayout>
